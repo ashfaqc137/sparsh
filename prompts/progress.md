@@ -5,18 +5,29 @@
 > then fix this file.
 
 ## Current focus
-Project not started. Documentation/specs complete in `prompts/`. Next up: **T01 — Monorepo skeleton**.
+`@sparsh/core` (T01–T11) is implemented, tested, and builds clean. Next up: **T12 — DOM host: capture
+listener + normalization** (the first task in Phase D, `@sparsh/dom`).
 
 ## Last decision
 See `01-architecture/decisions.md`. Most recent settled items: D12 (Age applies to all input kinds),
-D17 (native deferred), D18 (pnpm+turbo+changesets monorepo). Name is **sparsh** (D1).
+D17 (native deferred), D18 (pnpm+turbo+changesets monorepo). Name is **sparsh** (D1). `@sparsh` npm scope
+was assumed available and used as-is (not independently re-verified against the npm registry during T01;
+revisit before first publish in T22).
+
+Engine-contract extensions made during T04–T11 (documented in `core-contract.md` in the same change):
+`Host.onIntentClear` + `IntentClearSignal`, `GuardOptions.refractoryMs` (default 300ms) +
+`semanticsTextCheck` (default false), and `PolicyContext.refractoryMs` / `compareText` /
+`lastActivation`. These were necessary to make DoubleFire and the opt-in Semantics text check
+implementable without hidden module state; see `policy.ts` JSDoc.
 
 ## Open blockers / to-confirm
-- [ ] `@sparsh` npm scope availability — verify in **T01**; fall back to unscoped `sparsh` / `sparsh-dom` /
-      `sparsh-react` and record an ADR if taken.
+- [ ] `@sparsh` npm scope availability — **not yet verified against the live npm registry**; fall back to
+      unscoped `sparsh` / `sparsh-dom` / `sparsh-react` and record an ADR if taken. Do this before T22.
 - [ ] `display: contents` provider-root behavior under flex/grid — verify in the demo (**T18/T20**).
-- [ ] `refractoryMs` value + whether DoubleFire reduces to a thin refractory guard — decide during **T11**
-      against a real repro.
+- [x] `refractoryMs` value + whether DoubleFire reduces to a thin refractory guard — decided during T11:
+      default 300ms, dedicated (smaller than `cooldownMs`). DoubleFire kept as a small, separate policy
+      (not reduced to a thin guard) since it's cheap and the temporal-sequence framing is distinct from
+      Age; revisit if e2e (T21) shows it's redundant with Age+Continuity in practice.
 
 ## Task status
 
@@ -25,17 +36,17 @@ Phases: A Foundation · B Core engine · C Policies · D DOM host · E React · 
 
 | ID | Task | Phase | Status |
 |---|---|---|---|
-| T01 | Monorepo skeleton | A | not-started |
-| T02 | Build/test/release tooling | A | not-started |
-| T03 | DOM-free lint fence | A | not-started |
-| T04 | Core types & ports | B | not-started |
-| T05 | Engine skeleton | B | not-started |
-| T06 | Mode/decision plumbing + fail-open | B | not-started |
-| T07 | Input classification & gating | C | not-started |
-| T08 | ContinuityPolicy | C | not-started |
-| T09 | SemanticsPolicy | C | not-started |
-| T10 | AgePolicy | C | not-started |
-| T11 | DoubleFirePolicy | C | not-started |
+| T01 | Monorepo skeleton | A | done |
+| T02 | Build/test/release tooling | A | done |
+| T03 | DOM-free lint fence | A | done |
+| T04 | Core types & ports | B | done |
+| T05 | Engine skeleton | B | done |
+| T06 | Mode/decision plumbing + fail-open | B | done |
+| T07 | Input classification & gating | C | done |
+| T08 | ContinuityPolicy | C | done |
+| T09 | SemanticsPolicy | C | done |
+| T10 | AgePolicy | C | done |
+| T11 | DoubleFirePolicy | C | done |
 | T12 | DOM host: capture listener + normalization | D | not-started |
 | T13 | DOM host: target resolution | D | not-started |
 | T14 | DOM host: snapshot (rect + fingerprint) | D | not-started |
@@ -52,4 +63,15 @@ Phases: A Foundation · B Core engine · C Policies · D DOM host · E React · 
 `not-started` · `in-progress` · `done` · `blocked`
 
 ## Changelog (append newest on top)
-- _(none yet)_ — documentation scaffold created under `prompts/`; old `PLAN.md` removed.
+- **T01–T11 complete.** Monorepo (pnpm + turbo + changesets + tsup + vitest + biome) scaffolded;
+  `packages/{core,dom,react}` created (dom/react are placeholders — real work starts at T12/T18).
+  `@sparsh/core` fully implemented: types/ports (`types.ts`, `host.ts`, `policy.ts`, `decision.ts`),
+  engine (`engine.ts` — intent lifecycle, mode resolution, fail-open, `onDecision`, `isGuarded`), and all
+  four policies (`policies/{continuity,semantics,age,double-fire}.ts`). 37 vitest unit tests cover the
+  full decision table from `04-verification/testing-strategy.md` (rows 1, 3–24) against a fake host
+  (`test/fake-host.ts`). `pnpm exec tsc -b`, `pnpm run typecheck:core-fence`, `pnpm exec biome check .`,
+  `pnpm --filter @sparsh/core exec vitest run`, and `pnpm --filter @sparsh/core build` all pass clean.
+  Core builds ESM+CJS+d.ts via tsup (a separate non-composite `tsconfig.build.json` works around a
+  tsup/rollup-plugin-dts incompatibility with `"composite": true`). Engine-contract extensions
+  documented above and mirrored into `core-contract.md` in the same change.
+- _(previous)_ — documentation scaffold created under `prompts/`; old `PLAN.md` removed.

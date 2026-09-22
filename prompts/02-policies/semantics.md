@@ -43,8 +43,9 @@ badge, a price that ticks, a "2m ago" timestamp. These change constantly while t
 unchanged. Therefore:
 
 - The default fingerprint comparison uses `disabled` + `ariaLabel` + `role` + `hrefOrValue` + `guardKey`.
-- `text` is compared **only** when explicitly enabled (e.g., an opt-in option or a per-element attribute),
-  and even then callers should scope it to the label element, not the whole subtree.
+- `text` is compared **only** when explicitly enabled (`GuardOptions.semanticsTextCheck: true`,
+  implemented in T09), and even then callers should scope it to the label element, not the whole
+  subtree.
 - Prefer `aria-label` / `data-guard-key` as the stable meaning signal over raw text.
 
 ## Case 5 (list reorder) requires `data-guard-key` — honest layering (D15)

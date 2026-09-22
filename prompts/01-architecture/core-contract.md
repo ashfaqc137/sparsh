@@ -84,6 +84,13 @@ export interface Host {
   /** Subscribe to normalized activation events. Host is responsible for capture-phase, pointer-id, cleanup. */
   onActivationEvent(cb: (e: ActivationEvent) => void): Unsubscribe
 
+  /**
+   * Subscribe to intent-clearing signals (`pointercancel` / `lostpointercapture` in the DOM
+   * host). The engine clears any stored intent for the given `pointerId` when this fires.
+   * (Implemented in T05; not in the original draft of this doc.)
+   */
+  onIntentClear(cb: (signal: IntentClearSignal) => void): Unsubscribe
+
   /** Resolve a raw platform target to the interactive element handle, or null if none. */
   resolveTarget(raw: unknown): TargetHandle | null
 
@@ -95,6 +102,16 @@ export interface Host {
 
   /** Monotonic clock. */
   now(): number
+}
+
+/**
+ * A signal the host emits to clear stored intent state for a `pointerId` without an activation —
+ * `pointercancel` and `lostpointercapture`. Kept distinct from `ActivationEvent` so the engine
+ * stays DOM-free and does not need to know these are DOM event names.
+ */
+export interface IntentClearSignal {
+  pointerId: number
+  timeStamp: number
 }
 ```
 
@@ -110,6 +127,19 @@ export interface GuardOptions {
 
   /** Continuity rect-movement tolerance in px. Default: small, e.g. 4. */
   rectThresholdPx?: number
+
+  /**
+   * DoubleFire's post-activation refractory window, ms. Default 300 — a dedicated, smaller
+   * value than `cooldownMs` (see `02-policies/double-fire.md`'s "decide during implementation"
+   * note). Added in T05/T11; not in the original draft of this doc.
+   */
+  refractoryMs?: number
+
+  /**
+   * Opt-in: also compare `Fingerprint.text` in SemanticsPolicy (D14). Default false. Added in
+   * T09; not in the original draft of this doc.
+   */
+  semanticsTextCheck?: boolean
 
   /** Which policies run. Default: all four. */
   policies?: PolicyId[]
@@ -158,10 +188,22 @@ export interface Decision {
 ## Policy interface (internal, but part of the contract for extensibility)
 
 ```ts
+export interface LastActivation {
+  time: number
+  identity: unknown
+  rect: Rect
+}
+
 export interface PolicyContext {
   now: number
   cooldownMs: number
   rectThresholdPx: number
+  /** Refractory window for DoubleFirePolicy. Added in T05/T11; see GuardOptions.refractoryMs. */
+  refractoryMs: number
+  /** Opt-in text comparison flag for SemanticsPolicy. Added in T09; see GuardOptions.semanticsTextCheck. */
+  compareText: boolean
+  /** Last committed (allowed) pointer activation, for DoubleFirePolicy. Added in T05/T11. */
+  lastActivation?: LastActivation
 }
 
 export interface Verdict {

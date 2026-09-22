@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    // Deliberately no "DOM" lib — @sparsh/core must contain zero DOM (D8).
+    // If code here needs `document`/`window`/`Element`, the design is wrong;
+    // move the concern behind the Host port instead.
+    "lib": ["ES2022"],
+    "outDir": "dist",
+    "rootDir": "src"
+  },
+  "include": ["src/**/*"]
+}

@@ -1,0 +1,11 @@
+{
+  // tsup's dts bundler (rollup-plugin-dts) chokes on "composite": true (TS6307 — "file not
+  // listed within the file list of project"). Use a non-composite view of the same sources for
+  // the tsup build only; `tsc -b` (project references, typecheck) keeps using tsconfig.json.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "composite": false,
+    "declarationMap": false,
+    "incremental": false
+  }
+}

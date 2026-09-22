@@ -20,8 +20,9 @@ or repeat event lands on whatever is now underneath.
 
 ## The rule
 
-Maintain a short **post-activation refractory window** per root (default: the same `cooldownMs`, or a
-smaller dedicated value — decide during implementation, keep configurable):
+Maintain a short **post-activation refractory window** per root (default: **300ms**, a dedicated
+value smaller than the default `cooldownMs` (500ms) — decided during T05/T11 implementation and
+exposed as `GuardOptions.refractoryMs`):
 
 ```
 After sparsh observes an activation that changed the target region (collapse/unmount detected via

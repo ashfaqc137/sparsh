@@ -1,0 +1,27 @@
+{
+  "name": "sparsh",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Monorepo for @sparsh/* — a framework-agnostic UX-safety primitive against accidental UI activation.",
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "e2e": "playwright test",
+    "lint": "biome check .",
+    "typecheck": "turbo run typecheck",
+    "typecheck:core-fence": "tsc -p packages/core/tsconfig.json --noEmit",
+    "release": "changeset version && changeset publish",
+    "changeset": "changeset"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@changesets/cli": "^2.27.10",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
