@@ -109,14 +109,28 @@ different implementations sharing only the *conceptual* policy model. Web value 
 **Consequences:** v1 is web only. The host-port design (D5) keeps native possible at zero extra cost now.
 Do not distort the web core for a hypothetical native target beyond keeping DOM access behind the port.
 
-### D18 · Monorepo: pnpm workspaces + turbo + changesets · Accepted
+### D18 · Monorepo: pnpm workspaces + turbo + changesets · Superseded by D20
 **Rationale:** co-released public packages; turbo caching pays off once Playwright + demo are in the graph;
 changesets for public semver. nx is heavier than needed at this size.
 **Consequences:** pnpm workspaces; `packages/{core,dom,react}` + `apps/demo` + `e2e/`; tsup for bundling;
 tsconfig project references; a lint fence keeping core DOM-free.
+**Update:** the turbo portion of this decision is superseded by D20 — pnpm workspaces + changesets +
+tsconfig project references stand as originally decided.
 
 ### D19 · Perf budget is a release blocker · Accepted
 **Rationale:** a guard that adds latency gets removed; users dislike lag more than occasional mistaps.
 **Consequences:** target < 1ms added per interaction on the interaction path, **plus** a separately
 measured Mutation/Intersection background budget under a virtualized 10k-row list. Regression blocks
 release.
+
+### D20 · Drop turbo; run tasks with plain `pnpm -r` + `tsc -b` · Accepted
+**Rationale:** at the current repo size (one implemented package, two placeholders), turbo's value —
+build caching and task-graph orchestration — isn't paying for itself. `pnpm -r run <script>` already
+executes in topological (dependency-graph) order natively, and `tsc -b` (tsconfig project references)
+already gives fast, correctly-ordered typechecking across the graph. Turbo added a devDependency and a
+config surface with no measurable benefit yet.
+**Consequences:** `turbo.json` removed; `turbo` removed from root devDependencies; root scripts
+(`build`, `test`, `typecheck`) now call `pnpm -r run ...` / `tsc -b` directly (see `tooling.md`). No
+caching layer exists today — full rebuilds/tests run every time. **Revisit** once `apps/demo` (T20) and
+the Playwright suite (T21) make the build graph heavy enough that uncached runs are a real cost; at that
+point turbo (or nx) can be reintroduced with a new ADR without any change to package boundaries or code.

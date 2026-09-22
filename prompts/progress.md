@@ -10,7 +10,8 @@ listener + normalization** (the first task in Phase D, `@sparsh/dom`).
 
 ## Last decision
 See `01-architecture/decisions.md`. Most recent settled items: D12 (Age applies to all input kinds),
-D17 (native deferred), D18 (pnpm+turbo+changesets monorepo). Name is **sparsh** (D1). `@sparsh` npm scope
+D17 (native deferred), D18 (pnpm+turbo+changesets monorepo — task-runner portion superseded by D20),
+D20 (turbo removed; plain `pnpm -r` + `tsc -b` instead). Name is **sparsh** (D1). `@sparsh` npm scope
 was assumed available and used as-is (not independently re-verified against the npm registry during T01;
 revisit before first publish in T22).
 
@@ -63,6 +64,14 @@ Phases: A Foundation · B Core engine · C Policies · D DOM host · E React · 
 `not-started` · `in-progress` · `done` · `blocked`
 
 ## Changelog (append newest on top)
+- **Turbo removed (D20).** With only `@sparsh/core` implemented (dom/react still placeholders), turbo's
+  caching/orchestration wasn't paying for itself. Deleted `turbo.json`, dropped `turbo` from root
+  devDependencies, root scripts now call `pnpm -r run build`/`pnpm -r run test`/`tsc -b tsconfig.json`
+  directly (`pnpm -r` already runs in topological order; `tsc -b` already orders typecheck via project
+  references). Added `tsup.config.ts` to `packages/{dom,react}` (previously missing, which only surfaced
+  once `pnpm -r run build` was exercised directly) and `--passWithNoTests` to their `test` scripts (no
+  test files yet). D18 annotated as partially superseded; D20 added. Re-ran `pnpm install` (lockfile no
+  longer references turbo), full build/typecheck/lint/test suite verified green across all packages.
 - **T01–T11 complete.** Monorepo (pnpm + turbo + changesets + tsup + vitest + biome) scaffolded;
   `packages/{core,dom,react}` created (dom/react are placeholders — real work starts at T12/T18).
   `@sparsh/core` fully implemented: types/ports (`types.ts`, `host.ts`, `policy.ts`, `decision.ts`),

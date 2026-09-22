@@ -1,33 +1,35 @@
 # Tooling
 
-Decision reference: D18 (monorepo), D19 (perf budget), D2/D8 (core is DOM-free).
+Decision reference: D18 (monorepo), D20 (drop turbo, plain pnpm scripts), D19 (perf budget), D2/D8
+(core is DOM-free).
 
 ## Stack
 
 | Concern | Choice | Notes |
 |---|---|---|
 | Package manager | **pnpm** (workspaces) | strict, good hoisting control |
-| Task runner / cache | **turbo** | caching pays off once Playwright + demo are in the graph |
+| Task runner | **plain `pnpm -r run <script>`** | pnpm runs recursive scripts in topological (dependency-graph) order natively; no caching layer yet — see D20. Revisit (turbo/nx) once the demo + Playwright graph makes uncached rebuilds slow. |
 | Release / versioning | **changesets** | public semver for 3 packages; start at `0.x` |
 | Bundler | **tsup** | ESM + CJS + `.d.ts`, per package |
 | Unit tests | **vitest** | core in Node (fake host); dom in jsdom |
 | E2E / real input | **Playwright** | real `mouse` + `touchscreen` + keyboard; touch asserted independently |
 | Lint / format | **biome** (preferred) or eslint+prettier | plus the custom DOM-free fence below |
-| TS build graph | **tsconfig project references** | fast typed builds across packages |
+| TS build graph | **tsconfig project references** (`tsc -b`) | fast typed builds across packages; also gives us cross-package dependency ordering for typecheck without a task runner |
 
 ## Workspace layout
 
 ```
 sparsh/                      (repo root; package name "sparsh" internal, not published)
   pnpm-workspace.yaml        # packages: ["packages/*", "apps/*", "e2e"]
-  turbo.json
   package.json               # root scripts, devDeps, changesets
   tsconfig.base.json         # shared compiler options
+  tsconfig.json              # root project-references file for `tsc -b`
   .changeset/
   packages/
     core/
       package.json           # @sparsh/core, no deps, no "DOM" lib
       tsconfig.json          # extends base; lib WITHOUT "DOM"
+      tsconfig.build.json     # non-composite view used only by tsup's dts bundler
       src/
       tsup.config.ts
     dom/
@@ -69,14 +71,14 @@ Each package ships dual ESM/CJS with types:
 }
 ```
 
-## Scripts (root, via turbo)
+## Scripts (root, plain pnpm — see D20)
 
 ```
-pnpm build      # turbo run build   (core → dom → react, honoring the graph)
-pnpm test       # turbo run test    (vitest across packages)
+pnpm build      # pnpm -r run build   (topological order: core → dom → react)
+pnpm test       # pnpm -r run test    (vitest across packages)
 pnpm e2e        # playwright test
 pnpm lint       # biome check + the core fence
-pnpm typecheck  # tsc -b
+pnpm typecheck  # tsc -b  (project references honor the graph)
 pnpm release    # changeset version && changeset publish
 ```
 
