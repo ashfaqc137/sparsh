@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>sparsh — throwaway vanilla smoke test</title>
+    <style>
+      body { font-family: system-ui, sans-serif; max-width: 720px; margin: 2rem auto; line-height: 1.5; }
+      h1 { font-size: 1.25rem; }
+      section { border: 1px solid #ccc; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+      button { font-size: 1rem; padding: 0.5rem 1rem; cursor: pointer; }
+      button[disabled] { cursor: not-allowed; opacity: 0.5; }
+      button[aria-disabled="true"] { cursor: not-allowed; opacity: 0.5; }
+      #interstitial-target { position: relative; }
+      #toast {
+        position: absolute; inset: -0.25rem -0.25rem auto -0.25rem; height: 2.75rem;
+        background: crimson; color: white; display: flex; align-items: center; justify-content: center;
+        border-radius: 6px; z-index: 2;
+      }
+      #log { background: #111; color: #0f0; font-family: ui-monospace, monospace; font-size: 0.8rem;
+        padding: 0.75rem; height: 220px; overflow-y: auto; border-radius: 6px; white-space: pre-wrap; }
+      label { display: inline-flex; gap: 0.35rem; align-items: center; margin-right: 1rem; }
+    </style>
+  </head>
+  <body>
+    <h1>sparsh — throwaway vanilla smoke test (@sparsh/core + @sparsh/dom)</h1>
+    <p>
+      NOT the official T20 demo (that's Vite+React, <code>apps/demo</code>). This is a scratch page to
+      manually verify the DOM host (T12–T17) actually blocks accidental activations. Safe to delete.
+    </p>
+
+    <section>
+      <strong>Global mode:</strong>
+      <label><input type="radio" name="mode" value="report" checked /> report (never blocks)</label>
+      <label><input type="radio" name="mode" value="enforce" /> enforce (blocks flagged activations)</label>
+    </section>
+
+    <section>
+      <h2>Case 1 — Interstitial (toast mounts over the button)</h2>
+      <p>
+        Click "Arm interstitial", then quickly press-and-hold on the button below and don't release for
+        ~400ms: a red toast will mount over it mid-press (Continuity: rect/identity changes between down
+        and up).
+      </p>
+      <div id="interstitial-target">
+        <button id="danger-btn">Delete account</button>
+      </div>
+      <p><button id="arm-interstitial">Arm interstitial (mounts in 400ms)</button></p>
+      <p>Action fired count: <span id="danger-count">0</span></p>
+    </section>
+
+    <section>
+      <h2>Case 4 — Async settle (disabled → enabled)</h2>
+      <p>
+        Click "Arm async settle" — the button below becomes visually/aria disabled, then re-enables
+        ~400ms later. Press-and-hold it while disabled and release after it re-enables. Uses
+        <code>aria-disabled</code> rather than the native <code>disabled</code> attribute, since a truly
+        disabled element never dispatches pointer events at all (there'd be nothing for sparsh to see).
+      </p>
+      <button id="async-btn" aria-disabled="true">Submit</button>
+      <p><button id="arm-async">Arm async settle (enables in 400ms)</button></p>
+      <p>Action fired count: <span id="async-count">0</span></p>
+    </section>
+
+    <section>
+      <h2>Live suspect log (onDecision)</h2>
+      <div id="log"></div>
+    </section>
+
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>

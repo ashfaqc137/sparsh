@@ -5,8 +5,10 @@
 > then fix this file.
 
 ## Current focus
-`@sparsh/core` (T01–T11) is implemented, tested, and builds clean. Next up: **T12 — DOM host: capture
-listener + normalization** (the first task in Phase D, `@sparsh/dom`).
+`@sparsh/dom` (T12–T17) is implemented, tested, builds clean, and has been validated end-to-end
+against a real browser (not just jsdom). Next up: **T18 — React `<ActivationGuardProvider>`**
+(Phase E). A throwaway (non-T20) vanilla demo exists at `apps/scratch-vanilla-demo` as a lightweight
+integration smoke test for `core`+`dom` ahead of the official React-based T20 demo.
 
 ## Last decision
 See `01-architecture/decisions.md`. Most recent settled items: D12 (Age applies to all input kinds),
@@ -29,6 +31,15 @@ implementable without hidden module state; see `policy.ts` JSDoc.
       default 300ms, dedicated (smaller than `cooldownMs`). DoubleFire kept as a small, separate policy
       (not reduced to a thin guard) since it's cheap and the temporal-sequence framing is distinct from
       Age; revisit if e2e (T21) shows it's redundant with Age+Continuity in practice.
+- [ ] **T21 (Playwright e2e) environment note:** this sandbox is openSUSE Tumbleweed without root/sudo.
+      `zypper install` needs root, but `zypper download <pkg>` does not — it fetches rpms into
+      `~/.cache/zypp/packages` without installing. Chromium (downloaded via `playwright install
+      chromium`) needed ~30 shared libs not present on this box (nspr/nss incl. `libfreeblpriv3.so`,
+      atk/atk-bridge, cairo, pango, drm/gbm, the individual `libxcb-*` extension libs, fontconfig +
+      an actual font package (`dejavu-fonts`) with a custom `fonts.conf`, etc.) — resolved one at a
+      time via `zypper download` + `rpm2cpio | cpio -idm` into a scratch dir, then
+      `LD_LIBRARY_PATH=<dir>/usr/lib64 FONTCONFIG_PATH=<dir>/fc chromium ...`. This is host-specific,
+      not a repo concern — T21 should not assume it; CI/other dev machines likely won't need it.
 
 ## Task status
 
@@ -48,12 +59,12 @@ Phases: A Foundation · B Core engine · C Policies · D DOM host · E React · 
 | T09 | SemanticsPolicy | C | done |
 | T10 | AgePolicy | C | done |
 | T11 | DoubleFirePolicy | C | done |
-| T12 | DOM host: capture listener + normalization | D | not-started |
-| T13 | DOM host: target resolution | D | not-started |
-| T14 | DOM host: snapshot (rect + fingerprint) | D | not-started |
-| T15 | DOM host: age tracking (perceivability) | D | not-started |
-| T16 | DOM host: block() + cleanup + visibility | D | not-started |
-| T17 | DOM vanilla entry: createGuard | D | not-started |
+| T12 | DOM host: capture listener + normalization | D | done |
+| T13 | DOM host: target resolution | D | done |
+| T14 | DOM host: snapshot (rect + fingerprint) | D | done |
+| T15 | DOM host: age tracking (perceivability) | D | done |
+| T16 | DOM host: block() + cleanup + visibility | D | done |
+| T17 | DOM vanilla entry: createGuard | D | done |
 | T18 | React `<ActivationGuardProvider>` | E | not-started |
 | T19 | React `useActivationGuard()` + wrapper | E | not-started |
 | T20 | Demo app (repro per case + suspect log) | F | not-started |
@@ -64,6 +75,36 @@ Phases: A Foundation · B Core engine · C Policies · D DOM host · E React · 
 `not-started` · `in-progress` · `done` · `blocked`
 
 ## Changelog (append newest on top)
+- **T12–T17 complete: `@sparsh/dom` (the browser host).** Implemented `resolve.ts` (T13: interactive
+  target resolution incl. bare-`Text`-node fallback, `data-sparsh-off`/`data-guard-key` helpers),
+  `age.ts` (T15: `MutationObserver` + `IntersectionObserver`-based perceivability tracking with a
+  graceful no-`IntersectionObserver` fallback, `document.visibilitychange` re-arm), `snapshot.ts`
+  (T14: fingerprint + rect), and `host.ts` (T12+T16: one capture-phase listener per event type on
+  `root`, pointer-type classification, `block()`, cleanup). `index.ts` (T17) exposes vanilla
+  `createGuard(root, opts)` wiring `createDomHost` + `core.createGuard`. 46 new jsdom-based vitest
+  tests (`packages/dom/test/*`); full monorepo `typecheck`/`typecheck:core-fence`/`lint`/`test`/`build`
+  all green (37 core + 46 dom tests).
+  **Critical fix found via real-browser (Playwright/Chromium) verification, not reasoning:** the
+  original `block()` implementation canceled the native `pointerup`/`keydown` event carrying an
+  `activation`-phase `ActivationEvent`, on the assumption this would suppress the browser's
+  following `click`. Verified against real Chromium that this is **false** for real mouse input —
+  canceling `pointerdown`/`pointerup`/`mousedown` does not stop `click`; the Pointer Events spec's
+  compatibility-event suppression only applies to touch/pen, not mouse (whose `click` is its own
+  primary event). Fixed by deferring actual cancellation to the `click` event itself via a
+  `pendingClick` mechanism in `host.ts` (armed before emitting, so a synchronous `block()` call
+  during the engine's `onActivationEvent` callback can mark it; the real `preventDefault`/
+  `stopImmediatePropagation` happens in `onClick`). Re-verified end-to-end against the actual built
+  `@sparsh/dom` package with a real Chromium mouse press+release: blocked activations now correctly
+  suppress the real click handler (`clicks: 0`); allowed activations still pass through untouched
+  (`clicks: 1`). See the `pendingClick` doc comment in `host.ts`, the updated Notes section in
+  `03-implementation/tasks/16-dom-host-block-and-cleanup.md`, and the new regression tests in
+  `host.test.ts`. A throwaway (explicitly not T20) vanilla demo, `apps/scratch-vanilla-demo`, was
+  added as a workspace member — a lightweight integration smoke test exercising `core`+`dom`
+  together (interstitial + async-settle cases, report/enforce toggle, live decision log) ahead of
+  the official React-based T20 demo. Note: `apps/scratch-vanilla-demo` uses `aria-disabled` rather
+  than the native `disabled` attribute for its async-settle case, since a genuinely `disabled`
+  element is inert and dispatches no pointer events at all — real apps building this pattern must do
+  the same if they want sparsh to be able to intercept a press that started while visually disabled.
 - **Turbo removed (D20).** With only `@sparsh/core` implemented (dom/react still placeholders), turbo's
   caching/orchestration wasn't paying for itself. Deleted `turbo.json`, dropped `turbo` from root
   devDependencies, root scripts now call `pnpm -r run build`/`pnpm -r run test`/`tsc -b tsconfig.json`

@@ -1,5 +1,5 @@
 # Task 16 — DOM host: block() + pointer cleanup + visibility re-arm
-Status: not-started
+Status: done
 Depends on: T15
 Package: dom
 
@@ -43,3 +43,15 @@ correct `Host`.
   accidental activation into a different one via transparency.
 - Verify `stopImmediatePropagation` vs `stopPropagation` behavior against React 17+ root delegation in the
   demo (T20); pick the one that reliably prevents the synthetic handler.
+- **Resolved (verified against real Chromium via Playwright while building the T17 throwaway
+  demo, not jsdom):** canceling the `pointerup`/`keydown` event that carries an `activation`-phase
+  `ActivationEvent` does **not** stop the browser's own follow-up `click` for real mouse or
+  keyboard input — the Pointer Events spec's "cancel pointerdown to suppress compatibility mouse
+  events" behavior only applies to non-hovering pointers (touch/pen); a mouse's `click` is its own
+  primary event, not a synthesized compatibility one, so it fires regardless. The only reliable,
+  cross-pointer-type way to stop the real activation is to cancel the `click` event itself. `block()`
+  in `packages/dom/src/host.ts` therefore defers actual cancellation to `click` via a `pendingClick`
+  mechanism (armed before emitting the pointerup/keydown activation so a synchronous `block()` call
+  can mark it); virtual (`click`-native) activations are still canceled directly. See the doc
+  comment on `pendingClick` in `host.ts` for the full explanation, and `host.test.ts` for the
+  regression tests.

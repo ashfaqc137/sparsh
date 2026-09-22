@@ -1,5 +1,5 @@
 # Task 13 — DOM host: target resolution
-Status: not-started
+Status: done
 Depends on: T12
 Package: dom
 

@@ -1,5 +1,5 @@
 # Task 12 — DOM host: capture listener & event normalization
-Status: not-started
+Status: done
 Depends on: T06 (engine consumes the host)
 Package: dom
 

@@ -1,5 +1,5 @@
 # Task 17 — DOM vanilla entry: createGuard(root, opts)
-Status: not-started
+Status: done
 Depends on: T16
 Package: dom
 

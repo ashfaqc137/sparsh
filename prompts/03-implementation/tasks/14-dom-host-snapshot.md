@@ -1,5 +1,5 @@
 # Task 14 — DOM host: snapshot (rect + fingerprint)
-Status: not-started
+Status: done
 Depends on: T13
 Package: dom
 

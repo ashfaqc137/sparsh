@@ -1,0 +1,19 @@
+{
+  "name": "scratch-vanilla-demo",
+  "private": true,
+  "version": "0.0.0",
+  "description": "THROWAWAY — manual smoke test for @sparsh/core + @sparsh/dom (T12-T17). Not the official T20 demo (Vite+React, apps/demo). Safe to delete once T18-T20 land.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@sparsh/dom": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2",
+    "vite": "^5.4.11"
+  }
+}
