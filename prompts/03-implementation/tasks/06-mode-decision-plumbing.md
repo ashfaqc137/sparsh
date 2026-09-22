@@ -1,5 +1,5 @@
 # Task 06 — Mode / decision plumbing + fail-open
-Status: not-started
+Status: done
 Depends on: T05
 Package: core
 

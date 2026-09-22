@@ -1,5 +1,5 @@
 # Task 01 — Monorepo skeleton
-Status: not-started
+Status: done
 Depends on: —
 Package: repo root
 

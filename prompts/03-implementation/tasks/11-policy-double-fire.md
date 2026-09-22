@@ -1,5 +1,5 @@
 # Task 11 — DoubleFirePolicy
-Status: not-started
+Status: done
 Depends on: T07 (and benefits from T10's age signal)
 Package: core
 

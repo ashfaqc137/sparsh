@@ -1,5 +1,5 @@
 # Task 07 — Input classification & policy gating
-Status: not-started
+Status: done
 Depends on: T06
 Package: core (gating) — classification *production* is the host's job (T12); this task defines the
 contract + gating.

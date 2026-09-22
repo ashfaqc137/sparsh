@@ -1,5 +1,5 @@
 # Task 03 — DOM-free lint fence for `@sparsh/core`
-Status: not-started
+Status: done
 Depends on: T02
 Package: core (+ root lint/CI)
 

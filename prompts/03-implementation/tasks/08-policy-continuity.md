@@ -1,5 +1,5 @@
 # Task 08 — ContinuityPolicy
-Status: not-started
+Status: done
 Depends on: T07
 Package: core
 

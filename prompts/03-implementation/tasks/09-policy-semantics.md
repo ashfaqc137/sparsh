@@ -1,5 +1,5 @@
 # Task 09 — SemanticsPolicy
-Status: not-started
+Status: done
 Depends on: T07
 Package: core
 

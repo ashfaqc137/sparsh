@@ -1,5 +1,5 @@
 # Task 02 — Build / test / release tooling
-Status: not-started
+Status: done
 Depends on: T01
 Package: repo root + all packages
 
@@ -39,3 +39,8 @@ unit-test, and (eventually) publish through a single, cached pipeline.
 - Playwright config should be structured to run **mouse, touch, and keyboard** projects separately later
   (T21). Webkit is valuable because touch behavior differs.
 - Don't add the perf-budget CI check yet — stub a script placeholder; real measurement lands with T21.
+- **Post-implementation update (D20):** turbo was removed shortly after this task was completed — at
+  3-package scale (one implemented, two placeholders) its caching/orchestration wasn't paying for
+  itself. Replaced with plain `pnpm -r run <script>` (already topological) + `tsc -b` (already ordered
+  via project references). See `01-architecture/decisions.md` D20 and `../tooling.md`. The scope/
+  deliverables above are kept as-written for history; don't treat the `turbo.json` deliverable as current.

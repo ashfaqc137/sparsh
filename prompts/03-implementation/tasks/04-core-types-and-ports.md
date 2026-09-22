@@ -1,5 +1,5 @@
 # Task 04 — Core types & ports
-Status: not-started
+Status: done
 Depends on: T03
 Package: core
 

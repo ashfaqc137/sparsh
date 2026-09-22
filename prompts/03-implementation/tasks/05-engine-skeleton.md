@@ -1,5 +1,5 @@
 # Task 05 — Engine skeleton
-Status: not-started
+Status: done
 Depends on: T04
 Package: core
 
