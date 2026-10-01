@@ -117,7 +117,7 @@ document.getElementById('case-1a-arm')?.addEventListener('click', () => {
     setTimeout(() => {
       toast.remove()
       log('--- [1a] toast removed ---')
-    }, 2000)
+    }, 5000)
   }, 400)
 })
 
