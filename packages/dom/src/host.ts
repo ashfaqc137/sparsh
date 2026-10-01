@@ -16,6 +16,7 @@
 
 import type { ActivationEvent, Host, InputKind, IntentClearSignal, Unsubscribe } from '@sparsh/core'
 import { createAgeTracker } from './age.js'
+import { DEFAULT_BLOCK_ANIMATION_MS, playDefaultBlockAnimation } from './block-animation.js'
 import { fromHandle, resolveInteractiveElement, toHandle } from './resolve.js'
 import { snapshotOf } from './snapshot.js'
 
@@ -29,6 +30,14 @@ export interface DomHostOptions {
    * `classification.md`).
    */
   clickSuppressMs?: number
+  /**
+   * Whether a blocked activation plays the default visual "shake" feedback animation (see
+   * `block-animation.ts`). Default true. Set `false` to stay silent/cosmetic-free, e.g. if the
+   * consuming app wants to render its own feedback off `onDecision` instead.
+   */
+  blockAnimation?: boolean
+  /** Duration (ms) of the default block animation. Default 300. */
+  blockAnimationMs?: number
 }
 
 /** `createDomHost`'s return type: the `Host` port plus lifecycle teardown (not part of `Host`). */
@@ -48,6 +57,8 @@ function classifyPointerType(pointerType: string): InputKind {
 
 export function createDomHost(root: Element | Document, opts: DomHostOptions = {}): DomHost {
   const clickSuppressMs = opts.clickSuppressMs ?? DEFAULT_CLICK_SUPPRESS_MS
+  const blockAnimationEnabled = opts.blockAnimation ?? true
+  const blockAnimationMs = opts.blockAnimationMs ?? DEFAULT_BLOCK_ANIMATION_MS
 
   const activationCbs = new Set<(e: ActivationEvent) => void>()
   const clearCbs = new Set<(s: IntentClearSignal) => void>()
@@ -234,11 +245,12 @@ export function createDomHost(root: Element | Document, opts: DomHostOptions = {
       if (native === undefined) return
       native.preventDefault()
       stopImmediate(native)
+      const el = fromHandle(e.target)
+      if (blockAnimationEnabled) playDefaultBlockAnimation(el, blockAnimationMs)
       if (native.type === 'click') return // native IS the click (virtual activation) — done.
       // native is pointerup/keydown: canceling it does not stop the browser's own follow-up
       // click for real mouse/keyboard input (see the comment on `pendingClick`). Mark the
       // already-armed pending click so `onClick` cancels it when it actually arrives.
-      const el = fromHandle(e.target)
       if (pendingClick !== null && pendingClick.el === el) pendingClick.blocked = true
     },
 

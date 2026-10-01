@@ -6,9 +6,10 @@
 
 import type { Guard, GuardOptions, TargetHandle } from '@sparsh/core'
 import { createGuard as createCoreGuard } from '@sparsh/core'
+import { DEFAULT_BLOCK_ANIMATION_MS, playDefaultBlockAnimation } from './block-animation.js'
 import { type DomHost, type DomHostOptions, createDomHost } from './host.js'
 
-export { createDomHost }
+export { createDomHost, playDefaultBlockAnimation, DEFAULT_BLOCK_ANIMATION_MS }
 export type { DomHost, DomHostOptions }
 
 // Re-exported for convenience so vanilla consumers don't need a direct `@sparsh/core` dependency.

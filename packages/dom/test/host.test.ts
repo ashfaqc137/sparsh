@@ -197,6 +197,55 @@ describe('createDomHost', () => {
     expect(realClickHandlerFired).toBe(false)
   })
 
+  it('block() plays the default shake animation on the blocked element by default', () => {
+    const animate = vi.fn()
+    ;(btn as unknown as { animate: typeof animate }).animate = animate
+
+    host.onActivationEvent((e) => {
+      if (e.phase === 'activation') host.block(e)
+    })
+
+    firePointerEvent(btn, 'pointerdown', { pointerId: 1 })
+    firePointerEvent(btn, 'pointerup', { pointerId: 1 })
+
+    expect(animate).toHaveBeenCalledTimes(1)
+  })
+
+  it('block() does not animate when blockAnimation: false', () => {
+    host.destroy()
+    host = createDomHost(document.body, { blockAnimation: false })
+    const animate = vi.fn()
+    ;(btn as unknown as { animate: typeof animate }).animate = animate
+
+    host.onActivationEvent((e) => {
+      if (e.phase === 'activation') host.block(e)
+    })
+
+    firePointerEvent(btn, 'pointerdown', { pointerId: 1 })
+    firePointerEvent(btn, 'pointerup', { pointerId: 1 })
+
+    expect(animate).not.toHaveBeenCalled()
+  })
+
+  it('block() respects a custom blockAnimationMs', () => {
+    host.destroy()
+    host = createDomHost(document.body, { blockAnimationMs: 150 })
+    const animate = vi.fn()
+    ;(btn as unknown as { animate: typeof animate }).animate = animate
+
+    host.onActivationEvent((e) => {
+      if (e.phase === 'activation') host.block(e)
+    })
+
+    firePointerEvent(btn, 'pointerdown', { pointerId: 1 })
+    firePointerEvent(btn, 'pointerup', { pointerId: 1 })
+
+    expect(animate).toHaveBeenCalledWith(
+      expect.any(Array),
+      expect.objectContaining({ duration: 150 }),
+    )
+  })
+
   it('pointercancel clears intent for that pointerId', () => {
     const clears: IntentClearSignal[] = []
     host.onIntentClear((s) => clears.push(s))
