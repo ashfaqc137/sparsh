@@ -87,6 +87,17 @@ Phases: A Foundation · B Core engine · C Policies · D DOM host · E React · 
 `not-started` · `in-progress` · `done` · `blocked`
 
 ## Changelog (append newest on top)
+- **Added `LIMITATIONS.md` (repo root).** A user-facing writeup of what sparsh does and does not detect
+  today, prompted by an audit of CSS-driven UI changes. Confirms Continuity is transition-mechanism-
+  agnostic (it reads live geometry at two instants, so any CSS `transition`/`animation` that displaces or
+  swaps the pressed target is caught identically to an instant style change). Documents that Age's
+  perceivability clock (`MutationObserver` + `IntersectionObserver`) cannot see paint-only CSS reveals on
+  an already-inserted, already-intersecting element — `opacity`, `visibility`, `filter`, `clip-path`,
+  `backdrop-filter` — nor occlusion by another element painted on top, since IO is purely geometric and no
+  policy reasons about z-order. These were already individually noted in `age.md`'s "known blind spots";
+  `age.md` now cross-links to the new doc for the fuller picture (and the previously-undocumented
+  `visibility`/`filter`/`clip-path` variants of the same root cause). No code changes — docs only; no
+  fix scoped yet for these gaps.
 - **T12–T17 complete: `@sparsh/dom` (the browser host).** Implemented `resolve.ts` (T13: interactive
   target resolution incl. bare-`Text`-node fallback, `data-sparsh-off`/`data-guard-key` helpers),
   `age.ts` (T15: `MutationObserver` + `IntersectionObserver`-based perceivability tracking with a

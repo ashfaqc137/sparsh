@@ -51,6 +51,9 @@ ageMs = now - becamePerceivableAt
 - Occlusion by another element at the same coordinates — not caught by IO.
 - These are acceptable given fail-open; they can be improved *inside the host* later. Do **not** add
   expensive per-frame visibility polling to chase them — that violates the perf budget (D19).
+- See `../../LIMITATIONS.md` for the full, user-facing writeup of these (and other) gaps, including the
+  broader class of CSS-only paint reveals (`visibility`, `filter`, `clip-path`, `backdrop-filter`) that
+  share this same root cause.
 
 ## Interaction with intent snapshots
 
