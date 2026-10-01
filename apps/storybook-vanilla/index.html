@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>sparsh — vanilla storybook (case gallery)</title>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        font-family: system-ui, sans-serif; margin: 0; line-height: 1.5; color: #111;
+        display: grid; grid-template-columns: 220px 1fr; min-height: 100vh;
+      }
+      nav {
+        background: #0b1220; color: #cbd5e1; padding: 1rem 0.75rem; position: sticky; top: 0;
+        height: 100vh; overflow-y: auto;
+      }
+      nav h1 { font-size: 0.95rem; color: #fff; margin: 0 0 0.75rem; }
+      nav a {
+        display: block; color: #cbd5e1; text-decoration: none; padding: 0.4rem 0.5rem;
+        border-radius: 4px; font-size: 0.85rem; margin-bottom: 0.15rem;
+      }
+      nav a:hover, nav a:focus { background: #1e293b; color: #fff; }
+      main { padding: 1.5rem 2rem; max-width: 820px; }
+      section.story {
+        border: 1px solid #ddd; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1.5rem;
+        scroll-margin-top: 1rem;
+      }
+      section.story h2 { font-size: 1.05rem; margin-top: 0; }
+      section.story p.desc { color: #444; font-size: 0.9rem; }
+      section.story p.catch { font-size: 0.85rem; color: #555; font-style: italic; }
+      button { font-size: 0.95rem; padding: 0.45rem 0.9rem; cursor: pointer; }
+      button[disabled], button[aria-disabled="true"] { cursor: not-allowed; opacity: 0.5; }
+      .row { display: flex; align-items: center; gap: 0.5rem; margin: 0.4rem 0; }
+      .target-slot { position: relative; min-height: 2.75rem; }
+      .toast {
+        position: absolute; inset: 0 0 auto 0; height: 2.75rem; z-index: 2;
+        background: crimson; color: #fff; display: flex; align-items: center;
+        justify-content: center; border-radius: 6px; gap: 0.5rem;
+      }
+      ul.list-rows { list-style: none; padding: 0; margin: 0.5rem 0; }
+      ul.list-rows li {
+        border: 1px solid #ccc; border-radius: 6px; padding: 0.5rem 0.75rem; margin-bottom: 0.35rem;
+        display: flex; justify-content: space-between; align-items: center;
+      }
+      #controls {
+        border: 1px solid #ccc; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1.5rem;
+        background: #fafafa;
+      }
+      #controls .policy-row { display: flex; gap: 1rem; flex-wrap: wrap; margin: 0.3rem 0; }
+      #controls label { display: inline-flex; gap: 0.3rem; align-items: center; font-size: 0.85rem; }
+      #log {
+        background: #111; color: #0f0; font-family: ui-monospace, monospace; font-size: 0.78rem;
+        padding: 0.75rem; height: 260px; overflow-y: auto; border-radius: 6px; white-space: pre-wrap;
+      }
+      .count { font-weight: 600; }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <h1>sparsh storybook</h1>
+      <a href="#controls">Controls</a>
+      <a href="#case-1a">1a · Interstitial (occlusion)</a>
+      <a href="#case-1b">1b · Interstitial (mid-press)</a>
+      <a href="#case-2">2 · Layout shift</a>
+      <a href="#case-3">3 · Late render</a>
+      <a href="#case-4">4 · Async settle</a>
+      <a href="#case-5">5 · List reorder</a>
+      <a href="#case-6">6 · Double-fire</a>
+      <a href="#case-stable">Stable control (negative)</a>
+      <a href="#log-panel">Suspect log</a>
+    </nav>
+    <main>
+      <h1>sparsh — vanilla storybook</h1>
+      <p>
+        A dedicated, correctly-labeled repro per canonical case (see
+        <code>prompts/00-context/problem.md</code>). Each section has its own deterministic "Arm"
+        trigger. Toggle global/per-policy mode below, then try each case in both
+        <strong>report</strong> and <strong>enforce</strong> mode.
+      </p>
+
+      <section id="controls">
+        <h2>Controls</h2>
+        <div class="row">
+          <strong>Global mode:</strong>
+          <label><input type="radio" name="global-mode" value="report" checked data-testid="mode-global-report" /> report</label>
+          <label><input type="radio" name="global-mode" value="enforce" data-testid="mode-global-enforce" /> enforce</label>
+        </div>
+        <div class="policy-row" id="per-policy-modes"></div>
+        <div class="row">
+          <label>cooldownMs <input type="number" id="cooldown-input" value="500" step="50" style="width:5rem" data-testid="cooldown-input" /></label>
+          <label>rectThresholdPx <input type="number" id="rect-threshold-input" value="4" step="1" style="width:4rem" data-testid="rect-threshold-input" /></label>
+          <button id="apply-config" data-testid="apply-config">Apply (recreates guard)</button>
+        </div>
+      </section>
+
+      <section class="story" id="case-1a">
+        <h2>1a · Interstitial — occlusion</h2>
+        <p class="desc">
+          A toast mounts <em>exactly over</em> an existing button (no reflow). The whole press lands
+          on the toast's own control because it freshly covers the target.
+        </p>
+        <p class="catch">Caught by: AgePolicy (the clicked element is young).</p>
+        <div class="target-slot" id="case-1a-slot">
+          <button id="case-1a-target" data-testid="case-1a-target">Confirm</button>
+        </div>
+        <button id="case-1a-arm" data-testid="case-1a-arm">Arm (toast covers in 400ms)</button>
+        fired: <span class="count" id="case-1a-count" data-testid="case-1a-count">0</span>
+      </section>
+
+      <section class="story" id="case-1b">
+        <h2>1b · Interstitial — mid-press identity swap</h2>
+        <p class="desc">
+          Press-and-hold on the button below; mid-press a toast mounts and covers it, so
+          <code>pointerup</code> resolves to the toast's control instead (different identity, same
+          coordinates, no reflow).
+        </p>
+        <p class="catch">Caught by: ContinuityPolicy (identity differs between down and up).</p>
+        <div class="target-slot" id="case-1b-slot">
+          <button id="case-1b-target" data-testid="case-1b-target">Hold me, then release after 400ms</button>
+        </div>
+        <button id="case-1b-arm" data-testid="case-1b-arm">Arm (toast covers in 400ms)</button>
+        fired: <span class="count" id="case-1b-count" data-testid="case-1b-count">0</span>
+      </section>
+
+      <section class="story" id="case-2">
+        <h2>2 · Layout shift</h2>
+        <p class="desc">
+          Content loads <em>above</em> the target via normal document flow and displaces it
+          downward — a different pixel now holds the button by the time <code>pointerup</code>
+          fires.
+        </p>
+        <p class="catch">Caught by: ContinuityPolicy (rect moved past threshold).</p>
+        <div id="case-2-push-zone"></div>
+        <button id="case-2-target" data-testid="case-2-target">Delete account</button>
+        <br /><br />
+        <button id="case-2-arm" data-testid="case-2-arm">Arm (content pushes down in 400ms)</button>
+        fired: <span class="count" id="case-2-count" data-testid="case-2-count">0</span>
+      </section>
+
+      <section class="story" id="case-3">
+        <h2>3 · Late render</h2>
+        <p class="desc">
+          The slot below is empty. A real control materializes into it; a press that begins
+          <em>after</em> the control exists (both down and up) lands squarely on it.
+        </p>
+        <p class="catch">Caught by: AgePolicy only (identity/rect match — Continuity sees nothing).</p>
+        <div class="target-slot" id="case-3-slot"></div>
+        <button id="case-3-arm" data-testid="case-3-arm">Arm (control renders in 600ms)</button>
+        fired: <span class="count" id="case-3-count" data-testid="case-3-count">0</span>
+      </section>
+
+      <section class="story" id="case-4">
+        <h2>4 · Async settle</h2>
+        <p class="desc">
+          Same element, same pixels — only <em>meaning</em> changes. Uses
+          <code>aria-disabled</code> (a truly <code>disabled</code> element dispatches no pointer
+          events at all).
+        </p>
+        <p class="catch">Caught by: SemanticsPolicy (<code>disabled</code> field diff).</p>
+        <button id="case-4-target" aria-disabled="true" data-testid="case-4-target">Submit</button>
+        <button id="case-4-arm" data-testid="case-4-arm">Arm (enables in 400ms)</button>
+        fired: <span class="count" id="case-4-count" data-testid="case-4-count">0</span>
+      </section>
+
+      <section class="story" id="case-5">
+        <h2>5 · List reorder</h2>
+        <p class="desc">
+          Shuffle swaps the underlying <em>entities</em> while keeping the same DOM nodes/positions
+          (simulating a recycled/virtualized list). Row A carries <code>data-guard-key</code>; row B
+          does not.
+        </p>
+        <p class="catch">
+          Caught by: SemanticsPolicy via opt-in <code>guardKey</code> — row A blocked, row B is a
+          documented gap (allowed).
+        </p>
+        <ul class="list-rows" id="case-5-list"></ul>
+        <button id="case-5-arm" data-testid="case-5-arm">Shuffle entities (no DOM move)</button>
+      </section>
+
+      <section class="story" id="case-6">
+        <h2>6 · Double-fire</h2>
+        <p class="desc">
+          Confirming closes this control; immediately afterward a residual/repeat event fires and
+          lands on whatever is now underneath.
+        </p>
+        <p class="catch">Caught by: DoubleFirePolicy (post-activation refractory window).</p>
+        <div class="target-slot" id="case-6-slot">
+          <button id="case-6-confirm" data-testid="case-6-confirm">Confirm (closes + residual click underneath)</button>
+        </div>
+        <button id="case-6-arm" data-testid="case-6-arm">Reset</button>
+        underneath fired: <span class="count" id="case-6-count" data-testid="case-6-count">0</span>
+      </section>
+
+      <section class="story" id="case-stable">
+        <h2>Stable control (negative case)</h2>
+        <p class="desc">A plain, never-mutated button. Must never be flagged by any policy.</p>
+        <button id="case-stable-target" data-testid="case-stable-target">I never change</button>
+        fired: <span class="count" id="case-stable-count" data-testid="case-stable-count">0</span>
+      </section>
+
+      <section class="story" id="log-panel">
+        <h2>Live suspect log</h2>
+        <div id="log" data-testid="log"></div>
+      </section>
+    </main>
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>

@@ -7,8 +7,20 @@
 ## Current focus
 `@sparsh/dom` (T12–T17) is implemented, tested, builds clean, and has been validated end-to-end
 against a real browser (not just jsdom). Next up: **T18 — React `<ActivationGuardProvider>`**
-(Phase E). A throwaway (non-T20) vanilla demo exists at `apps/scratch-vanilla-demo` as a lightweight
-integration smoke test for `core`+`dom` ahead of the official React-based T20 demo.
+(Phase E). `apps/scratch-vanilla-demo` (the throwaway, 2-case smoke test) has been **removed and
+superseded** by `apps/storybook-vanilla` — a dedicated visual gallery with one correctly-labeled
+repro per canonical case (see `00-context/problem.md`): 1a (interstitial occlusion → Age), 1b
+(interstitial mid-press identity swap → Continuity), 2 (layout shift → Continuity), 3 (late render
+→ Age), 4 (async settle → Semantics), 5 (list reorder via `data-guard-key` → Semantics), 6
+(double-fire → DoubleFire), plus a stable/negative control. It also fixes a real bug in the old
+demo: its "Case 1" story actually displaced the target via `marginTop` (Case 2 mechanics), not true
+occlusion. Global + per-policy mode toggles, `cooldownMs`/`rectThresholdPx` controls, and a live
+suspect log are shared across all stories; `createGuard` is recreated (not mutated) when config
+changes, since its options are constructor-time only. Scenario/arm logic intentionally stays inline
+in this app for now — factor into a shared package only once a React/Vue demo is built on top of it.
+This app is **not** T20 (that's the official Vite+React demo, depends on T18/T19) — it exists ahead
+of it as a framework-free, immediately-usable verification tool and will seed the eventual T21
+Playwright fixtures.
 
 ## Last decision
 See `01-architecture/decisions.md`. Most recent settled items: D12 (Age applies to all input kinds),
@@ -101,10 +113,33 @@ Phases: A Foundation · B Core engine · C Policies · D DOM host · E React · 
   `host.test.ts`. A throwaway (explicitly not T20) vanilla demo, `apps/scratch-vanilla-demo`, was
   added as a workspace member — a lightweight integration smoke test exercising `core`+`dom`
   together (interstitial + async-settle cases, report/enforce toggle, live decision log) ahead of
-  the official React-based T20 demo. Note: `apps/scratch-vanilla-demo` uses `aria-disabled` rather
-  than the native `disabled` attribute for its async-settle case, since a genuinely `disabled`
-  element is inert and dispatches no pointer events at all — real apps building this pattern must do
-  the same if they want sparsh to be able to intercept a press that started while visually disabled.
+  the official React-based T20 demo. Note: the async-settle case uses `aria-disabled` rather than
+  the native `disabled` attribute, since a genuinely `disabled` element is inert and dispatches no
+  pointer events at all — real apps building this pattern must do the same if they want sparsh to
+  be able to intercept a press that started while visually disabled.
+- **`apps/scratch-vanilla-demo` removed, replaced by `apps/storybook-vanilla`.** The throwaway demo
+  only exercised 2 of 6 canonical cases, and mislabeled its "Case 1" story (it was actually Case 2
+  mechanics — a toast pushing the target down via `marginTop`/normal flow reflow, not a true
+  occlusion). `apps/storybook-vanilla` is a from-scratch, custom (no `@storybook/*` dependency)
+  gallery app: sidebar nav, one section per case with its own deterministic "Arm" trigger, stable
+  `data-testid`s on every interactive element for future T21 reuse, global + per-policy mode
+  toggles, live `cooldownMs`/`rectThresholdPx` controls (guard is destroyed/recreated on change —
+  its options are constructor-time only), and a shared suspect-log panel. Case 1 was split into its
+  two real sub-mechanisms per `age.md`/`continuity.md`: **1a** true occlusion (toast absolutely
+  positioned over an existing, unmoved button; caught by `AgePolicy`) and **1b** mid-press identity
+  swap (toast mounts mid-press at the same coordinates with no reflow; caught by
+  `ContinuityPolicy`). Case 3 (late render) materializes a control into a previously-empty slot
+  after which the whole press lands on it. Case 5 (list reorder) swaps the underlying `entity` on
+  two static DOM rows (one with `data-guard-key`, one without) with **zero DOM mutation**,
+  demonstrating both the catch and the documented no-guard-key gap from `semantics.test.ts` rows
+  11/12. Case 6 (double-fire) dispatches a synthetic residual pointer+click sequence on the
+  newly-exposed element immediately after the real control collapses. **Verification caveat:** this
+  sandbox cannot launch a real browser (Playwright's Chromium fails with a missing system library,
+  `libnspr4.so`, no root to install — same class of constraint as the existing T21 environment
+  note below) — verified via `tsc --noEmit`, `vite build`, `biome check`, and manual cross-checking
+  of every DOM id referenced in `src/main.ts` against `index.html` (static + dynamically-created),
+  but not yet via actual pointer interaction in a live browser. Re-verify interactively (or via
+  Playwright on an unconstrained machine) before relying on this as the T21 fixture.
 - **Turbo removed (D20).** With only `@sparsh/core` implemented (dom/react still placeholders), turbo's
   caching/orchestration wasn't paying for itself. Deleted `turbo.json`, dropped `turbo` from root
   devDependencies, root scripts now call `pnpm -r run build`/`pnpm -r run test`/`tsc -b tsconfig.json`

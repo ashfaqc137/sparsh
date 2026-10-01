@@ -1,8 +1,8 @@
 {
-  "name": "scratch-vanilla-demo",
+  "name": "storybook-vanilla",
   "private": true,
   "version": "0.0.0",
-  "description": "THROWAWAY — manual smoke test for @sparsh/core + @sparsh/dom (T12-T17). Not the official T20 demo (Vite+React, apps/demo). Safe to delete once T18-T20 land.",
+  "description": "Dedicated visual test gallery for @sparsh/core + @sparsh/dom: one deterministic, correctly-labeled repro per canonical case (problem.md). Supersedes the throwaway scratch-vanilla-demo. Future React/Vue demos build on the same scenario catalog.",
   "type": "module",
   "scripts": {
     "dev": "vite",
