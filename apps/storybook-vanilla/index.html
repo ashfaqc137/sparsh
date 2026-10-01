@@ -27,6 +27,10 @@
       section.story h2 { font-size: 1.05rem; margin-top: 0; }
       section.story p.desc { color: #444; font-size: 0.9rem; }
       section.story p.catch { font-size: 0.85rem; color: #555; font-style: italic; }
+      p.warn {
+        font-size: 0.82rem; color: #92400e; background: #fef3c7; border: 1px solid #fcd34d;
+        border-radius: 6px; padding: 0.5rem 0.7rem; margin: 0.6rem 0 0;
+      }
       button { font-size: 0.95rem; padding: 0.45rem 0.9rem; cursor: pointer; }
       button[disabled], button[aria-disabled="true"] { cursor: not-allowed; opacity: 0.5; }
       .row { display: flex; align-items: center; gap: 0.5rem; margin: 0.4rem 0; }
@@ -90,6 +94,14 @@
           <label>rectThresholdPx <input type="number" id="rect-threshold-input" value="4" step="1" style="width:4rem" data-testid="rect-threshold-input" /></label>
           <button id="apply-config" data-testid="apply-config">Apply (recreates guard)</button>
         </div>
+        <p class="warn">
+          ⚠️ <strong>Apply recreates the guard</strong>, which starts a brand-new age tracker with
+          no memory of elements inserted before this moment. Click <strong>Apply</strong>
+          <em>before</em> arming a case, not while a transient element (toast/banner) from a
+          previous arm is already on screen — otherwise that element's age is untracked
+          (<code>ageMs = Infinity</code>) and AgePolicy will allow it unconditionally, regardless
+          of <code>cooldownMs</code> or mode.
+        </p>
       </section>
 
       <section class="story" id="case-1a">

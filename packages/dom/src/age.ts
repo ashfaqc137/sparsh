@@ -4,8 +4,10 @@
  *
  * `ageMs` is time since an element became PERCEIVABLE (visible to the user), not since DOM
  * insertion. Combines:
- *   - a `MutationObserver` that stamps `insertedAt` for newly-added elements (O(added nodes),
- *     never a full-tree walk), and
+ *   - a `MutationObserver` that stamps `insertedAt` for newly-added elements AND any descendants
+ *     already attached to them at insertion time (O(nodes actually inserted this batch), not a
+ *     walk of the whole document — see `trackSubtree` below for why this recursion is required),
+ *     and
  *   - an `IntersectionObserver` that stamps `firstVisibleAt` the first time a tracked element
  *     intersects the viewport/root, and re-arms (clears `firstVisibleAt`) when the element leaves
  *     view again, so a later reveal recomputes age from that later moment.
@@ -78,11 +80,26 @@ export function createAgeTracker(root: Element | Document): AgeTracker {
     }
   }
 
+  // A `MutationObserver` only reports a node as "added" at the point it joins an observed tree —
+  // it does NOT re-report descendants that were already attached to that node beforehand (the
+  // extremely common "build the whole subtree off-document, then append once" pattern, e.g. a
+  // toast built with its own button before a single `container.appendChild(toast)`). Without
+  // walking the newly-added node's existing subtree here, every interactive descendant built this
+  // way would never get an `insertedAt` stamp and would silently read back as `ageMs: Infinity`
+  // (fail-open), defeating AgePolicy for exactly the insertion shape it exists to catch. Bounded
+  // by the size of the subtree actually inserted this batch, not the whole document tree.
+  function trackSubtree(el: Element, now: number): void {
+    track(el, now)
+    for (const descendant of el.querySelectorAll('*')) {
+      track(descendant, now)
+    }
+  }
+
   const mutationObserver = new MutationObserver((records) => {
     const now = performance.now()
     for (const record of records) {
       for (const node of record.addedNodes) {
-        if (node instanceof Element) track(node, now)
+        if (node instanceof Element) trackSubtree(node, now)
       }
     }
   })

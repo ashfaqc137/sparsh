@@ -58,6 +58,20 @@ describe('createAgeTracker', () => {
     expect(tracker.ageMs(added, performance.now())).not.toBe(Number.POSITIVE_INFINITY)
   })
 
+  it('stamps descendants already attached to a newly-inserted subtree (build off-document, append once)', async () => {
+    tracker = createAgeTracker(document.body)
+    // Common real-world pattern (e.g. a toast built with its own button before being mounted):
+    // the whole subtree is assembled detached, then inserted in a single appendChild.
+    const wrapper = document.createElement('div')
+    const inner = document.createElement('button')
+    wrapper.appendChild(inner)
+    document.body.appendChild(wrapper)
+    await flushMutations()
+
+    expect(tracker.ageMs(wrapper, performance.now())).not.toBe(Number.POSITIVE_INFINITY)
+    expect(tracker.ageMs(inner, performance.now())).not.toBe(Number.POSITIVE_INFINITY)
+  })
+
   it('destroy() disconnects observers — no further stamping', async () => {
     tracker = createAgeTracker(document.body)
     tracker.destroy()
