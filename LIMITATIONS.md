@@ -16,7 +16,7 @@ For the full policy specs this summarizes, see `prompts/02-policies/*.md` and
 | Policy | Catches | How |
 |---|---|---|
 | **Continuity** | Target moved or was swapped mid-press | Live `getBoundingClientRect()` + identity compare at press-down vs. press-up |
-| **Age** | Target is too new to have been perceived | Time since the target became *perceivable* (DOM insertion + viewport intersection) |
+| **Age** | Target is too new to have been perceived | Time since the target became *perceivable* (DOM insertion + viewport intersection + `disabled`→enabled transition) |
 | **Semantics** | Target's meaning changed (e.g. `disabled`→enabled, `aria-label`, `data-guard-key`) | Fingerprint compare at intent vs. activation |
 | **DoubleFire** | A second, residual activation lands on a freshly-exposed element right after the first collapsed | Temporal sequence + rect overlap against the last committed activation |
 
@@ -115,6 +115,7 @@ For completeness — these are pre-existing, already-documented gaps independent
 | Element swapped for a different one, same position | CSS transition or instant | ✅ | Continuity |
 | `display:none` → shown | any | ✅ | Age |
 | New element inserted (e.g. toast) and pressed | any | ✅ | Age |
+| `disabled`/`aria-disabled` → enabled, same element/position (incl. pre-existing/page-load-disabled) | any | ✅ | Age |
 | `opacity: 0→1` reveal, same element, same position | CSS only | ❌ | — (documented gap) |
 | `visibility: hidden→visible` reveal | CSS only | ❌ | — (documented gap) |
 | `filter`/`clip-path`/`backdrop-filter` reveal | CSS only | ❌ | — (documented gap) |

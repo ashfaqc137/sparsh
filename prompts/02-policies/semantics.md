@@ -1,7 +1,9 @@
 # SemanticsPolicy — meaning
 
-**Covers:** case 4 (async settle — `disabled`→enabled, "Add"→"Remove"), case 5 (list reorder — via opt-in
-`data-guard-key`).
+**Covers:** case 4 (async settle — `disabled`→enabled, "Add"→"Remove") *when the press spans the change*
+(intent captured while still disabled, activation after enable) — see `age.md` for the complementary
+sub-case where the whole press lands after the element is already enabled, caught by AgePolicy's
+`disabled`→enabled re-arm instead; case 5 (list reorder — via opt-in `data-guard-key`).
 
 **Applies to:** all input kinds. For pointer input the intent anchor is `pointerdown`; for `key`/`virtual`
 (no pointerdown) the intent anchor is **first-visible** (same anchor Age uses).

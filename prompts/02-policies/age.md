@@ -44,6 +44,12 @@ ageMs = now - becamePerceivableAt
   treated as **old** → allowed. This is fail-open (D7): a static page blocks nothing.
 - **Re-arm on visibility** (Chromium `VisibilityChanged()` semantics): a surface hidden then re-shown must
   reset its perceivable time. Tie this to IntersectionObserver transitions.
+- **Re-arm on `disabled` → enabled**: a disabled control fires no activation events, so it can never be
+  the realistic target of an accidental activation while disabled — the moment that matters is the moment
+  it *becomes* enabled. The host watches the `disabled`/`aria-disabled` attributes (same `MutationObserver`,
+  via `attributeFilter`) and treats an enable transition as "newly perceivable now", including for a
+  previously-untracked (e.g. pre-existing, page-load-disabled) element — that's the first moment it's an
+  eligible target at all. See `packages/dom/src/age.ts`.
 
 ### Known blind spots (document, don't pretend to solve)
 
@@ -74,5 +80,7 @@ Matches Chromium's double-click interval and the CLS `hadRecentInput` window. Th
 - Same target activated *after* cooldown → allowed.
 - Pre-existing (unseen) element → always allowed (Infinity age).
 - Hidden-then-revealed surface → age counts from reveal, not from mount.
+- Disabled-then-enabled control (including a pre-existing, page-load-disabled one) → age counts from the
+  enable moment, not from mount/page-load.
 - Keyboard activation of a fresh control within cooldown → flagged (report by default), and **works
   normally after the window** (never permanently blocked).

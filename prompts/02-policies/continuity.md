@@ -52,7 +52,9 @@ engine clears its per-`pointerId` map on them.
 
 - **Case 3 (late render)** — both down and up land on the *same* new element; identity and rect match, so
   Continuity passes. Age catches this one.
-- **Case 4 (async settle)** — same element, same rect, only *meaning* changed. Semantics catches this.
+- **Case 4 (async settle)** — same element, same rect, only *meaning* changed. Semantics catches the
+  in-flight variant (press spans the change); Age's `disabled`→enabled re-arm (see `age.md`) catches the
+  variant where the whole press happens after the element is already enabled.
 - **Case 5 (list reorder)** — DOM identity/rect may be unchanged while the underlying entity changed.
   Semantics via `data-guard-key` catches this.
 

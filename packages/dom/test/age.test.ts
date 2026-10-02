@@ -72,6 +72,66 @@ describe('createAgeTracker', () => {
     expect(tracker.ageMs(inner, performance.now())).not.toBe(Number.POSITIVE_INFINITY)
   })
 
+  it('re-arms a pre-existing, page-load-disabled element the moment it becomes enabled', async () => {
+    document.body.innerHTML = '<button id="pre" disabled>x</button>'
+    tracker = createAgeTracker(document.body)
+    await flushMutations()
+
+    const el = document.getElementById('pre') as HTMLButtonElement
+    // Still disabled: untracked, fail-open.
+    expect(tracker.ageMs(el, performance.now())).toBe(Number.POSITIVE_INFINITY)
+
+    el.removeAttribute('disabled')
+    await flushMutations()
+
+    const ageJustAfterEnable = tracker.ageMs(el, performance.now())
+    expect(ageJustAfterEnable).toBeGreaterThanOrEqual(0)
+    expect(ageJustAfterEnable).toBeLessThan(200)
+  })
+
+  it('re-arms via aria-disabled="true" → "false" the same way as the disabled attribute', async () => {
+    document.body.innerHTML = '<button id="pre" aria-disabled="true">x</button>'
+    tracker = createAgeTracker(document.body)
+    await flushMutations()
+
+    const el = document.getElementById('pre') as HTMLButtonElement
+    expect(tracker.ageMs(el, performance.now())).toBe(Number.POSITIVE_INFINITY)
+
+    el.setAttribute('aria-disabled', 'false')
+    await flushMutations()
+
+    expect(tracker.ageMs(el, performance.now())).not.toBe(Number.POSITIVE_INFINITY)
+  })
+
+  it('re-arms a previously-tracked element that becomes disabled then enabled again', async () => {
+    tracker = createAgeTracker(document.body)
+    const el = document.createElement('button')
+    document.body.appendChild(el)
+    await flushMutations()
+
+    await wait(60)
+    el.disabled = true
+    await flushMutations()
+    el.disabled = false
+    await flushMutations()
+
+    const ageAfterReEnable = tracker.ageMs(el, performance.now())
+    expect(ageAfterReEnable).toBeGreaterThanOrEqual(0)
+    expect(ageAfterReEnable).toBeLessThan(200)
+  })
+
+  it('does not re-arm on a disabled → disabled (no-op) or enabled → disabled transition', async () => {
+    document.body.innerHTML = '<button id="pre">x</button>'
+    tracker = createAgeTracker(document.body)
+    await flushMutations()
+
+    const el = document.getElementById('pre') as HTMLButtonElement
+    // Untracked, enabled pre-existing element stays Infinity.
+    el.disabled = true
+    await flushMutations()
+    expect(tracker.ageMs(el, performance.now())).toBe(Number.POSITIVE_INFINITY)
+  })
+
   it('destroy() disconnects observers — no further stamping', async () => {
     tracker = createAgeTracker(document.body)
     tracker.destroy()

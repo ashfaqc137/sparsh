@@ -167,7 +167,12 @@
           <code>aria-disabled</code> (a truly <code>disabled</code> element dispatches no pointer
           events at all).
         </p>
-        <p class="catch">Caught by: SemanticsPolicy (<code>disabled</code> field diff).</p>
+        <p class="catch">
+          Caught by: SemanticsPolicy (<code>disabled</code> field diff) when the press
+          <em>spans</em> the enable (down while disabled, up after enabled); AgePolicy (re-armed
+          perceivable-age on the enable transition) when the <em>entire</em> press — down and up —
+          happens after it's already enabled, within <code>cooldownMs</code>.
+        </p>
         <button id="case-4-target" aria-disabled="true" data-testid="case-4-target">Submit</button>
         <button id="case-4-arm" data-testid="case-4-arm">Arm (enables in 400ms)</button>
         fired: <span class="count" id="case-4-count" data-testid="case-4-count">0</span>
