@@ -5,22 +5,23 @@
 > then fix this file.
 
 ## Current focus
-`@sparsh/dom` (T12–T17) is implemented, tested, builds clean, and has been validated end-to-end
-against a real browser (not just jsdom). Next up: **T18 — React `<ActivationGuardProvider>`**
-(Phase E). `apps/scratch-vanilla-demo` (the throwaway, 2-case smoke test) has been **removed and
-superseded** by `apps/storybook-vanilla` — a dedicated visual gallery with one correctly-labeled
-repro per canonical case (see `00-context/problem.md`): 1a (interstitial occlusion → Age), 1b
-(interstitial mid-press identity swap → Continuity), 2 (layout shift → Continuity), 3 (late render
-→ Age), 4 (async settle → Semantics), 5 (list reorder via `data-guard-key` → Semantics), 6
-(double-fire → DoubleFire), plus a stable/negative control. It also fixes a real bug in the old
-demo: its "Case 1" story actually displaced the target via `marginTop` (Case 2 mechanics), not true
-occlusion. Global + per-policy mode toggles, `cooldownMs`/`rectThresholdPx` controls, and a live
-suspect log are shared across all stories; `createGuard` is recreated (not mutated) when config
-changes, since its options are constructor-time only. Scenario/arm logic intentionally stays inline
-in this app for now — factor into a shared package only once a React/Vue demo is built on top of it.
-This app is **not** T20 (that's the official Vite+React demo, depends on T18/T19) — it exists ahead
-of it as a framework-free, immediately-usable verification tool and will seed the eventual T21
-Playwright fixtures.
+`@sparsh/react` (T18–T19) is implemented, tested (vitest + jsdom, 7 tests), builds clean, and typechecks.
+`<ActivationGuardProvider>` installs one `createGuard` (from `@sparsh/dom`) per mount via a `display:
+contents` wrapper or an explicit `root` prop, in an effect, with SSR-safe rendering (no DOM access during
+render) and a "latest ref" pattern so re-renders with stable options never recreate the guard — only a
+change to the serialized option set does. `useActivationGuard()` returns `{ ref, isGuarded }`, reactive via
+an internal decision pub/sub exposed through context (event-driven, not polling); works standalone without
+a provider (no-op, doesn't throw). `<ActivationGuard>` is a thin nested-provider subtree wrapper. All three
+component/hook files carry a `'use client'` directive for Next.js App Router/RSC compatibility. The
+package's test suite runs against both React 18 (default `test` script, real devDependency) and React 19
+(`test:react19` script) — the latter via an isolated `npm install` into `packages/react/.react19/`
+(gitignored), set up by `scripts/setup-react19.mjs`; a pnpm-aliased-devDependency approach was tried first
+and abandoned because pnpm's workspace-wide peer-dependency hoisting paired `react-dom@19` with the real
+`react@18`, crashing at runtime — see that script's doc comment for the full story. Next up: **T20 — Demo
+app** (Vite + React, one repro per canonical case, depends on T18/T19) and **T21 — Playwright e2e**.
+`apps/storybook-vanilla` (the vanilla/framework-free visual gallery, built ahead of T20) remains as a
+framework-free verification tool and will seed the eventual T21 Playwright fixtures; it is not superseded
+by the upcoming React demo.
 
 ## Last decision
 See `01-architecture/decisions.md`. Most recent settled items: D12 (Age applies to all input kinds),
@@ -77,8 +78,8 @@ Phases: A Foundation · B Core engine · C Policies · D DOM host · E React · 
 | T15 | DOM host: age tracking (perceivability) | D | done |
 | T16 | DOM host: block() + cleanup + visibility | D | done |
 | T17 | DOM vanilla entry: createGuard | D | done |
-| T18 | React `<ActivationGuardProvider>` | E | not-started |
-| T19 | React `useActivationGuard()` + wrapper | E | not-started |
+| T18 | React `<ActivationGuardProvider>` | E | done |
+| T19 | React `useActivationGuard()` + wrapper | E | done |
 | T20 | Demo app (repro per case + suspect log) | F | not-started |
 | T21 | Playwright e2e (mouse+touch+keyboard) | F | not-started |
 | T22 | Docs + changesets + first publish | G | not-started |
@@ -87,6 +88,20 @@ Phases: A Foundation · B Core engine · C Policies · D DOM host · E React · 
 `not-started` · `in-progress` · `done` · `blocked`
 
 ## Changelog (append newest on top)
+- **T18 + T19 done: `@sparsh/react` implemented.** `src/ActivationGuardProvider.tsx` (context +
+  effect-mounted `createGuard`, `display: contents` wrapper or explicit `root` prop, "latest ref" pattern
+  so stable re-renders don't recreate the guard, SSR-safe), `src/useActivationGuard.ts` (`{ ref, isGuarded
+  }`, event-driven via decision pub/sub, no-ops without a provider), `src/ActivationGuard.tsx` (subtree
+  wrapper = nested provider), `src/index.ts` barrel. Flat `src/` layout (no separate `context.ts`),
+  matching core/dom convention; single shared implementation for React 18 and 19 (no version fork) since
+  only the common stable API subset is used. `'use client'` directive added to all three
+  component/hook files for RSC/Next.js App Router compatibility. Added `tsconfig.build.json` +
+  `tsup.config.ts` fix (tsup's dts bundler needs `composite: false`, same workaround already used by
+  core/dom). Test suite (7 tests, vitest + jsdom) runs against React 18 (`test`) and React 19
+  (`test:react19`, isolated `npm install` into gitignored `.react19/`, see `scripts/setup-react19.mjs`
+  for why pnpm-aliased devDependencies were tried and abandoned). Repo-wide typecheck/lint/build/test all
+  clean. No `@sparsh/core`/`@sparsh/dom` changes were needed — T17's `createGuard`/`isGuarded`/`destroy`
+  API was already sufficient.
 - **Added `LIMITATIONS.md` (repo root).** A user-facing writeup of what sparsh does and does not detect
   today, prompted by an audit of CSS-driven UI changes. Confirms Continuity is transition-mechanism-
   agnostic (it reads live geometry at two instants, so any CSS `transition`/`animation` that displaces or

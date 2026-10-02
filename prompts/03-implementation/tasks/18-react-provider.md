@@ -1,5 +1,5 @@
 # Task 18 — React `<ActivationGuardProvider>`
-Status: not-started
+Status: done
 Depends on: T17
 Package: react
 

@@ -1,5 +1,5 @@
 # Task 19 — React `useActivationGuard()` + `<ActivationGuard>`
-Status: not-started
+Status: done
 Depends on: T18
 Package: react
 
