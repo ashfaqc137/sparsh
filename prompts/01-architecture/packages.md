@@ -54,20 +54,56 @@ here, the design is wrong — move it behind a port.
 - `data-guard="off"`, `data-guard-key={id}` are plain attributes — no JS needed, read by the dom host.
 - Depends on: `@sparsh/core`, `@sparsh/dom`, `react` (peer).
 
+## `@sparsh/vue`
+
+**Responsibility:** the Vue 3 binding; mirrors `@sparsh/react`'s surface 1:1, Composition API only.
+
+- Exports:
+  - `ActivationGuardProvider` — primary API, app-wide. Same props as React's
+    `<ActivationGuardProvider>` (`mode`, `onDecision`, `onSuspect`, `root`, plus the `DomGuardOptions`
+    passthrough).
+  - `useActivationGuard()` → `{ ref, isGuarded }` — per-element escape hatch / block explanation.
+    `isGuarded` is a reactive `Ref<boolean>` (Vue's equivalent of React `useState`).
+  - `ActivationGuard` — optional subtree wrapper, same "nested provider" framing as React's.
+- Provider calls `createGuard` from `@sparsh/dom` in `onMounted`/`onBeforeUnmount`, on a root node
+  obtained via a `display: contents` wrapper element or an explicit `root` prop — identical
+  lifecycle shape to React's provider.
+- Uses Vue's `provide`/`inject` (a typed `InjectionKey`, `GuardKey`) as the structural equivalent
+  of React context. Unlike React, `provide()` doesn't need a dedicated wrapper component — it's
+  called once in `setup()` and applies to the whole subtree, since `setup()` runs once per
+  instance rather than once per render.
+- **Composable, not mixin/directive.** Same reasoning as React's "hook not HOC" (D16): the guard
+  needs a real DOM node, and a composable can take the ref directly.
+- Depends on: `@sparsh/core`, `@sparsh/dom`, `vue` (peer, `>=3.3`).
+
+**Composition API vs Options API (why only Composition API ships in v1):** the engine/host layer
+(`@sparsh/core` + `@sparsh/dom`) has zero Vue dependency and is identical either way. The
+`ActivationGuardProvider`/`ActivationGuard` *components* are also consumed identically by an
+Options API app's templates — components don't care how the host app authors its own script
+blocks. The one piece that *does* differ is the per-element hook equivalent: `useActivationGuard()`
+is a composable and is only callable inside `setup()`/`<script setup>`. An Options API component
+cannot call it directly — it would need a parallel surface (e.g. a component `inject: [...]`
+option, or a mixin exposing `this.$activationGuard`). That surface is a deliberately deferred,
+separate extension, not built in v1.
+
 ## Dependency direction (must never invert)
 
 ```
 react  ──▶  dom  ──▶  core
-   └───────────────▶  core   (react also imports core types directly)
+vue    ──▶  dom  ──▶  core
+   └───────────────▶  core   (react/vue also import core types directly)
 ```
 
 - `core` depends on nothing.
 - `dom` depends on `core` only.
 - `react` depends on `core` + `dom` + react (peer).
-- No package imports a sibling "upward". No framework-adapter package exists.
+- `vue` depends on `core` + `dom` + vue (peer).
+- No package imports a sibling "upward". No framework-adapter package imports another framework's
+  adapter.
 
 ## Future packages (not built in v1)
 
-`@sparsh/vue`, `@sparsh/svelte`, `@sparsh/angular` — each a thin binding over `core` + `dom`.
-`@sparsh/native` (or separate) — a *different host*, shared philosophy only, not shared code. See
-`decisions.md` for why native is deferred.
+`@sparsh/svelte`, `@sparsh/angular` — each a thin binding over `core` + `dom`, same shape as
+`@sparsh/react`/`@sparsh/vue`. An Options-API-compatible surface for `@sparsh/vue` (mixin/`inject`-
+based, see above) is also deferred. `@sparsh/native` (or separate) — a *different host*, shared
+philosophy only, not shared code. See `decisions.md` for why native is deferred.
