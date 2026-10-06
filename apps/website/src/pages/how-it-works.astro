@@ -1,0 +1,69 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+---
+
+<BaseLayout
+  title="How sparsh works — a quick tour"
+  description="A quick, plain-language tour of how sparsh checks whether the target under a tap stayed put and kept its meaning."
+>
+  <main class="content-page explainer-page">
+    <section class="page-hero">
+      <p class="eyebrow"><span class="eyebrow-dot" /> How sparsh works</p>
+      <h1>Sometimes the page moves<br /><span>between “I meant that” and click.</span></h1>
+      <p class="lead">That little gap is where a good tap can go sideways. sparsh checks what’s under it: is it the thing the person saw, or did the UI sneak in something new?</p>
+    </section>
+
+    <section class="flow-section" aria-label="The sparsh decision flow">
+      <div class="flow-step"><span>01</span><strong>You spot something</strong><p>You see Maya’s message and go to open it.</p></div>
+      <div class="flow-connector" aria-hidden="true">→</div>
+      <div class="flow-step flow-change"><span>02</span><strong>The page does a thing</strong><p>A new message appears, or the row moves while you’re on your way.</p></div>
+      <div class="flow-connector" aria-hidden="true">→</div>
+      <div class="flow-step flow-decision"><span>03</span><strong>sparsh checks the tap</strong><p>Does it still match what you were trying to do?</p></div>
+    </section>
+
+    <section class="policy-section">
+      <div class="section-heading">
+        <p class="section-kicker">FOUR WAYS A TAP CAN GO SIDEWAYS</p>
+        <h2>What does sparsh check?</h2>
+      </div>
+      <div class="policy-grid">
+        <article class="policy-card">
+          <span class="policy-icon">◷</span><p class="policy-name">AGE</p><h3>Did it just show up?</h3>
+          <p><strong>Age</strong> checks how long something has been visible. A brand-new message that pops up under a tap may not be what the person meant to open.</p>
+        </article>
+        <article class="policy-card">
+          <span class="policy-icon">⌖</span><p class="policy-name">CONTINUITY</p><h3>Did it move while you pressed?</h3>
+          <p><strong>Continuity</strong> checks whether the same thing stayed in the same place from pointer down to pointer up. It catches a layout shift or a new control taking over.</p>
+        </article>
+        <article class="policy-card">
+          <span class="policy-icon">◈</span><p class="policy-name">SEMANTICS</p><h3>Did the button’s job change?</h3>
+          <p><strong>Semantics</strong> checks things like disabled state, accessible label, link or input value, and an optional <code>data-guard-key</code>.</p>
+        </article>
+        <article class="policy-card">
+          <span class="policy-icon">↻</span><p class="policy-name">DOUBLE FIRE</p><h3>Did the last click uncover something?</h3>
+          <p><strong>Double fire</strong> watches for a quick second activation on a different target after the first action changed or collapsed the UI.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="report-panel">
+      <div class="report-mark" aria-hidden="true">◎</div>
+      <div>
+        <p class="section-kicker">START WITH THE TRAINING WHEELS ON</p>
+        <h2>Watch first. Block later.</h2>
+        <p>By default, sparsh runs in <code>report</code> mode. It tells you when a tap looks suspicious but lets it through. Once you’ve seen how the signals behave in your app, you can switch on <code>enforce</code> for the policies you’re comfortable with.</p>
+      </div>
+      <div class="mode-pills"><span>report <small>default</small></span><span>enforce <small>opt in</small></span></div>
+    </section>
+
+    <section class="accessibility-note">
+      <span class="note-icon" aria-hidden="true">⌘</span>
+      <div><h2>Keyboard users count too.</h2><p>Keyboard and assistive-technology activations are handled separately. Continuity only runs when there’s an actual pointer press to compare. Escape, moving focus, and scrolling are never blocked.</p></div>
+    </section>
+
+    <section class="limits-note">
+      <p class="section-kicker">A QUICK REALITY CHECK</p>
+      <p>sparsh would rather miss a tricky case than block a tap it can’t explain. It doesn’t catch every visual change yet—opacity-only reveals and some overlays can slip by. <a href="/docs/#limitations">See what it can and can’t catch.</a></p>
+    </section>
+  </main>
+</BaseLayout>

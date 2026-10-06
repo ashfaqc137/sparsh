@@ -21,6 +21,23 @@ const {
     <meta name="description" content={description} />
   </head>
   <body>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="sparsh home">
+        <span class="brand-mark" aria-hidden="true">s</span>
+        <span>sparsh</span>
+      </a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="/" aria-current={Astro.url.pathname === '/' ? 'page' : undefined}>Why sparsh</a>
+        <a href="/how-it-works/" aria-current={Astro.url.pathname.startsWith('/how-it-works') ? 'page' : undefined}>How it works</a>
+        <a href="/demo/" aria-current={Astro.url.pathname.startsWith('/demo') ? 'page' : undefined}>Demo</a>
+        <a href="/playground/" aria-current={Astro.url.pathname.startsWith('/playground') ? 'page' : undefined}>Playground</a>
+        <a href="/docs/" aria-current={Astro.url.pathname.startsWith('/docs') ? 'page' : undefined}>Docs</a>
+      </nav>
+    </header>
     <slot />
+    <footer class="site-footer">
+      <a href="/" class="footer-brand">sparsh <span>·</span> trustworthy touch</a>
+      <span>Made for interfaces that move.</span>
+    </footer>
   </body>
 </html>

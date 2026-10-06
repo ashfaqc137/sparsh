@@ -1,15 +1,16 @@
 # apps/website
 
-Consumer-facing site for sparsh. For now this is **demo-only**: an eye-catching, interactive
-React page that conveys the problem sparsh solves (accidental UI activation on
-moved/changed/stale targets). Official docs (MDX/content collections) land here later, once the
-first release ships — Astro was chosen now specifically so that addition is a natural extension
-rather than a framework migration.
+Consumer-facing site and the source for sparsh's official product and API documentation. The site
+has five routes: `/` introduces the UX philosophy, `/how-it-works/` explains the policies and
+accessibility model, `/demo/` hosts the interactive inbox reshuffle, `/playground/` lets visitors
+try live React and Vue examples, and `/docs/` contains quick-start guidance, API examples, and current
+limitations. Expand the docs as the packages approach their first release.
 
-Built with **Astro** + `@astrojs/react`: the page itself is static Astro, and the interactive
-demo (`src/components/HeroDemo.tsx`) is a single hydrated React island (`client:load`). It
-consumes `@sparsh/react` (which wraps `@sparsh/dom`/`@sparsh/core`) as workspace dependencies, so
-the demo is always in sync with the real library — never a mock.
+Built with **Astro** + `@astrojs/react`: the informational pages are static Astro, and the interactive
+demo (`src/components/HeroDemo.tsx`) and playground (`src/components/Playground.tsx`) are hydrated
+React islands (`client:load`). The playground mounts its Vue example with the real `@sparsh/vue`
+binding. Both use workspace packages rather than mocks. Shared navigation and footer live in
+`src/layouts/BaseLayout.astro`.
 
 ## Scripts
 

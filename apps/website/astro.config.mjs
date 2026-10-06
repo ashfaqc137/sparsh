@@ -3,4 +3,9 @@ import { defineConfig } from 'astro/config'
 
 export default defineConfig({
   integrations: [react()],
+  vite: {
+    optimizeDeps: {
+      include: ['react', 'react-dom', 'vue'],
+    },
+  },
 })
