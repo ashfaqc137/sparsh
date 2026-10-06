@@ -1,0 +1,28 @@
+{
+  "name": "website",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Consumer-facing site for sparsh: eye-catching interactive demo today, official docs later.",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "typecheck": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/react": "^4.2.0",
+    "@sparsh/core": "workspace:*",
+    "@sparsh/dom": "workspace:*",
+    "@sparsh/react": "workspace:*",
+    "astro": "^5.1.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.5",
+    "typescript": "^5.7.2"
+  }
+}

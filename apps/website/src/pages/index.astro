@@ -1,0 +1,14 @@
+---
+import { HeroDemo } from '../components/HeroDemo'
+import BaseLayout from '../layouts/BaseLayout.astro'
+---
+
+<BaseLayout title="sparsh — stop accidental clicks">
+  <main class="page">
+    <header class="hero">
+      <h1>sparsh</h1>
+      <p class="tagline">A UX-safety primitive that blocks accidental UI activation.</p>
+    </header>
+    <HeroDemo client:load />
+  </main>
+</BaseLayout>
