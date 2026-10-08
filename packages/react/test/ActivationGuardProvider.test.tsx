@@ -204,4 +204,27 @@ describe('<ActivationGuardProvider>', () => {
       globalThis.document = savedDocument
     }
   })
+
+  it('warns when nested inside another ActivationGuardProvider (overlapping subtree)', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const root = createRoot(container)
+
+    act(() => {
+      root.render(
+        <ActivationGuardProvider mode="report">
+          <ActivationGuardProvider mode={{ age: 'report' }}>
+            <button type="button">Click</button>
+          </ActivationGuardProvider>
+        </ActivationGuardProvider>,
+      )
+    })
+
+    expect(warnSpy).toHaveBeenCalledTimes(1)
+    expect(warnSpy.mock.calls[0][0]).toContain('[sparsh]')
+
+    act(() => {
+      root.unmount()
+    })
+    warnSpy.mockRestore()
+  })
 })

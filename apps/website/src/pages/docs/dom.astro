@@ -108,5 +108,14 @@ const guard = createGuard(document.body, {
       A guard owns listeners and visibility/age tracking for its root. Keep its lifetime aligned
       with that UI root. For React and Vue, the provider handles setup and cleanup automatically.
     </p>
+    <p class="doc-note">
+      <strong>Composing multiple guards:</strong> guards never merge or inherit options from one
+      another — each <code>createGuard</code> call installs its own independent listeners and
+      policy pipeline. If a guard's root overlaps (is the same as, contains, or is contained by) a
+      root that already has an active guard, sparsh logs a <code>console.warn</code> so the overlap
+      doesn't go unnoticed. This is expected and safe for an intentional scoped override (a nested
+      guard on a sub-region with different options); if it wasn't intentional, make sure each
+      subtree is only wrapped once.
+    </p>
   </section>
 </DocsShell>

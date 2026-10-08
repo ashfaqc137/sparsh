@@ -163,6 +163,17 @@ export interface UseActivationGuardResult {
     <Code code={`<ActivationGuard mode={{ age: 'report' }}>
   <FrequentlyUpdatedPanel />
 </ActivationGuard>`} lang="tsx" theme="github-dark" />
+    <p class="doc-note">
+      <strong>Nesting providers:</strong> each provider installs its own capture-phase listeners
+      and policy pipeline — nothing is merged or inherited from an ancestor. When providers
+      overlap the same DOM, the outermost one sees pointer/click/key events first and, if it
+      blocks, the inner provider never sees that interaction at all. This is exactly how
+      <code>&lt;ActivationGuard&gt;</code> is meant to be used for a scoped override, but
+      accidentally wrapping the same subtree with two top-level <code>ActivationGuardProvider</code>s
+      is usually a mistake. sparsh logs a <code>console.warn</code> whenever a new guard's root
+      overlaps one that's already active, so you can tell the two cases apart — ignore it for an
+      intentional scoped override, fix it otherwise.
+    </p>
   </section>
 
   <section class="docs-section" id="custom-animation">

@@ -164,4 +164,25 @@ describe('<ActivationGuardProvider>', () => {
 
     wrapper.unmount()
   })
+
+  it('warns when nested inside another ActivationGuardProvider (overlapping subtree)', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+    const wrapper = mount(ActivationGuardProvider, {
+      attachTo: container,
+      props: { mode: 'report' },
+      slots: {
+        default: () =>
+          h(ActivationGuardProvider, { mode: { age: 'report' } }, () =>
+            h('button', { type: 'button' }, 'Click'),
+          ),
+      },
+    })
+
+    expect(warnSpy).toHaveBeenCalledTimes(1)
+    expect(warnSpy.mock.calls[0]?.[0]).toContain('[sparsh]')
+
+    wrapper.unmount()
+    warnSpy.mockRestore()
+  })
 })
