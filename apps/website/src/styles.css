@@ -249,6 +249,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lime); outline-
 .limits-note a, .docs-content a { color: #d9e9a8; text-underline-offset: 3px; }
 
 .docs-layout { display: grid; grid-template-columns: 175px minmax(0,1fr); gap: 45px; align-items: start; }
+.docs-page { overflow-x: clip; }
 .docs-sidebar { position: sticky; top: 22px; padding: 10px 0; display: grid; gap: 4px; }
 .docs-nav-group { display: grid; gap: 3px; margin-bottom: 12px; }
 .docs-nav-group > p { margin: 0 0 4px; padding: 0 10px; color: #72776a; font: 8px 'DM Mono', monospace; letter-spacing: .1em; }
@@ -293,6 +294,12 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lime); outline-
 @keyframes overlay-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes blocked-wiggle { 25% { transform: translateX(-2px); } 75% { transform: translateX(2px); } }
 @keyframes count-pulse { to { transform: scale(1.08); box-shadow: 0 0 28px rgba(211, 243, 107, 0.25); } }
+
+@media (max-width: 850px) {
+  .site-header { gap: 12px; }
+  .site-nav { gap: 0; }
+  .site-nav a { padding-inline: 8px; }
+}
 
 @media (max-width: 720px) {
   .site-header { width: calc(100% - 34px); min-height: 69px; flex-wrap: wrap; gap: 9px; padding: 12px 0; }
@@ -347,11 +354,11 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lime); outline-
 
 @media (max-width: 420px) {
   .site-header { width: calc(100% - 26px); align-items: flex-start; flex-direction: column; gap: 9px; }
-  .site-nav { width: 100%; justify-content: space-between; }
-  .site-nav a { padding: 6px 5px; font-size: 10px; }
+  .site-nav { width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3px; }
+  .site-nav a { min-width: 0; padding: 6px 3px; font-size: 10px; text-align: center; }
   .content-page, .site-footer { width: calc(100% - 26px); }
   .landing { width: calc(100% - 26px); }
-  .philosophy-hero h1, .page-hero h1 { font-size: 34px; }
+  .philosophy-hero h1, .page-hero h1 { font-size: clamp(24px, 7.2vw, 32px); }
   .lead { font-size: 13px; }
   .hero-actions { align-items: stretch; flex-direction: column; }
   .button-primary, .button-secondary { width: 100%; }

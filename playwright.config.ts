@@ -5,7 +5,9 @@ const benchmarkOnly = process.env.SPARSH_BENCHMARK === '1'
 
 export default defineConfig({
   testDir: './e2e',
-  testMatch: benchmarkOnly ? ['performance.spec.ts'] : ['playground-bindings.spec.ts'],
+  testMatch: benchmarkOnly
+    ? ['performance.spec.ts']
+    : ['playground-bindings.spec.ts', 'responsive.spec.ts'],
   fullyParallel: true,
   retries: process.env.CI ? 1 : 0,
   reporter: 'list',
