@@ -10,6 +10,7 @@
   },
   "scripts": {
     "build": "pnpm -r run build",
+    "build:website": "pnpm --filter=website... run build",
     "test": "pnpm -r run test",
     "e2e": "playwright test",
     "bench": "pnpm -r --filter './packages/*' run build && node scripts/package-sizes.mjs && SPARSH_BENCHMARK=1 playwright test",

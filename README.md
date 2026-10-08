@@ -73,6 +73,11 @@ download size for a consumer. The project’s performance target is less than 1 
 interaction; the fixture results above are diagnostic measurements, not a cross-device benchmark
 guarantee.
 
+## Website
+
+`apps/website` is the consumer-facing site and official docs, deployed to Cloudflare Pages. See
+[`apps/website/README.md`](./apps/website/README.md) for the build command and deployment settings.
+
 ## License
 
 [MIT](./LICENSE)
