@@ -1,35 +1,51 @@
 # sparsh
 
-sparsh is a small interaction safety layer for web apps. It checks whether an interactive target
-is still the thing the user intended to activate after the interface changes, and can stop a
-suspicious activation before it commits.
+**sparsh helps prevent a tap from activating the wrong thing when an interface changes under the
+user.** A page can shift, a new item can appear, or a control can change while someone is pressing
+it. sparsh checks whether the target still matches what the person first interacted with, and can
+stop a suspicious activation before it commits.
 
-## Is it worth adding?
+## What sparsh checks
 
-That depends on the cost and the value of preventing accidental activations in your app. sparsh is
-designed to keep its work on the interaction path small, but we should use benchmark results—not
-the word “lightweight”—to make the cost clear. The performance figures below are targets and
-measurement plans, not measured results.
+The browser guard evaluates an activation using four policies:
+
+- **Age:** did the target only recently appear or become available?
+- **Continuity:** did the target move or get replaced during the press?
+- **Semantics:** did the target’s meaning or enabled state change?
+- **Double fire:** did the previous activation reveal a different target beneath a quick follow-up?
+
+Sparsh runs in `enforce` mode by default. Use `report` mode to observe suspicious activations
+without stopping them, such as while tuning a policy. Every decision can be observed through the
+`onDecision` callback. Keyboard and assistive-technology activations are handled separately, and
+Sparsh does not block Escape, focus changes, or scrolling.
+
+## Packages
+
+- `@sparsh/core` contains the framework-independent decision engine.
+- `@sparsh/dom` connects the engine to browser events and also provides a vanilla DOM API.
+- `@sparsh/react` and `@sparsh/vue` provide framework bindings.
+
+These packages are currently developed in this repository and are not yet published to npm. See
+the [website documentation](apps/website/README.md) for the APIs, examples, and local development
+instructions.
+
+## How it stays lightweight
+
+Sparsh uses shared event listeners at the guard root instead of registering every control. It
+evaluates policies when an activation happens, and its DOM age tracking handles newly added or
+visible nodes rather than repeatedly walking the entire interface. The framework bindings manage
+lifecycle and configuration around the shared browser implementation.
 
 ## Performance
 
-### Measurement commands
+Run `pnpm bench` to build the packages, print raw and gzip sizes for each package’s ESM entry, and
+run the Chromium performance fixture. Run correctness checks with `pnpm test` and `pnpm e2e`.
 
-Run correctness checks with `pnpm test` and `pnpm e2e`. Run the report-only performance fixture
-and package size report with `pnpm bench`. The benchmark command builds the four packages, reports
-their ESM entry size before and after gzip, then runs a Chromium fixture at `/performance/`.
+### Current measurements
 
-The interaction fixture warms up and times batches of 100 equivalent pointerdown, pointerup, and
-click dispatches against an unguarded target and a guarded target. It reports the per-dispatch
-median and p95, plus the difference between those summaries. The observer fixture retains 30 live
-rows from a 10,000-row virtualized data set and measures the DOM insertion plus MutationObserver
-callback for 30-row replacement batches. Browser measurements are diagnostic and depend on the
-machine and browser used; they are not a CI timing gate or an end-to-end app latency guarantee.
-
-### Local benchmark results
-
-Measured with `pnpm bench` on Chromium 153.0.8010.12 (Playwright browser; user agent reports
-Windows 10), with 5,000 measured activations after 500 warmups:
+Measured in two benchmark runs on Chromium 153.0.8010.12 (Playwright browser; user agent reports
+Windows 10), each with 5,000 measured activations after 500 warmups. The ranges show variation
+between the runs on this runner.
 
 | Measurement | Unguarded | Guarded | Added |
 | --- | ---: | ---: | ---: |
@@ -38,7 +54,12 @@ Windows 10), with 5,000 measured activations after 500 warmups:
 | 30-row insertion + observer callback median | — | 0.100–0.200 ms | — |
 | 30-row insertion + observer callback p95 | — | 0.200–0.800 ms | — |
 
-Package ESM entry sizes from the same run:
+The observer fixture uses a virtualized 10,000-row data set with 30 mounted rows and measures 30-row
+replacement batches. The interaction fixture times equivalent synthetic pointerdown, pointerup,
+and click dispatches on guarded and unguarded targets. These timings show synchronous handling in
+this fixture; they are not end-to-end input-to-paint latency or a guarantee for every app or device.
+
+Package ESM entry sizes from the same runs:
 
 | Package | Raw | Gzip |
 | --- | ---: | ---: |
@@ -47,49 +68,7 @@ Package ESM entry sizes from the same run:
 | `@sparsh/react` | 3,752 bytes | 1,186 bytes |
 | `@sparsh/vue` | 3,840 bytes | 1,308 bytes |
 
-The browser fixture uses synthetic DOM event dispatch and reports the incremental synchronous
-handling cost, not end-to-end input-to-paint latency. Package figures are individual ESM entry
-files before application bundling or tree-shaking; they are not the total size of a consumer's
-download.
-
-### Metrics
-
-| Area | Metric | Current target or fixture | Status |
-| --- | --- | --- | --- |
-| Interaction | Added dispatch time per activation | Less than 1 ms | Target; measured by `pnpm bench` |
-| DOM observation | Insertion and observer callback time per 30-row batch | Virtualized 10,000-row data set, 30 mounted rows | Measured by `pnpm bench` |
-| Download | ESM entry size before and after gzip | `@sparsh/core`, `@sparsh/dom`, `@sparsh/react`, `@sparsh/vue` | Measured by `pnpm bench` |
-
-The latency target covers the work sparsh adds while an activation is evaluated. It does not mean
-that every app will gain or lose a measurable millisecond in end-to-end response time; framework,
-browser, device, and app work also affect that result. The observer fixture is intended to check
-large and frequently updated interfaces. Bundle size should be reported separately because it
-affects download and startup, not just interaction handling.
-
-### Why the design should be light
-
-- A guard uses shared listeners at its configured root instead of attaching a listener or
-  registering every interactive element individually.
-- Decision work happens when an activation occurs, so ordinary pages do not pay policy evaluation
-  costs continuously or once per control.
-- DOM age tracking stamps added or newly visible nodes as they are observed; it is designed to
-  process added nodes rather than repeatedly walk the entire interface.
-- The core decision engine has no DOM dependency, and the React and Vue bindings mainly handle
-  lifecycle and configuration around the shared browser implementation.
-
-These are design properties, not substitutes for measurements. Real results should include the
-tested browser, device or runner, app fixture, enabled policies, and whether the reported number is
-a median or a tail percentile. A useful comparison runs the same fixture with and without sparsh.
-
-Keep benchmark results tied to their browser and runner. The under-1-ms figure remains a target
-until repeatable measurements demonstrate it; do not present one machine's result as a guarantee
-for every application.
-
-## Packages
-
-- `@sparsh/core` — framework-independent decision engine and policy pipeline.
-- `@sparsh/dom` — browser event handling and vanilla DOM integration.
-- `@sparsh/react` and `@sparsh/vue` — framework bindings.
-
-See the [website](apps/website/README.md) for local development and site commands. The package APIs
-and examples are documented in the website's `/docs/` pages.
+These are individual package entry files before app bundling or tree-shaking, not the total
+download size for a consumer. The project’s performance target is less than 1 ms of added work per
+interaction; the fixture results above are diagnostic measurements, not a cross-device benchmark
+guarantee.
