@@ -4,7 +4,7 @@
  * instance (D10's "provider root" framing applies recursively), and this is the documented
  * mechanism for subtree-scoped overrides — it does not attempt to merge/inherit an ancestor
  * provider's options, it simply installs its own guard, scoped to its own subtree root, with
- * whatever options are passed to it. Mirrors `@sparsh/react`'s `<ActivationGuard>` 1:1.
+ * whatever options are passed to it. Mirrors `@sparshlabs/react`'s `<ActivationGuard>` 1:1.
  */
 
 import {

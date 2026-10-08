@@ -8,7 +8,7 @@
  * `memo`, and ref-swallowing third-party components.
  */
 
-import type { TargetHandle } from '@sparsh/core'
+import type { TargetHandle } from '@sparshlabs/core'
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { GuardContext } from './ActivationGuardProvider.js'
 

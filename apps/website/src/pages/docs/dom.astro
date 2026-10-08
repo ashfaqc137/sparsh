@@ -2,7 +2,7 @@
 import { Code } from 'astro:components'
 import DocsShell from '../../components/DocsShell.astro'
 
-const setupExample = `import { createGuard } from '@sparsh/dom'
+const setupExample = `import { createGuard } from '@sparshlabs/dom'
 
 const appRoot = document.querySelector('#app')
 if (!(appRoot instanceof Element)) {
@@ -21,7 +21,7 @@ const guard = createGuard(appRoot, {
 // Call this when the guarded UI is removed.
 guard.destroy()`
 
-const customFeedback = `import { createGuard } from '@sparsh/dom'
+const customFeedback = `import { createGuard } from '@sparshlabs/dom'
 
 const guard = createGuard(document.body, {
   onBlocked(element) {
@@ -43,7 +43,7 @@ const guard = createGuard(document.body, {
   description="Use the browser adapter directly when you do not use React or Vue, or when you need to own the guard lifecycle yourself."
 >
   <section class="docs-section" id="create-guard">
-    <p class="section-kicker">ENTRY POINT · @sparsh/dom</p>
+    <p class="section-kicker">ENTRY POINT · @sparshlabs/dom</p>
     <h2><code>createGuard(root, options?)</code></h2>
     <p>
       Creates the DOM host and core engine together, installs capture-phase listeners on the supplied

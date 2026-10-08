@@ -1,4 +1,4 @@
-import type { Decision, TargetHandle } from '@sparsh/core'
+import type { Decision, TargetHandle } from '@sparshlabs/core'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createGuard } from '../src/index.js'
 import { fireClick, firePointerEvent } from './dom-events.js'

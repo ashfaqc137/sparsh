@@ -64,8 +64,8 @@ them silently reintroduces the exact bugs sparsh exists to prevent.
    *through* to whatever is underneath — converting one accidental activation into a different one.
    Swallow at the event layer (capture-phase `preventDefault` + `stopPropagation`).
 
-8. **`@sparsh/core` must contain zero DOM.** The engine depends only on abstract host *ports*. All
-   browser access lives in `@sparsh/dom`. A lint fence enforces this (`03-implementation/lint-fence`,
+8. **`@sparshlabs/core` must contain zero DOM.** The engine depends only on abstract host *ports*. All
+   browser access lives in `@sparshlabs/dom`. A lint fence enforces this (`03-implementation/lint-fence`,
    part of tooling). If you need `document` in core, the design is wrong.
 
 9. **A block must be legible, never silent.** Silently swallowing input reads as a broken app. Expose
@@ -86,9 +86,9 @@ Everything in sparsh is an implementation of that sentence.
 ## Package graph (target)
 
 ```
-@sparsh/core   — engine + policy pipeline + host PORT interfaces + types. ZERO DOM.
-@sparsh/dom    — browser host implementing the ports; also the vanilla / no-framework entry point.
-@sparsh/react  — <ActivationGuardProvider> + useActivationGuard; the first binding and the live proof.
+@sparshlabs/core   — engine + policy pipeline + host PORT interfaces + types. ZERO DOM.
+@sparshlabs/dom    — browser host implementing the ports; also the vanilla / no-framework entry point.
+@sparshlabs/react  — <ActivationGuardProvider> + useActivationGuard; the first binding and the live proof.
 ```
 
 `vue` / `svelte` / `angular` bindings slot in beside `react` later, each depending on `core` + `dom`.

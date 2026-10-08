@@ -12,10 +12,10 @@ for (const name of packages) {
     const [contents, info] = await Promise.all([readFile(path), stat(path)])
     const gzipped = gzipSync(contents, { level: 9 })
     console.log(
-      `@sparsh/${name}: ${info.size.toLocaleString()} bytes raw, ${gzipped.length.toLocaleString()} bytes gzip`,
+      `@sparshlabs/${name}: ${info.size.toLocaleString()} bytes raw, ${gzipped.length.toLocaleString()} bytes gzip`,
     )
   } catch {
-    console.log(`@sparsh/${name}: build output not found (${path})`)
+    console.log(`@sparshlabs/${name}: build output not found (${path})`)
     process.exitCode = 1
   }
 }

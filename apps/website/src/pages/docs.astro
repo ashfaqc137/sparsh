@@ -2,7 +2,7 @@
 import { Code } from 'astro:components'
 import DocsShell from '../components/DocsShell.astro'
 
-const reactProvider = `import { ActivationGuardProvider } from '@sparsh/react'
+const reactProvider = `import { ActivationGuardProvider } from '@sparshlabs/react'
 
 export function App() {
   return (
@@ -13,7 +13,7 @@ export function App() {
 }`
 
 const vueProvider = `<script setup lang="ts">
-import { ActivationGuardProvider } from '@sparsh/vue'
+import { ActivationGuardProvider } from '@sparshlabs/vue'
 </script>
 
 <template>
@@ -22,7 +22,7 @@ import { ActivationGuardProvider } from '@sparsh/vue'
   </ActivationGuardProvider>
 </template>`
 
-const observeDecisions = `import type { Decision } from '@sparsh/react'
+const observeDecisions = `import type { Decision } from '@sparshlabs/react'
 
 function recordDecision(decision: Decision) {
   if (decision.enforced) {
@@ -51,9 +51,9 @@ function recordDecision(decision: Decision) {
       <table class="docs-table">
         <thead><tr><th>Package</th><th>Use it when</th><th>Requirements</th></tr></thead>
         <tbody>
-          <tr><td><code>@sparsh/react</code></td><td>Your UI is React.</td><td>React 18 or later</td></tr>
-          <tr><td><code>@sparsh/vue</code></td><td>Your UI is Vue 3.</td><td>Vue 3.3 or later; Composition API</td></tr>
-          <tr><td><code>@sparsh/dom</code></td><td>You use vanilla JavaScript or a different framework.</td><td>A browser DOM root</td></tr>
+          <tr><td><code>@sparshlabs/react</code></td><td>Your UI is React.</td><td>React 18 or later</td></tr>
+          <tr><td><code>@sparshlabs/vue</code></td><td>Your UI is Vue 3.</td><td>Vue 3.3 or later; Composition API</td></tr>
+          <tr><td><code>@sparshlabs/dom</code></td><td>You use vanilla JavaScript or a different framework.</td><td>A browser DOM root</td></tr>
         </tbody>
       </table>
     </div>

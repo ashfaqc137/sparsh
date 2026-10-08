@@ -1,10 +1,10 @@
-# Task 03 — DOM-free lint fence for `@sparsh/core`
+# Task 03 — DOM-free lint fence for `@sparshlabs/core`
 Status: done
 Depends on: T02
 Package: core (+ root lint/CI)
 
 ## Goal
-Make it **structurally impossible** for `@sparsh/core` to depend on the DOM. This guarantees the core
+Make it **structurally impossible** for `@sparshlabs/core` to depend on the DOM. This guarantees the core
 contract stays framework- and platform-agnostic (D2, D8) and provable-without-a-browser.
 
 ## Scope

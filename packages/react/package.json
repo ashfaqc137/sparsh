@@ -1,6 +1,6 @@
 {
-  "name": "@sparsh/react",
-  "version": "0.0.0",
+  "name": "@sparshlabs/react",
+  "version": "0.1.0",
   "description": "React binding for sparsh: <ActivationGuardProvider>, useActivationGuard(), <ActivationGuard>.",
   "license": "MIT",
   "type": "module",
@@ -25,8 +25,8 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@sparsh/core": "workspace:*",
-    "@sparsh/dom": "workspace:*"
+    "@sparshlabs/core": "workspace:*",
+    "@sparshlabs/dom": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=18"

@@ -5,7 +5,7 @@ import DocsShell from '../../components/DocsShell.astro'
 const providerExample = `import {
   ActivationGuardProvider,
   type Decision,
-} from '@sparsh/react'
+} from '@sparshlabs/react'
 
 function handleDecision(decision: Decision) {
   if (!decision.allowed) {
@@ -25,7 +25,7 @@ export function App() {
   )
 }`
 
-const useGuardExample = `import { useActivationGuard } from '@sparsh/react'
+const useGuardExample = `import { useActivationGuard } from '@sparshlabs/react'
 
 function SaveButton() {
   const { ref, isGuarded } = useActivationGuard()
@@ -42,7 +42,7 @@ function SaveButton() {
   )
 }`
 
-const customFeedback = `import { ActivationGuardProvider } from '@sparsh/react'
+const customFeedback = `import { ActivationGuardProvider } from '@sparshlabs/react'
 
 export function App() {
   return (
@@ -63,7 +63,7 @@ export function App() {
   )
 }`
 
-const publicTypes = `import type { InputKind, Phase } from '@sparsh/react'
+const publicTypes = `import type { InputKind, Phase } from '@sparshlabs/react'
 
 export type Mode = 'report' | 'enforce'
 export type PolicyId = 'age' | 'continuity' | 'semantics' | 'doubleFire'
@@ -195,7 +195,7 @@ export interface UseActivationGuardResult {
       <code>allowed</code> (the policy verdict), <code>enforced</code> (whether the activation was
       blocked), optional <code>policy</code> and <code>reason</code>, input <code>event</code>{' '}
       details, and a target snapshot summary. The binding re-exports these types from
-      <code>@sparsh/core</code>.
+      <code>@sparshlabs/core</code>.
     </p>
     <Code code={publicTypes} lang="ts" theme="github-dark" />
     <p>For policy behavior and accessibility details, see <a href="/docs/concepts/">Core concepts</a>.</p>

@@ -27,23 +27,23 @@ sparsh/                      (repo root; package name "sparsh" internal, not pub
   .changeset/
   packages/
     core/
-      package.json           # @sparsh/core, no deps, no "DOM" lib
+      package.json           # @sparshlabs/core, no deps, no "DOM" lib
       tsconfig.json          # extends base; lib WITHOUT "DOM"
       tsconfig.build.json     # non-composite view used only by tsup's dts bundler
       src/
       tsup.config.ts
     dom/
-      package.json           # @sparsh/dom, dep: @sparsh/core
+      package.json           # @sparshlabs/dom, dep: @sparshlabs/core
       src/
     react/
-      package.json           # @sparsh/react, deps: core+dom, peer: react
+      package.json           # @sparshlabs/react, deps: core+dom, peer: react
       src/
   apps/
     demo/                    # Vite + React; repro per case; live suspect log; Playwright fixture
   e2e/                       # Playwright config + specs (or fold into apps/demo)
 ```
 
-## The DOM-free lint fence for `@sparsh/core` (critical — D8)
+## The DOM-free lint fence for `@sparshlabs/core` (critical — D8)
 
 Two layers, both required:
 
@@ -92,5 +92,5 @@ pnpm release    # changeset version && changeset publish
 
 ## npm scope
 
-Target `@sparsh/{core,dom,react}`. **Verify scope availability during Task 01**; if taken, fall back to
+Target `@sparshlabs/{core,dom,react}`. **Verify scope availability during Task 01**; if taken, fall back to
 unscoped `sparsh` / `sparsh-dom` / `sparsh-react` and record the choice in `decisions.md` + `progress.md`.

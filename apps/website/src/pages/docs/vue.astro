@@ -3,7 +3,7 @@ import { Code } from 'astro:components'
 import DocsShell from '../../components/DocsShell.astro'
 
 const providerExample = `<script setup lang="ts">
-import { ActivationGuardProvider, type Decision } from '@sparsh/vue'
+import { ActivationGuardProvider, type Decision } from '@sparshlabs/vue'
 
 function handleDecision(decision: Decision) {
   if (!decision.allowed) {
@@ -23,7 +23,7 @@ function handleDecision(decision: Decision) {
 </template>`
 
 const hookExample = `<script setup lang="ts">
-import { useActivationGuard } from '@sparsh/vue'
+import { useActivationGuard } from '@sparshlabs/vue'
 
 const { ref: guardRef, isGuarded } = useActivationGuard()
 </script>
@@ -36,7 +36,7 @@ const { ref: guardRef, isGuarded } = useActivationGuard()
 </template>`
 
 const customFeedback = `<script setup lang="ts">
-import { ActivationGuardProvider } from '@sparsh/vue'
+import { ActivationGuardProvider } from '@sparshlabs/vue'
 
 function animateBlocked(element: Element) {
   element.animate(
@@ -56,7 +56,7 @@ function animateBlocked(element: Element) {
   </ActivationGuardProvider>
 </template>`
 
-const publicTypes = `import type { InputKind, Phase, PolicyId } from '@sparsh/vue'
+const publicTypes = `import type { InputKind, Phase, PolicyId } from '@sparshlabs/vue'
 import type { Ref } from 'vue'
 
 export interface UseActivationGuardResult {
@@ -181,7 +181,7 @@ export interface Decision {
     <h2>Decision and mode</h2>
     <p>
       <code>Mode</code>, <code>PolicyId</code>, and <code>Decision</code> are re-exported from
-      <code>@sparsh/vue</code>. A decision’s <code>allowed</code> field records the policy verdict;
+      <code>@sparshlabs/vue</code>. A decision’s <code>allowed</code> field records the policy verdict;
       <code>enforced</code> says whether it actually stopped the activation. See
       <a href="/docs/concepts/">Core concepts</a> for policy behavior and accessibility details.
     </p>

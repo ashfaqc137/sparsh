@@ -1,5 +1,5 @@
-import type { Decision, Guard, Mode, PolicyId } from '@sparsh/dom'
-import { createGuard } from '@sparsh/dom'
+import type { Decision, Guard, Mode, PolicyId } from '@sparshlabs/dom'
+import { createGuard } from '@sparshlabs/dom'
 
 const logEl = document.getElementById('log') as HTMLDivElement
 

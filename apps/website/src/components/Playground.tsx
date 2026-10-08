@@ -1,15 +1,16 @@
-import type { Decision, Mode } from '@sparsh/core'
-import { ActivationGuardProvider } from '@sparsh/react'
-import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
+import type { Decision, Mode } from '@sparshlabs/core'
+import { ActivationGuardProvider } from '@sparshlabs/react'
+import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { createApp } from 'vue'
-import { formatDecisionReason } from './formatDecisionReason'
 import { VueScenario } from './VueScenario'
+import { formatDecisionReason } from './formatDecisionReason'
 
 type Scenario = 'inbox' | 'late' | 'meaning'
 type Framework = 'react' | 'vue'
 
 function highlightCode(code: string): ReactNode[] {
-  const tokenPattern = /("[^"]*"|'[^']*'|<\/?[A-Za-z][\w.-]*|[A-Za-z_:][\w:.-]*(?=\s*=)|\b(?:import|from)\b|\b\d+\b|[{}[\]<>/=])/g
+  const tokenPattern =
+    /("[^"]*"|'[^']*'|<\/?[A-Za-z][\w.-]*|[A-Za-z_:][\w:.-]*(?=\s*=)|\b(?:import|from)\b|\b\d+\b|[{}[\]<>/=])/g
   const highlighted: ReactNode[] = []
   let offset = 0
 
@@ -262,15 +263,15 @@ function VueMount({ scenario, mode, cooldownMs, onDecision, onReset }: DemoProps
 
 function exampleCode(framework: Framework, scenario: Scenario, mode: Mode, cooldownMs: number) {
   if (framework === 'react')
-    return `import { ActivationGuardProvider } from '@sparsh/react'\n\n<ActivationGuardProvider\n  mode="${mode}"\n  cooldownMs={${cooldownMs}}\n  policies={['age', 'continuity', 'semantics']}\n>\n  <${scenario === 'inbox' ? 'Inbox' : scenario === 'late' ? 'LateAction' : 'ChangingButton'} />\n</ActivationGuardProvider>`
-  return `import { ActivationGuardProvider } from '@sparsh/vue'\n\n<ActivationGuardProvider\n  mode="${mode}"\n  :cooldown-ms="${cooldownMs}"\n  :policies="['age', 'continuity', 'semantics']"\n>\n  <${scenario === 'inbox' ? 'Inbox' : scenario === 'late' ? 'LateAction' : 'ChangingButton'} />\n</ActivationGuardProvider>`
+    return `import { ActivationGuardProvider } from '@sparshlabs/react'\n\n<ActivationGuardProvider\n  mode="${mode}"\n  cooldownMs={${cooldownMs}}\n  policies={['age', 'continuity', 'semantics']}\n>\n  <${scenario === 'inbox' ? 'Inbox' : scenario === 'late' ? 'LateAction' : 'ChangingButton'} />\n</ActivationGuardProvider>`
+  return `import { ActivationGuardProvider } from '@sparshlabs/vue'\n\n<ActivationGuardProvider\n  mode="${mode}"\n  :cooldown-ms="${cooldownMs}"\n  :policies="['age', 'continuity', 'semantics']"\n>\n  <${scenario === 'inbox' ? 'Inbox' : scenario === 'late' ? 'LateAction' : 'ChangingButton'} />\n</ActivationGuardProvider>`
 }
 
 export function Playground() {
   const [framework, setFramework] = useState<Framework>('react')
   const [scenario, setScenario] = useState<Scenario>('inbox')
   const [mode, setMode] = useState<Mode>('enforce')
-  const [cooldownMs, setCooldownMs] = useState(500)
+  const [cooldownMs, setCooldownMs] = useState(800)
   const [lastDecision, setLastDecision] = useState<Decision | null>(null)
   const [hydrated, setHydrated] = useState(false)
   const onDecision = useCallback((d: Decision) => setLastDecision(d), [])

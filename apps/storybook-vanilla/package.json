@@ -2,7 +2,7 @@
   "name": "storybook-vanilla",
   "private": true,
   "version": "0.0.0",
-  "description": "Dedicated visual test gallery for @sparsh/core + @sparsh/dom: one deterministic, correctly-labeled repro per canonical case (problem.md). Supersedes the throwaway scratch-vanilla-demo. Future React/Vue demos build on the same scenario catalog.",
+  "description": "Dedicated visual test gallery for @sparshlabs/core + @sparshlabs/dom: one deterministic, correctly-labeled repro per canonical case (problem.md). Supersedes the throwaway scratch-vanilla-demo. Future React/Vue demos build on the same scenario catalog.",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "@sparsh/dom": "workspace:*"
+    "@sparshlabs/dom": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.7.2",

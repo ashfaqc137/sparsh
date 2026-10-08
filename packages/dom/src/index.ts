@@ -1,18 +1,18 @@
 /**
- * `@sparsh/dom` — the browser host implementing `@sparsh/core`'s `Host` port, plus the
+ * `@sparshlabs/dom` — the browser host implementing `@sparshlabs/core`'s `Host` port, plus the
  * framework-free `createGuard` entry point (T17). This is the reference binding every framework
- * adapter (`@sparsh/react`, future bindings) mirrors.
+ * adapter (`@sparshlabs/react`, future bindings) mirrors.
  */
 
-import type { Guard, GuardOptions, TargetHandle } from '@sparsh/core'
-import { createGuard as createCoreGuard } from '@sparsh/core'
+import type { Guard, GuardOptions, TargetHandle } from '@sparshlabs/core'
+import { createGuard as createCoreGuard } from '@sparshlabs/core'
 import { DEFAULT_BLOCK_ANIMATION_MS, playDefaultBlockAnimation } from './block-animation.js'
 import { type DomHost, type DomHostOptions, createDomHost } from './host.js'
 
 export { createDomHost, playDefaultBlockAnimation, DEFAULT_BLOCK_ANIMATION_MS }
 export type { DomHost, DomHostOptions }
 
-// Re-exported for convenience so vanilla consumers don't need a direct `@sparsh/core` dependency.
+// Re-exported for convenience so vanilla consumers don't need a direct `@sparshlabs/core` dependency.
 export type {
   ActivationEvent,
   Decision,
@@ -26,7 +26,7 @@ export type {
   Rect,
   TargetHandle,
   TargetSnapshot,
-} from '@sparsh/core'
+} from '@sparshlabs/core'
 
 export type DomGuardOptions = GuardOptions & DomHostOptions
 

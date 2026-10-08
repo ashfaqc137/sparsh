@@ -5,8 +5,8 @@
 > then fix this file.
 
 ## Current focus
-`@sparsh/react` (T18–T19) is implemented, tested (vitest + jsdom, 7 tests), builds clean, and typechecks.
-`<ActivationGuardProvider>` installs one `createGuard` (from `@sparsh/dom`) per mount via a `display:
+`@sparshlabs/react` (T18–T19) is implemented, tested (vitest + jsdom, 7 tests), builds clean, and typechecks.
+`<ActivationGuardProvider>` installs one `createGuard` (from `@sparshlabs/dom`) per mount via a `display:
 contents` wrapper or an explicit `root` prop, in an effect, with SSR-safe rendering (no DOM access during
 render) and a "latest ref" pattern so re-renders with stable options never recreate the guard — only a
 change to the serialized option set does. `useActivationGuard()` returns `{ ref, isGuarded }`, reactive via
@@ -26,9 +26,8 @@ by the upcoming React demo.
 ## Last decision
 See `01-architecture/decisions.md`. Most recent settled items: D12 (Age applies to all input kinds),
 D17 (native deferred), D18 (pnpm+turbo+changesets monorepo — task-runner portion superseded by D20),
-D20 (turbo removed; plain `pnpm -r` + `tsc -b` instead). Name is **sparsh** (D1). `@sparsh` npm scope
-was assumed available and used as-is (not independently re-verified against the npm registry during T01;
-revisit before first publish in T22).
+D20 (turbo removed; plain `pnpm -r` + `tsc -b` instead). Name is **sparsh** (D1). The proposed
+`@sparsh` namespace was unavailable; the project owner created the `sparshlabs` npm organization (D22).
 
 Engine-contract extensions made during T04–T11 (documented in `core-contract.md` in the same change):
 `Host.onIntentClear` + `IntentClearSignal`, `GuardOptions.refractoryMs` (default 300ms) +
@@ -37,8 +36,8 @@ Engine-contract extensions made during T04–T11 (documented in `core-contract.m
 implementable without hidden module state; see `policy.ts` JSDoc.
 
 ## Open blockers / to-confirm
-- [ ] `@sparsh` npm scope availability — **not yet verified against the live npm registry**; fall back to
-      unscoped `sparsh` / `sparsh-dom` / `sparsh-react` and record an ADR if taken. Do this before T22.
+- [x] `@sparshlabs` npm organization created by the project owner for public package publishing (D22).
+      Confirm account login and publish permission before the first release.
 - [ ] `display: contents` provider-root behavior under flex/grid — verify in the demo (**T18/T20**).
 - [x] `refractoryMs` value + whether DoubleFire reduces to a thin refractory guard — decided during T11:
       default 300ms, dedicated (smaller than `cooldownMs`). DoubleFire kept as a small, separate policy
@@ -82,13 +81,25 @@ Phases: A Foundation · B Core engine · C Policies · D DOM host · E React · 
 | T19 | React `useActivationGuard()` + wrapper | E | done |
 | T20 | Demo app (repro per case + suspect log) | F | not-started |
 | T21 | Playwright e2e (mouse+touch+keyboard) | F | not-started |
-| T22 | Docs + changesets + first publish | G | not-started |
+| T22 | Docs + changesets + first publish | G | in-progress |
 
 ## Status legend
 `not-started` · `in-progress` · `done` · `blocked`
 
 ## Changelog (append newest on top)
-- **T18 + T19 done: `@sparsh/react` implemented.** `src/ActivationGuardProvider.tsx` (context +
+- **T22 release prep: `@sparshlabs/*`.** All four packages are `0.1.0` with independent Changesets
+  versioning; private apps are excluded from version bumps. Updated package names, workspace deps,
+  code imports, examples, docs, lockfile, and D22. `pnpm build`, `tsc -b`, all package unit tests
+  (118 tests), the configured Playwright suite (27 cases), changed-file Biome checks, four `pnpm pack`
+  inspections, and four `pnpm publish --dry-run` checks passed. Tarballs contain the right exports and
+  rewrite internal `workspace:*` dependencies to `0.1.0`. Repo-wide Biome still reports two unrelated
+  existing issues in `apps/website/src/styles.css` and `apps/website/src/pages/playground.astro`.
+  npm login is active for `ashfaqc137`, but npm rejected all four publish requests with E403 because
+  this account/session lacks publish 2FA or a granular access token configured to bypass it. No
+  package was published. Enable publish 2FA or configure the appropriate token before retrying;
+  registry install verification, T21's broader touch/perf acceptance, and final fresh-app install
+  also remain.
+- **T18 + T19 done: `@sparshlabs/react` implemented.** `src/ActivationGuardProvider.tsx` (context +
   effect-mounted `createGuard`, `display: contents` wrapper or explicit `root` prop, "latest ref" pattern
   so stable re-renders don't recreate the guard, SSR-safe), `src/useActivationGuard.ts` (`{ ref, isGuarded
   }`, event-driven via decision pub/sub, no-ops without a provider), `src/ActivationGuard.tsx` (subtree
@@ -100,7 +111,7 @@ Phases: A Foundation · B Core engine · C Policies · D DOM host · E React · 
   core/dom). Test suite (7 tests, vitest + jsdom) runs against React 18 (`test`) and React 19
   (`test:react19`, isolated `npm install` into gitignored `.react19/`, see `scripts/setup-react19.mjs`
   for why pnpm-aliased devDependencies were tried and abandoned). Repo-wide typecheck/lint/build/test all
-  clean. No `@sparsh/core`/`@sparsh/dom` changes were needed — T17's `createGuard`/`isGuarded`/`destroy`
+  clean. No `@sparshlabs/core`/`@sparshlabs/dom` changes were needed — T17's `createGuard`/`isGuarded`/`destroy`
   API was already sufficient.
 - **Added `LIMITATIONS.md` (repo root).** A user-facing writeup of what sparsh does and does not detect
   today, prompted by an audit of CSS-driven UI changes. Confirms Continuity is transition-mechanism-
@@ -113,7 +124,7 @@ Phases: A Foundation · B Core engine · C Policies · D DOM host · E React · 
   `age.md` now cross-links to the new doc for the fuller picture (and the previously-undocumented
   `visibility`/`filter`/`clip-path` variants of the same root cause). No code changes — docs only; no
   fix scoped yet for these gaps.
-- **T12–T17 complete: `@sparsh/dom` (the browser host).** Implemented `resolve.ts` (T13: interactive
+- **T12–T17 complete: `@sparshlabs/dom` (the browser host).** Implemented `resolve.ts` (T13: interactive
   target resolution incl. bare-`Text`-node fallback, `data-sparsh-off`/`data-guard-key` helpers),
   `age.ts` (T15: `MutationObserver` + `IntersectionObserver`-based perceivability tracking with a
   graceful no-`IntersectionObserver` fallback, `document.visibilitychange` re-arm), `snapshot.ts`
@@ -132,7 +143,7 @@ Phases: A Foundation · B Core engine · C Policies · D DOM host · E React · 
   `pendingClick` mechanism in `host.ts` (armed before emitting, so a synchronous `block()` call
   during the engine's `onActivationEvent` callback can mark it; the real `preventDefault`/
   `stopImmediatePropagation` happens in `onClick`). Re-verified end-to-end against the actual built
-  `@sparsh/dom` package with a real Chromium mouse press+release: blocked activations now correctly
+  `@sparshlabs/dom` package with a real Chromium mouse press+release: blocked activations now correctly
   suppress the real click handler (`clicks: 0`); allowed activations still pass through untouched
   (`clicks: 1`). See the `pendingClick` doc comment in `host.ts`, the updated Notes section in
   `03-implementation/tasks/16-dom-host-block-and-cleanup.md`, and the new regression tests in
@@ -166,7 +177,7 @@ Phases: A Foundation · B Core engine · C Policies · D DOM host · E React · 
   of every DOM id referenced in `src/main.ts` against `index.html` (static + dynamically-created),
   but not yet via actual pointer interaction in a live browser. Re-verify interactively (or via
   Playwright on an unconstrained machine) before relying on this as the T21 fixture.
-- **Turbo removed (D20).** With only `@sparsh/core` implemented (dom/react still placeholders), turbo's
+- **Turbo removed (D20).** With only `@sparshlabs/core` implemented (dom/react still placeholders), turbo's
   caching/orchestration wasn't paying for itself. Deleted `turbo.json`, dropped `turbo` from root
   devDependencies, root scripts now call `pnpm -r run build`/`pnpm -r run test`/`tsc -b tsconfig.json`
   directly (`pnpm -r` already runs in topological order; `tsc -b` already orders typecheck via project
@@ -176,12 +187,12 @@ Phases: A Foundation · B Core engine · C Policies · D DOM host · E React · 
   longer references turbo), full build/typecheck/lint/test suite verified green across all packages.
 - **T01–T11 complete.** Monorepo (pnpm + turbo + changesets + tsup + vitest + biome) scaffolded;
   `packages/{core,dom,react}` created (dom/react are placeholders — real work starts at T12/T18).
-  `@sparsh/core` fully implemented: types/ports (`types.ts`, `host.ts`, `policy.ts`, `decision.ts`),
+  `@sparshlabs/core` fully implemented: types/ports (`types.ts`, `host.ts`, `policy.ts`, `decision.ts`),
   engine (`engine.ts` — intent lifecycle, mode resolution, fail-open, `onDecision`, `isGuarded`), and all
   four policies (`policies/{continuity,semantics,age,double-fire}.ts`). 37 vitest unit tests cover the
   full decision table from `04-verification/testing-strategy.md` (rows 1, 3–24) against a fake host
   (`test/fake-host.ts`). `pnpm exec tsc -b`, `pnpm run typecheck:core-fence`, `pnpm exec biome check .`,
-  `pnpm --filter @sparsh/core exec vitest run`, and `pnpm --filter @sparsh/core build` all pass clean.
+  `pnpm --filter @sparshlabs/core exec vitest run`, and `pnpm --filter @sparshlabs/core build` all pass clean.
   Core builds ESM+CJS+d.ts via tsup (a separate non-composite `tsconfig.build.json` works around a
   tsup/rollup-plugin-dts incompatibility with `"composite": true`). Engine-contract extensions
   documented above and mirrored into `core-contract.md` in the same change.

@@ -7,7 +7,7 @@ references are separate pages so future bindings can add focused API documentati
 
 Built with **Astro** + `@astrojs/react`: the informational pages are static Astro, and the interactive
 demo (`src/components/HeroDemo.tsx`) and playground (`src/components/Playground.tsx`) are hydrated
-React islands (`client:load`). The playground mounts its Vue example with the real `@sparsh/vue`
+React islands (`client:load`). The playground mounts its Vue example with the real `@sparshlabs/vue`
 binding. Both use workspace packages rather than mocks. Shared navigation and footer live in
 `src/layouts/BaseLayout.astro`.
 
@@ -17,8 +17,8 @@ binding. Both use workspace packages rather than mocks. Shared navigation and fo
 - `pnpm --filter website build` — `astro check` + production build
 - `pnpm --filter website preview` — preview the production build
 - `pnpm --filter website typecheck` — `astro check` only
-- `pnpm build:website` (run from the repo root) — builds `@sparsh/core`, `@sparsh/dom`,
-  `@sparsh/react`, and `@sparsh/vue` first (via `pnpm --filter=website... run build`, which
+- `pnpm build:website` (run from the repo root) — builds `@sparshlabs/core`, `@sparshlabs/dom`,
+  `@sparshlabs/react`, and `@sparshlabs/vue` first (via `pnpm --filter=website... run build`, which
   resolves the whole workspace dependency graph in topological order), then this site. Use this
   one for a clean checkout / CI / hosting provider build step — `apps/website`'s own `build` script
   assumes the workspace packages are already built, since this site imports their published

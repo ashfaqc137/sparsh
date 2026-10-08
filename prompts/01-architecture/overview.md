@@ -4,7 +4,7 @@
 
 ```
                       ┌──────────────────────────────────────────────┐
-                      │                @sparsh/core                   │
+                      │                @sparshlabs/core                   │
                       │  (pure, ZERO DOM, framework-agnostic)         │
                       │                                              │
    ActivationEvent ──▶│  Engine.decide(event)                        │
@@ -18,7 +18,7 @@
                       └───────────────▲──────────────────────────────┘
                                       │ implements ports
               ┌───────────────────────┴───────────────────────┐
-              │                  @sparsh/dom                   │
+              │                  @sparshlabs/dom                   │
               │  capture-phase listener, target resolution,    │
               │  rect/fingerprint reads, IO/MO age tracking,   │
               │  block() = preventDefault + stopPropagation    │
@@ -26,7 +26,7 @@
               └───────────────────────▲───────────────────────┘
                                       │ uses
               ┌───────────────────────┴───────────────────────┐
-              │                 @sparsh/react                  │
+              │                 @sparshlabs/react                  │
               │  <ActivationGuardProvider>  useActivationGuard │
               └────────────────────────────────────────────────┘
 ```
@@ -47,11 +47,11 @@
 ## Why core-first / framework-agnostic
 
 The goal is a **UX philosophy adopted across frameworks**, React first (it also gives us the live demo).
-So `@sparsh/core`'s public API *is the product* — it's the contract we're asking Vue/Svelte/Angular
+So `@sparshlabs/core`'s public API *is the product* — it's the contract we're asking Vue/Svelte/Angular
 authors to build against. It gets designed as a stable contract, versioned carefully, and kept DOM-free so
 its correctness is provable without a browser.
 
-## Why `@sparsh/dom` is a real package (not premature)
+## Why `@sparshlabs/dom` is a real package (not premature)
 
 Every *web* framework binding shares the same browser host. So `dom` has multiple real consumers
 (`react`, and future `vue`/`svelte`), plus it doubles as the **vanilla / no-framework entry point**

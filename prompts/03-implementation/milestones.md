@@ -43,7 +43,7 @@ T22
 |---|---|---|---|
 | T01 | Monorepo skeleton (pnpm workspaces, base tsconfig) | A | — |
 | T02 | Build/test tooling (turbo, changesets, tsup, vitest, playwright, biome) | A | T01 |
-| T03 | DOM-free lint fence for `@sparsh/core` | A | T02 |
+| T03 | DOM-free lint fence for `@sparshlabs/core` | A | T02 |
 | T04 | Core types & ports (`core-contract.md` → `.ts`) | B | T03 |
 | T05 | Engine skeleton (`createGuard`, per-pointerId state, pipeline) | B | T04 |
 | T06 | Mode/decision plumbing + `onDecision` + fail-open wrapping | B | T05 |

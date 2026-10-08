@@ -1,7 +1,7 @@
 /**
- * `@sparsh/vue` — the Vue 3 (Composition API) binding for sparsh: `ActivationGuardProvider`,
- * `useActivationGuard()`, `ActivationGuard`. Thin layer over `@sparsh/dom`'s `createGuard`,
- * mirroring `@sparsh/react`'s surface.
+ * `@sparshlabs/vue` — the Vue 3 (Composition API) binding for sparsh: `ActivationGuardProvider`,
+ * `useActivationGuard()`, `ActivationGuard`. Thin layer over `@sparshlabs/dom`'s `createGuard`,
+ * mirroring `@sparshlabs/react`'s surface.
  */
 
 export {
@@ -13,7 +13,7 @@ export {
 export { useActivationGuard, type UseActivationGuardResult } from './useActivationGuard.js'
 export { ActivationGuard, type ActivationGuardProps } from './ActivationGuard.js'
 
-// Re-exported for convenience so consumers don't need a direct `@sparsh/core` dependency.
+// Re-exported for convenience so consumers don't need a direct `@sparshlabs/core` dependency.
 export type {
   ActivationEvent,
   Decision,
@@ -27,5 +27,5 @@ export type {
   Rect,
   TargetHandle,
   TargetSnapshot,
-} from '@sparsh/core'
-export type { DomGuardOptions, DomHost, DomHostOptions } from '@sparsh/dom'
+} from '@sparshlabs/core'
+export type { DomGuardOptions, DomHost, DomHostOptions } from '@sparshlabs/dom'

@@ -2,7 +2,7 @@
 
 > sparsh blocks activations on **untrustworthy** UI — a target that was not *perceivable long enough* to
 > form intent, or whose *identity/meaning* changed between intent and activation. This document is the
-> honest list of what today's implementation (`@sparsh/core` + `@sparsh/dom`) does and does **not** catch.
+> honest list of what today's implementation (`@sparshlabs/core` + `@sparshlabs/dom`) does and does **not** catch.
 > Nothing here is a bug — these are either explicit design trade-offs (fail-open, perf budget) or gaps not
 > yet scoped as work. If this file and the code ever disagree, the code wins; file an issue.
 
@@ -47,7 +47,7 @@ the mount. This is by design (see `age.md`, D13).
 
 ### ❌ Not covered — purely visual/paint reveals of an already-present, already-laid-out element
 
-The root cause: `@sparsh/dom`'s age tracker (`packages/dom/src/age.ts`) stamps "became perceivable" from
+The root cause: `@sparshlabs/dom`'s age tracker (`packages/dom/src/age.ts`) stamps "became perceivable" from
 exactly two signals — `MutationObserver` (node **inserted**) and `IntersectionObserver` (geometric
 **intersection** with the viewport/root changes). `IntersectionObserver` is a *layout-geometry* API — it
 does not know about paint-only CSS properties or stacking/z-order. So:
@@ -101,7 +101,7 @@ For completeness — these are pre-existing, already-documented gaps independent
 - **`text` fingerprint comparison is opt-in (`semanticsTextCheck`, D14).** Off by default to avoid false
   positives on controls with live text (counters, relative timestamps like "2m ago").
 - **Native platforms (Android/iOS/React Native) are out of scope for v1 (D17).** The host-port design
-  keeps this possible later without touching `@sparsh/core`.
+  keeps this possible later without touching `@sparshlabs/core`.
 - **Keyboard/virtual activation only goes through Age + Semantics, never Continuity (D11).** This is
   required for accessibility (keyboard/AT activation has no `pointerdown`), not a gap.
 
@@ -124,6 +124,6 @@ For completeness — these are pre-existing, already-documented gaps independent
 
 ---
 
-*Last updated alongside the `@sparsh/core` + `@sparsh/dom` implementation (T01–T17). If you implement a fix
+*Last updated alongside the `@sparshlabs/core` + `@sparshlabs/dom` implementation (T01–T17). If you implement a fix
 for any of the ❌ rows above, update this table and the corresponding policy doc in `prompts/02-policies/`
 in the same change.*

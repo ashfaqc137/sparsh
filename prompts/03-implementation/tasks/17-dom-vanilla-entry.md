@@ -24,7 +24,7 @@ the basis every framework binding mirrors.
 - Vanilla usage in a jsdom/Playwright page: `const g = createGuard(document.body, { mode:'report',
   onDecision })` — `onDecision` fires on interactions; `g.destroy()` cleans everything.
 - With a policy in `enforce`, an untrusted synthetic interaction is blocked; in `report`, it isn't.
-- No React dependency anywhere in `@sparsh/dom`.
+- No React dependency anywhere in `@sparshlabs/dom`.
 
 ## References
 - `../../01-architecture/packages.md` (dom = host + vanilla entry)

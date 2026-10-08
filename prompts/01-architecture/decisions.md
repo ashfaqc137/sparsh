@@ -11,20 +11,20 @@ Format: `ID · Decision · Status · Rationale · Consequences`.
 **Rationale:** "sparsh" (touch, Hindi/Sanskrit) frames the project as *sensory / trustworthy touch*, not a
 defensive "guard". Better fit for a UX-philosophy positioning. Supersedes the earlier working name
 `activation-guard`.
-**Consequences:** npm scope `@sparsh/*` (`core`, `dom`, `react`). Verify scope availability at scaffolding;
-fallback to unscoped `sparsh` / `sparsh-dom` / `sparsh-react`. Repo name `sparsh`.
+**Consequences:** repo name is `sparsh`. The original proposed npm scope was `@sparsh`; D22 records
+the final package namespace.
 
 ### D2 · Framework-agnostic core is the product · Accepted
 **Rationale:** the goal is a UX philosophy adopted across many frameworks (React first). The core API is
 what other framework authors build against.
-**Consequences:** `@sparsh/core` is DOM-free and versioned as a stable contract. Correctness provable
+**Consequences:** `@sparshlabs/core` is DOM-free and versioned as a stable contract. Correctness provable
 without a browser.
 
-### D3 · Three packages: core / dom / react · Accepted
+### D3 · Framework packages: core / dom / react / vue · Accepted
 **Rationale:** `core` = contract; `dom` = shared browser host + vanilla entry (real multiple consumers);
 `react` = first binding + demo.
-**Consequences:** Publish all three from day one. `dom` is justified now; a framework-adapter package is
-**not** (see D4).
+**Consequences:** `core`, `dom`, and `react` were the first planned packages; Vue was added later.
+`dom` is justified now; a framework-adapter package is **not** (see D4).
 
 ### D4 · No shared "framework adapter" package · Accepted
 **Rationale:** a layer between core and each framework would have one provider and one consumer today, and
@@ -144,3 +144,10 @@ they need to observe decisions without blocking.
 available through explicit configuration. This supersedes D6; `onDecision` continues to fire in both
 modes. Age and keyboard activations can now be blocked by default, so applications that need to tune
 Age's cooldown should configure that policy as `report` explicitly.
+
+### D22 · npm scope is `@sparshlabs` · Accepted
+**Rationale:** the `sparsh` npm organization and user namespace were unavailable; the project owner
+created the `sparshlabs` organization for publishing.
+**Consequences:** the four public packages are `@sparshlabs/core`, `@sparshlabs/dom`,
+`@sparshlabs/react`, and `@sparshlabs/vue`. Internal workspace dependencies and consumer examples use
+these names. Public API behavior is unchanged.

@@ -1,19 +1,19 @@
 /**
  * `ActivationGuardProvider` — the primary Vue 3 (Composition API) API. Installs exactly one
- * guard, via `@sparsh/dom`'s `createGuard`, on a root subtree, in a lifecycle hook, with clean
+ * guard, via `@sparshlabs/dom`'s `createGuard`, on a root subtree, in a lifecycle hook, with clean
  * teardown. Global-by-default is the point: you can't predict which control renders late.
  *
- * Mirrors `@sparsh/react`'s `ActivationGuardProvider` 1:1. Vue's `provide`/`inject` is the
+ * Mirrors `@sparshlabs/react`'s `ActivationGuardProvider` 1:1. Vue's `provide`/`inject` is the
  * structural equivalent of React context — `provide()` is called once in `setup()` for the whole
  * component subtree, so (unlike React) no extra wrapper component is needed just to host the
  * context value.
  *
  * `GuardKey` is co-located here (not a separate `context.ts`) to keep `packages/vue/src` flat,
- * mirroring `@sparsh/core`/`@sparsh/dom`/`@sparsh/react`'s flat-`src` convention.
+ * mirroring `@sparshlabs/core`/`@sparshlabs/dom`/`@sparshlabs/react`'s flat-`src` convention.
  */
 
-import type { Decision, TargetHandle } from '@sparsh/core'
-import { type DomGuardOptions, type Guard, createGuard } from '@sparsh/dom'
+import type { Decision, TargetHandle } from '@sparshlabs/core'
+import { type DomGuardOptions, type Guard, createGuard } from '@sparshlabs/dom'
 import {
   type InjectionKey,
   type SetupContext,
@@ -81,7 +81,7 @@ const PROVIDER_PROP_NAMES = [
  * Serializes the option set the guard cares about so the watcher only recreates `createGuard` on
  * a meaningful change, not on every prop update (perf + avoids losing in-flight intent state).
  * `mode` and `policies` can be objects/arrays, so they're included via `JSON.stringify` rather
- * than reference equality — correctness over micro-perf, mirrors `@sparsh/react`'s
+ * than reference equality — correctness over micro-perf, mirrors `@sparshlabs/react`'s
  * `serializeOptions`.
  */
 function serializeOptions(opts: DomGuardOptions): string {

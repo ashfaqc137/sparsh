@@ -1,7 +1,7 @@
 /**
- * The Host port — implemented by `@sparsh/dom`, a future RN host, and test fakes.
+ * The Host port — implemented by `@sparshlabs/dom`, a future RN host, and test fakes.
  *
- * This is the one seam through which the engine ever touches the outside world. `@sparsh/core`
+ * This is the one seam through which the engine ever touches the outside world. `@sparshlabs/core`
  * never imports the DOM directly; all platform access is behind this interface (D5).
  */
 

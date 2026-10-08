@@ -15,7 +15,7 @@ unit-test, and (eventually) publish through a single, cached pipeline.
 ## Deliverables
 - `turbo.json` with `build`, `test`, `lint`, `typecheck` pipelines honoring the package graph
   (`dependsOn: ["^build"]`).
-- `.changeset/` initialized; changesets config for public access on `@sparsh/*`.
+- `.changeset/` initialized; changesets config for public access on `@sparshlabs/*`.
 - `tsup.config.ts` per package: ESM + CJS + `.d.ts`, `sideEffects:false`, external peer deps.
 - `vitest` config: `core` runs in Node env; `dom` runs in jsdom env.
 - Playwright installed with a minimal config (browsers: chromium at least; webkit for touch realism).

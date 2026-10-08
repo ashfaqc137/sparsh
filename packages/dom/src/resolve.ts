@@ -8,7 +8,7 @@
  * detached/replaced (e.g. by a framework re-render).
  */
 
-import type { TargetHandle } from '@sparsh/core'
+import type { TargetHandle } from '@sparshlabs/core'
 
 /**
  * The interactive-element selector set. Exported so tests (and future host-adjacent code) share
@@ -38,7 +38,7 @@ export function toHandle(el: Element): TargetHandle {
   return el as unknown as TargetHandle
 }
 
-/** Unwrap a `TargetHandle` back to its `Element`. Only ever called from within `@sparsh/dom`. */
+/** Unwrap a `TargetHandle` back to its `Element`. Only ever called from within `@sparshlabs/dom`. */
 export function fromHandle(handle: TargetHandle): Element {
   return handle as unknown as Element
 }

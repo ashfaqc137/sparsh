@@ -2,15 +2,15 @@
 
 /**
  * `<ActivationGuardProvider>` — the primary React API (T18). Installs exactly one guard, via
- * `@sparsh/dom`'s `createGuard`, on a root subtree, in an effect, with SSR safety and clean
+ * `@sparshlabs/dom`'s `createGuard`, on a root subtree, in an effect, with SSR safety and clean
  * teardown. Global-by-default is the point: you can't predict which control renders late.
  *
  * `GuardContext` is co-located here (not a separate `context.ts`) to keep `packages/react/src`
- * flat, mirroring `@sparsh/core`/`@sparsh/dom`'s flat-`src` convention.
+ * flat, mirroring `@sparshlabs/core`/`@sparshlabs/dom`'s flat-`src` convention.
  */
 
-import type { Decision, TargetHandle } from '@sparsh/core'
-import { type DomGuardOptions, type Guard, createGuard } from '@sparsh/dom'
+import type { Decision, TargetHandle } from '@sparshlabs/core'
+import { type DomGuardOptions, type Guard, createGuard } from '@sparshlabs/dom'
 import { type ReactNode, createContext, useEffect, useMemo, useRef } from 'react'
 
 export interface GuardContextValue {

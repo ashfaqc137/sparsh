@@ -1,4 +1,4 @@
-import type { ActivationEvent, IntentClearSignal } from '@sparsh/core'
+import type { ActivationEvent, IntentClearSignal } from '@sparshlabs/core'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createDomHost } from '../src/host.js'
 import { fireClick, fireKeyDown, firePointerEvent } from './dom-events.js'

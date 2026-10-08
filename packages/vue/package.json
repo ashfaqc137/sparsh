@@ -1,6 +1,6 @@
 {
-  "name": "@sparsh/vue",
-  "version": "0.0.0",
+  "name": "@sparshlabs/vue",
+  "version": "0.1.0",
   "description": "Vue 3 (Composition API) binding for sparsh: <ActivationGuardProvider>, useActivationGuard(), <ActivationGuard>.",
   "license": "MIT",
   "type": "module",
@@ -24,8 +24,8 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@sparsh/core": "workspace:*",
-    "@sparsh/dom": "workspace:*"
+    "@sparshlabs/core": "workspace:*",
+    "@sparshlabs/dom": "workspace:*"
   },
   "peerDependencies": {
     "vue": ">=3.3"

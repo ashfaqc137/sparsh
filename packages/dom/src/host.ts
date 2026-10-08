@@ -1,5 +1,5 @@
 /**
- * `createDomHost(root, opts)` — the `@sparsh/dom` implementation of `@sparsh/core`'s `Host` port.
+ * `createDomHost(root, opts)` — the `@sparshlabs/dom` implementation of `@sparshlabs/core`'s `Host` port.
  *
  * Combines T12 (capture-phase listener + classification), T13 (target resolution, via
  * `resolve.ts`), T14/T15 (snapshot + age, via `snapshot.ts`/`age.ts`), and T16 (block + pointer
@@ -14,7 +14,13 @@
  * via the `pendingClick` mechanism below; see its comment for the full explanation.
  */
 
-import type { ActivationEvent, Host, InputKind, IntentClearSignal, Unsubscribe } from '@sparsh/core'
+import type {
+  ActivationEvent,
+  Host,
+  InputKind,
+  IntentClearSignal,
+  Unsubscribe,
+} from '@sparshlabs/core'
 import { createAgeTracker } from './age.js'
 import { DEFAULT_BLOCK_ANIMATION_MS, playDefaultBlockAnimation } from './block-animation.js'
 import { fromHandle, resolveInteractiveElement, toHandle } from './resolve.js'

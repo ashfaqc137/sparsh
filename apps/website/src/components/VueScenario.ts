@@ -1,5 +1,5 @@
-import type { Decision, Mode } from '@sparsh/core'
-import { ActivationGuardProvider } from '@sparsh/vue'
+import type { Decision, Mode } from '@sparshlabs/core'
+import { ActivationGuardProvider } from '@sparshlabs/vue'
 import { type PropType, defineComponent, h, onBeforeUnmount, ref } from 'vue'
 import { formatDecisionReason } from './formatDecisionReason'
 

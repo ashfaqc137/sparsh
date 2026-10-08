@@ -1,7 +1,7 @@
 {
-  "name": "@sparsh/dom",
-  "version": "0.0.0",
-  "description": "Browser host implementing @sparsh/core's ports; the vanilla / no-framework entry point.",
+  "name": "@sparshlabs/dom",
+  "version": "0.1.0",
+  "description": "Browser host implementing @sparshlabs/core's ports; the vanilla / no-framework entry point.",
   "license": "MIT",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -24,7 +24,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@sparsh/core": "workspace:*"
+    "@sparshlabs/core": "workspace:*"
   },
   "devDependencies": {
     "jsdom": "^25.0.1",

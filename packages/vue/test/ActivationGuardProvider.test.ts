@@ -1,13 +1,13 @@
-import type { Decision } from '@sparsh/core'
-import * as domModule from '@sparsh/dom'
+import type { Decision } from '@sparshlabs/core'
+import * as domModule from '@sparshlabs/dom'
 import { mount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, nextTick, ref } from 'vue'
 import { ActivationGuardProvider } from '../src/ActivationGuardProvider.js'
 import { firePointerEvent } from './dom-events.js'
 
-vi.mock('@sparsh/dom', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@sparsh/dom')>()
+vi.mock('@sparshlabs/dom', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@sparshlabs/dom')>()
   return { ...actual, createGuard: vi.fn(actual.createGuard) }
 })
 

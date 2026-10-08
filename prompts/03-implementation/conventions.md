@@ -19,7 +19,7 @@ exists to prevent.
 - **One listener on the provider root**, never `document`. (D10)
 - **Pointer Events only.** No `mouse*`/`touch*` listeners. Track per `pointerId`; clear on
   `pointercancel`/`lostpointercapture`. (D8)
-- **`@sparsh/core` imports zero DOM.** Enforced by tsconfig (no `"DOM"` lib) + lint fence. (D8)
+- **`@sparshlabs/core` imports zero DOM.** Enforced by tsconfig (no `"DOM"` lib) + lint fence. (D8)
 
 ## Code style
 
@@ -61,7 +61,7 @@ exists to prevent.
 - `data-guard="off"` — opt out an element/subtree.
 - `data-guard-key={id}` — supply entity identity for list-reorder (case 5).
 - React: `<ActivationGuardProvider>`, `useActivationGuard()`, `<ActivationGuard>`.
-- Vanilla: `createGuard(root, opts)` from `@sparsh/dom`.
+- Vanilla: `createGuard(root, opts)` from `@sparshlabs/dom`.
 
 ## Docs discipline
 

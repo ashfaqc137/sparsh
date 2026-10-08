@@ -1,4 +1,4 @@
-# The core contract (`@sparsh/core`)
+# The core contract (`@sparshlabs/core`)
 
 This is **the stable public API** — the thing every framework binding and every host implements against.
 Treat changes here as semver-significant. Everything is DOM-free and browser-free.
@@ -39,7 +39,7 @@ export interface ActivationEvent {
   neverBlock?: boolean
 }
 
-/** Opaque to the engine. In @sparsh/dom this wraps an Element. */
+/** Opaque to the engine. In @sparshlabs/dom this wraps an Element. */
 export type TargetHandle = { readonly __brand: 'TargetHandle' }
 ```
 
@@ -75,7 +75,7 @@ export interface TargetSnapshot {
 }
 ```
 
-## The Host port (implemented by `@sparsh/dom`, future RN host, and test fakes)
+## The Host port (implemented by `@sparshlabs/dom`, future RN host, and test fakes)
 
 ```ts
 export type Unsubscribe = () => void

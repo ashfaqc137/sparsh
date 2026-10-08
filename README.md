@@ -21,12 +21,29 @@ Sparsh does not block Escape, focus changes, or scrolling.
 
 ## Packages
 
-- `@sparsh/core` contains the framework-independent decision engine.
-- `@sparsh/dom` connects the engine to browser events and also provides a vanilla DOM API.
-- `@sparsh/react` and `@sparsh/vue` provide framework bindings.
+- `@sparshlabs/core` contains the framework-independent decision engine.
+- `@sparshlabs/dom` connects the engine to browser events and also provides a vanilla DOM API.
+- `@sparshlabs/react` and `@sparshlabs/vue` provide framework bindings.
 
-These packages are currently developed in this repository and are not yet published to npm. See
-the [website documentation](apps/website/README.md) for the APIs, examples, and local development
+Install the integration for your app with npm:
+
+```sh
+# Vanilla DOM
+npm install @sparshlabs/dom
+
+# React (React is a peer dependency)
+npm install @sparshlabs/react react
+
+# Vue (Vue is a peer dependency)
+npm install @sparshlabs/vue vue
+```
+
+`@sparshlabs/dom` is also the browser integration used by the framework packages and is installed
+automatically as a dependency. For a custom host or framework binding, install the engine directly
+with `npm install @sparshlabs/core`. Each package is versioned independently; releases use SemVer,
+with `0.x` versions while the public APIs settle. Start in `report` mode to observe decisions, then
+switch to `enforce` after reviewing the behavior in your app. See the
+[website documentation](apps/website/README.md) for APIs, examples, and local development
 instructions.
 
 ## How it stays lightweight
@@ -63,10 +80,10 @@ Package ESM entry sizes from the same runs:
 
 | Package | Raw | Gzip |
 | --- | ---: | ---: |
-| `@sparsh/core` | 7,982 bytes | 2,308 bytes |
-| `@sparsh/dom` | 12,646 bytes | 3,243 bytes |
-| `@sparsh/react` | 3,752 bytes | 1,186 bytes |
-| `@sparsh/vue` | 3,840 bytes | 1,308 bytes |
+| `@sparshlabs/core` | 7,982 bytes | 2,308 bytes |
+| `@sparshlabs/dom` | 12,646 bytes | 3,243 bytes |
+| `@sparshlabs/react` | 3,752 bytes | 1,186 bytes |
+| `@sparshlabs/vue` | 3,840 bytes | 1,308 bytes |
 
 These are individual package entry files before app bundling or tree-shaking, not the total
 download size for a consumer. The project’s performance target is less than 1 ms of added work per

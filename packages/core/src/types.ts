@@ -31,7 +31,7 @@ export type InputKind = 'mouse' | 'touch' | 'pen' | 'virtual' | 'key'
 export type Phase = 'intent' | 'activation'
 
 /**
- * Opaque handle to a resolved interactive target. In `@sparsh/dom` this wraps an `Element`.
+ * Opaque handle to a resolved interactive target. In `@sparshlabs/dom` this wraps an `Element`.
  * The engine never inspects it — it is only ever passed back to the `Host` port.
  */
 export type TargetHandle = { readonly __brand: 'TargetHandle' }

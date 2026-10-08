@@ -1,4 +1,4 @@
-import { ActivationGuardProvider, useActivationGuard } from '@sparsh/react'
+import { ActivationGuardProvider, useActivationGuard } from '@sparshlabs/react'
 import { useEffect, useRef, useState } from 'react'
 
 type Message = {

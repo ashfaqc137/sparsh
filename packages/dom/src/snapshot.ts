@@ -6,7 +6,7 @@
  * call, no interleaved reads/writes. `ageMs` is supplied by the caller (from `age.ts`, T15).
  */
 
-import type { Fingerprint, Rect, TargetHandle, TargetSnapshot } from '@sparsh/core'
+import type { Fingerprint, Rect, TargetHandle, TargetSnapshot } from '@sparshlabs/core'
 import { fromHandle, guardKeyOf, isGuardOff } from './resolve.js'
 
 function isDisabled(el: Element): boolean {

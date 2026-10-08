@@ -4,7 +4,7 @@ Depends on: T06 (engine consumes the host)
 Package: dom
 
 ## Goal
-Begin `@sparsh/dom`'s `Host` implementation: a single capture-phase listener on the root that intercepts
+Begin `@sparshlabs/dom`'s `Host` implementation: a single capture-phase listener on the root that intercepts
 Pointer Events + keydown, classifies `InputKind`, filters out esc/focus/scroll, and emits normalized
 `ActivationEvent`s to the engine. This is where the a11y/touch/pointer correctness actually lives.
 

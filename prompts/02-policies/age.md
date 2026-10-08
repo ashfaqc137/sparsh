@@ -17,7 +17,7 @@ reason (when blocked): `target perceivable for ${ageMs}ms < ${cooldownMs}ms cool
 ```
 
 That's the entire engine-side logic. **All the difficulty is in how the host computes `ageMs`** — and
-that lives in `@sparsh/dom`, behind the port, so it can be refined without touching core.
+that lives in `@sparshlabs/dom`, behind the port, so it can be refined without touching core.
 
 ## `ageMs` must measure PERCEIVABILITY, not DOM insertion (D13)
 

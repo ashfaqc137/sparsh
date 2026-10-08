@@ -2,7 +2,7 @@
  * `useActivationGuard()` — the per-element escape hatch and legibility surface: returns a `ref`
  * callback to attach to the element the consumer wants to observe, and `isGuarded` (a reactive
  * `Ref<boolean>`) reflecting whether that element's most recent activation was blocked. Mirrors
- * `@sparsh/react`'s `useActivationGuard` 1:1 — a composable, not a mixin/directive, for the same
+ * `@sparshlabs/react`'s `useActivationGuard` 1:1 — a composable, not a mixin/directive, for the same
  * reason React uses a hook not a HOC (D16): the guard needs a real DOM node, and the ref must be
  * handed to it directly.
  *
@@ -11,7 +11,7 @@
  * intentionally deferred — see `prompts/01-architecture/packages.md` for the decision.
  */
 
-import type { TargetHandle } from '@sparsh/core'
+import type { TargetHandle } from '@sparshlabs/core'
 import { type Ref, inject, onBeforeUnmount, onMounted, ref } from 'vue'
 import { GuardKey, defaultGuardContextValue } from './ActivationGuardProvider.js'
 

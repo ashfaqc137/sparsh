@@ -17,15 +17,15 @@ a working dependency graph. This is pure scaffolding — no sparsh logic yet.
 - Root `package.json` (private, `"packageManager": "pnpm@..."`, workspace scripts placeholders).
 - `tsconfig.base.json` with strict options (`strict`, `noUncheckedIndexedAccess`, `moduleResolution:
   "bundler"`, `target: ES2022`).
-- `packages/core/package.json` → name `@sparsh/core` (verify scope availability now; see Notes).
-- `packages/dom/package.json` → `@sparsh/dom`, dependency `@sparsh/core: "workspace:*"`.
-- `packages/react/package.json` → `@sparsh/react`, deps `@sparsh/core` + `@sparsh/dom` (workspace),
+- `packages/core/package.json` → name `@sparshlabs/core` (verify scope availability now; see Notes).
+- `packages/dom/package.json` → `@sparshlabs/dom`, dependency `@sparshlabs/core: "workspace:*"`.
+- `packages/react/package.json` → `@sparshlabs/react`, deps `@sparshlabs/core` + `@sparshlabs/dom` (workspace),
   peerDep `react`.
 - Each package: `tsconfig.json` extending base; `src/index.ts` exporting nothing yet (placeholder).
 - Project references wired (`tsconfig.base` → per-package references).
 
 ## Acceptance
-- `pnpm install` succeeds; workspace links resolve (`@sparsh/dom` sees `@sparsh/core`).
+- `pnpm install` succeeds; workspace links resolve (`@sparshlabs/dom` sees `@sparshlabs/core`).
 - `pnpm -r exec tsc --noEmit` (or `tsc -b`) passes on empty packages.
 - Dependency direction is correct: `react → dom → core`, no cycles.
 
