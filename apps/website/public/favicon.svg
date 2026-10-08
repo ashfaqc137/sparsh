@@ -1,5 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <rect width="64" height="64" rx="16" fill="#171814"/>
-  <path d="M17 25h8l7 17 7-17h8L36 49h-8L17 25Z" fill="#d3f36b"/>
-  <circle cx="48" cy="17" r="4" fill="#d3f36b"/>
+  <g transform="rotate(-7 32 32)">
+    <rect x="8" y="8" width="48" height="48" rx="16" fill="#d3f36b"/>
+    <text x="32" y="33" fill="#202218" font-family="Manrope, Arial, sans-serif" font-size="37" font-weight="800" text-anchor="middle" dominant-baseline="central">s</text>
+  </g>
 </svg>
