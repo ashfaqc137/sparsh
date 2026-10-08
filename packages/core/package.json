@@ -2,6 +2,7 @@
   "name": "@sparsh/core",
   "version": "0.0.0",
   "description": "sparsh decision engine + policy pipeline + host port interfaces. Zero DOM.",
+  "license": "MIT",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",

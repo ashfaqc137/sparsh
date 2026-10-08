@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "description": "Monorepo for @sparsh/* — a framework-agnostic UX-safety primitive against accidental UI activation.",
+  "license": "MIT",
   "packageManager": "pnpm@9.15.0",
   "engines": {
     "node": ">=18"

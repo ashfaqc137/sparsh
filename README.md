@@ -72,3 +72,7 @@ These are individual package entry files before app bundling or tree-shaking, no
 download size for a consumer. The project’s performance target is less than 1 ms of added work per
 interaction; the fixture results above are diagnostic measurements, not a cross-device benchmark
 guarantee.
+
+## License
+
+[MIT](./LICENSE)

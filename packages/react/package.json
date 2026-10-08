@@ -2,6 +2,7 @@
   "name": "@sparsh/react",
   "version": "0.0.0",
   "description": "React binding for sparsh: <ActivationGuardProvider>, useActivationGuard(), <ActivationGuard>.",
+  "license": "MIT",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
