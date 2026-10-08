@@ -1,0 +1,112 @@
+---
+import { Code } from 'astro:components'
+import DocsShell from '../../components/DocsShell.astro'
+
+const setupExample = `import { createGuard } from '@sparsh/dom'
+
+const appRoot = document.querySelector('#app')
+if (!(appRoot instanceof Element)) {
+  throw new Error('App root not found')
+}
+
+const guard = createGuard(appRoot, {
+  mode: 'enforce',
+  onDecision(decision) {
+    if (decision.enforced) {
+      console.info('Blocked:', decision.policy, decision.reason)
+    }
+  },
+})
+
+// Call this when the guarded UI is removed.
+guard.destroy()`
+
+const customFeedback = `import { createGuard } from '@sparsh/dom'
+
+const guard = createGuard(document.body, {
+  onBlocked(element) {
+    element.animate(
+      [
+        { transform: 'translateX(0)' },
+        { transform: 'translateX(-4px)' },
+        { transform: 'translateX(4px)' },
+        { transform: 'translateX(0)' },
+      ],
+      { duration: 180 },
+    )
+  },
+})`
+---
+
+<DocsShell
+  title="DOM and vanilla API"
+  description="Use the browser adapter directly when you do not use React or Vue, or when you need to own the guard lifecycle yourself."
+>
+  <section class="docs-section" id="create-guard">
+    <p class="section-kicker">ENTRY POINT · @sparsh/dom</p>
+    <h2><code>createGuard(root, options?)</code></h2>
+    <p>
+      Creates the DOM host and core engine together, installs capture-phase listeners on the supplied
+      root, and returns a handle for querying block state and cleaning up. Prefer the smallest stable
+      root that contains all controls you want guarded.
+    </p>
+    <Code code={setupExample} lang="ts" theme="github-dark" />
+    <h3>Returned guard</h3>
+    <ul class="docs-list">
+      <li><code>destroy(): void</code> removes event listeners and disconnects observers. Call it when the guarded surface is torn down.</li>
+      <li><code>isGuarded(target): boolean</code> reports whether the target’s latest decision was actually blocked.</li>
+    </ul>
+    <p class="doc-note">
+      <strong>Low-level option:</strong> <code>createDomHost(root, options)</code> exposes the DOM
+      implementation of the core <code>Host</code> port. Use it only when you intentionally want to
+      construct the core engine separately; ordinary applications should use <code>createGuard</code>.
+    </p>
+  </section>
+
+  <section class="docs-section" id="options">
+    <p class="section-kicker">OPTIONS</p>
+    <h2>Guard configuration</h2>
+    <p>
+      <code>createGuard</code> combines core policy options with DOM-host options. React and Vue
+      providers accept these same options.
+    </p>
+    <div class="docs-table-wrap">
+      <table class="docs-table">
+        <thead><tr><th>Option</th><th>Type</th><th>Default / effect</th></tr></thead>
+        <tbody>
+          <tr><td><code>mode</code></td><td><code>Mode | Partial&lt;Record&lt;PolicyId, Mode&gt;&gt;</code></td><td><code>'enforce'</code>; partial-map omissions also enforce.</td></tr>
+          <tr><td><code>policies</code></td><td><code>PolicyId[]</code></td><td>All policies enabled.</td></tr>
+          <tr><td><code>cooldownMs</code></td><td><code>number</code></td><td><code>500</code> ms, Age threshold.</td></tr>
+          <tr><td><code>rectThresholdPx</code></td><td><code>number</code></td><td><code>4</code> px, Continuity tolerance.</td></tr>
+          <tr><td><code>refractoryMs</code></td><td><code>number</code></td><td><code>300</code> ms, DoubleFire window.</td></tr>
+          <tr><td><code>semanticsTextCheck</code></td><td><code>boolean</code></td><td><code>false</code>; opt in to comparing text.</td></tr>
+          <tr><td><code>clickSuppressMs</code></td><td><code>number</code></td><td><code>500</code> ms to match a native follow-up click.</td></tr>
+          <tr><td><code>blockAnimation</code></td><td><code>boolean</code></td><td><code>true</code>; default shake unless <code>onBlocked</code> is provided.</td></tr>
+          <tr><td><code>blockAnimationMs</code></td><td><code>number</code></td><td><code>300</code> ms, default shake duration.</td></tr>
+          <tr><td><code>onBlocked</code></td><td><code>(element: Element) =&gt; void</code></td><td>Custom feedback after actual cancellation; replaces the default shake.</td></tr>
+          <tr><td><code>onDecision</code></td><td><code>(decision: Decision) =&gt; void</code></td><td>Every decision, in report and enforce mode.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="docs-section" id="custom-feedback">
+    <p class="section-kicker">CUSTOM BLOCK FEEDBACK</p>
+    <h2>Animate only after a real block</h2>
+    <p>
+      <code>onBlocked</code> runs only when an enforced decision has canceled the activation. It
+      receives the interactive element, and a thrown error is ignored so cosmetic code cannot
+      affect input handling.
+    </p>
+    <Code code={customFeedback} lang="ts" theme="github-dark" />
+  </section>
+
+  <section class="docs-section" id="cleanup">
+    <p class="section-kicker">LIFECYCLE</p>
+    <h2>Always destroy the guard</h2>
+    <p>
+      A guard owns listeners and visibility/age tracking for its root. Keep its lifetime aligned
+      with that UI root. For React and Vue, the provider handles setup and cleanup automatically.
+    </p>
+  </section>
+</DocsShell>

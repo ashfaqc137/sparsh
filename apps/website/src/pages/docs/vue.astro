@@ -1,0 +1,179 @@
+---
+import { Code } from 'astro:components'
+import DocsShell from '../../components/DocsShell.astro'
+
+const providerExample = `<script setup lang="ts">
+import { ActivationGuardProvider, type Decision } from '@sparsh/vue'
+
+function handleDecision(decision: Decision) {
+  if (!decision.allowed) {
+    console.info('Suspicious activation:', decision.reason)
+  }
+}
+</script>
+
+<template>
+  <ActivationGuardProvider
+    mode="enforce"
+    :cooldown-ms="500"
+    :on-decision="handleDecision"
+  >
+    <ApplicationShell />
+  </ActivationGuardProvider>
+</template>`
+
+const hookExample = `<script setup lang="ts">
+import { useActivationGuard } from '@sparsh/vue'
+
+const { ref: guardRef, isGuarded } = useActivationGuard()
+</script>
+
+<template>
+  <button :ref="guardRef" type="button">Save draft</button>
+  <p v-if="isGuarded" role="status">
+    The screen changed. Try again.
+  </p>
+</template>`
+
+const customFeedback = `<script setup lang="ts">
+import { ActivationGuardProvider } from '@sparsh/vue'
+
+function animateBlocked(element: Element) {
+  element.animate(
+    [
+      { transform: 'scale(1)' },
+      { transform: 'scale(0.96)' },
+      { transform: 'scale(1)' },
+    ],
+    { duration: 220, easing: 'ease-out' },
+  )
+}
+</script>
+
+<template>
+  <ActivationGuardProvider :on-blocked="animateBlocked">
+    <ApplicationShell />
+  </ActivationGuardProvider>
+</template>`
+
+const publicTypes = `import type { InputKind, Phase, PolicyId } from '@sparsh/vue'
+import type { Ref } from 'vue'
+
+export interface UseActivationGuardResult {
+  ref: (node: Element | null) => void
+  isGuarded: Ref<boolean>
+}
+
+export interface Decision {
+  allowed: boolean
+  enforced: boolean
+  policy?: PolicyId
+  reason?: string
+  event: { kind: InputKind; phase: Phase }
+  target: {
+    identity: unknown
+    ageMs: number
+    guardKey?: string
+  }
+}`
+---
+
+<DocsShell
+  title="Vue API reference"
+  description="Provider, Composition API composable, scoped wrapper, callbacks, and shared guard options for Vue 3."
+>
+  <section class="docs-section" id="provider">
+    <p class="section-kicker">COMPONENT · PROVIDER</p>
+    <h2><code>ActivationGuardProvider</code></h2>
+    <p>
+      Provides one guard to descendant components and attaches it to the rendered subtree after
+      mount. When <code>root</code> is omitted, the provider creates a <code>display: contents</code>
+      wrapper; pass an element or document as <code>root</code> to attach to an existing boundary.
+    </p>
+    <p>
+      Changing a guard configuration option recreates the guard and resets in-flight interaction
+      observations. Keep configuration stable during a press; callback changes are picked up without
+      recreating the guard.
+    </p>
+    <Code code={providerExample} lang="vue" theme="github-dark" />
+    <p>
+      In Vue templates, bind callback props using kebab-case names such as
+      <code>:on-decision</code> and <code>:on-blocked</code>. In render functions, use the
+      camelCase prop names.
+    </p>
+    <h3>Props</h3>
+    <div class="docs-table-wrap">
+      <table class="docs-table">
+        <thead><tr><th>Prop</th><th>Type</th><th>Default / behavior</th></tr></thead>
+        <tbody>
+          <tr><td>default slot</td><td>Vue slot</td><td>Subtree to observe.</td></tr>
+          <tr><td><code>mode</code></td><td><code>Mode | Partial&lt;Record&lt;PolicyId, Mode&gt;&gt;</code></td><td><code>'enforce'</code>. Unspecified policies in a mode map remain enforced.</td></tr>
+          <tr><td><code>policies</code></td><td><code>PolicyId[]</code></td><td>All four policies by default.</td></tr>
+          <tr><td><code>cooldownMs</code></td><td><code>number</code></td><td><code>500</code>. Age policy threshold in milliseconds.</td></tr>
+          <tr><td><code>rectThresholdPx</code></td><td><code>number</code></td><td><code>4</code>. Continuity movement tolerance.</td></tr>
+          <tr><td><code>refractoryMs</code></td><td><code>number</code></td><td><code>300</code>. DoubleFire recency window.</td></tr>
+          <tr><td><code>semanticsTextCheck</code></td><td><code>boolean</code></td><td><code>false</code>. Also compare target text.</td></tr>
+          <tr><td><code>clickSuppressMs</code></td><td><code>number</code></td><td><code>500</code>. Matching native click window.</td></tr>
+          <tr><td><code>onDecision</code></td><td><code>(decision: Decision) =&gt; void</code></td><td>Called for allowed and suspicious decisions.</td></tr>
+          <tr><td><code>onSuspect</code></td><td><code>(decision: Decision) =&gt; void</code></td><td>Called when a policy verdict is suspicious, including report mode.</td></tr>
+          <tr><td><code>onBlocked</code></td><td><code>(element: Element) =&gt; void</code></td><td>Called after an enforced activation is canceled; replaces the default shake.</td></tr>
+          <tr><td><code>blockAnimation</code></td><td><code>boolean</code></td><td><code>true</code>. Enables the default shake when no custom callback is set.</td></tr>
+          <tr><td><code>blockAnimationMs</code></td><td><code>number</code></td><td><code>300</code>. Default shake duration.</td></tr>
+          <tr><td><code>root</code></td><td><code>Element | Document</code></td><td>Optional explicit DOM root.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="docs-section" id="composable">
+    <p class="section-kicker">COMPOSABLE · ELEMENT FEEDBACK</p>
+    <h2><code>useActivationGuard()</code></h2>
+    <p>
+      Call the composable from a descendant component’s <code>setup()</code> or
+      <code>&lt;script setup&gt;</code>. It returns a callback ref and a reactive
+      <code>Ref&lt;boolean&gt;</code> that becomes true when the element is actually blocked.
+    </p>
+    <Code code={hookExample} lang="vue" theme="github-dark" />
+    <ul class="docs-list">
+      <li>The returned <code>ref</code> is a callback: <code>(node: Element | null) =&gt; void</code>.</li>
+      <li><code>isGuarded</code> is automatically unwrapped in templates and resets after an allowed activation.</li>
+      <li>Without a provider ancestor, the composable is a no-op and does not throw.</li>
+      <li>Options API direct support is not included; use a Composition API component as the descendant.</li>
+    </ul>
+  </section>
+
+  <section class="docs-section" id="scoped-wrapper">
+    <p class="section-kicker">COMPONENT · SCOPED GUARD</p>
+    <h2><code>ActivationGuard</code></h2>
+    <p>
+      This is an alias of <code>ActivationGuardProvider</code> with the same props and slots. A
+      nested instance installs a separate guard on its subtree; options are not merged with an
+      ancestor.
+    </p>
+    <Code code={`<ActivationGuard :mode="{ age: 'report' }">
+  <FrequentlyUpdatedPanel />
+</ActivationGuard>`} lang="vue" theme="github-dark" />
+  </section>
+
+  <section class="docs-section" id="custom-feedback">
+    <p class="section-kicker">BLOCK FEEDBACK</p>
+    <h2>Customize the blocked animation</h2>
+    <p>
+      <code>onBlocked</code> runs after cancellation and receives the interactive element. A
+      callback exception is ignored so it cannot affect the guard’s decision.
+    </p>
+    <Code code={customFeedback} lang="vue" theme="github-dark" />
+  </section>
+
+  <section class="docs-section" id="types">
+    <p class="section-kicker">RELATED TYPES</p>
+    <h2>Decision and mode</h2>
+    <p>
+      <code>Mode</code>, <code>PolicyId</code>, and <code>Decision</code> are re-exported from
+      <code>@sparsh/vue</code>. A decision’s <code>allowed</code> field records the policy verdict;
+      <code>enforced</code> says whether it actually stopped the activation. See
+      <a href="/docs/concepts/">Core concepts</a> for policy behavior and accessibility details.
+    </p>
+    <Code code={publicTypes} lang="ts" theme="github-dark" />
+  </section>
+</DocsShell>

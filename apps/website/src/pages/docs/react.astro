@@ -1,0 +1,192 @@
+---
+import { Code } from 'astro:components'
+import DocsShell from '../../components/DocsShell.astro'
+
+const providerExample = `import {
+  ActivationGuardProvider,
+  type Decision,
+} from '@sparsh/react'
+
+function handleDecision(decision: Decision) {
+  if (!decision.allowed) {
+    showTryAgainMessage(decision.reason)
+  }
+}
+
+export function App() {
+  return (
+    <ActivationGuardProvider
+      mode="enforce"
+      cooldownMs={500}
+      onDecision={handleDecision}
+    >
+      <ApplicationRoutes />
+    </ActivationGuardProvider>
+  )
+}`
+
+const useGuardExample = `import { useActivationGuard } from '@sparsh/react'
+
+function SaveButton() {
+  const { ref, isGuarded } = useActivationGuard()
+
+  return (
+    <>
+      <button ref={ref} type="button">
+        Save draft
+      </button>
+      {isGuarded && (
+        <p role="status">The screen changed. Try again.</p>
+      )}
+    </>
+  )
+}`
+
+const customFeedback = `import { ActivationGuardProvider } from '@sparsh/react'
+
+export function App() {
+  return (
+    <ActivationGuardProvider
+      onBlocked={(element) => {
+        element.animate(
+          [
+            { transform: 'scale(1)' },
+            { transform: 'scale(0.96)' },
+            { transform: 'scale(1)' },
+          ],
+          { duration: 220, easing: 'ease-out' },
+        )
+      }}
+    >
+      <ApplicationRoutes />
+    </ActivationGuardProvider>
+  )
+}`
+
+const publicTypes = `import type { InputKind, Phase } from '@sparsh/react'
+
+export type Mode = 'report' | 'enforce'
+export type PolicyId = 'age' | 'continuity' | 'semantics' | 'doubleFire'
+
+export interface Decision {
+  allowed: boolean
+  enforced: boolean
+  policy?: PolicyId
+  reason?: string
+  event: { kind: InputKind; phase: Phase }
+  target: {
+    identity: unknown
+    ageMs: number
+    guardKey?: string
+  }
+}
+
+export interface UseActivationGuardResult {
+  ref: (node: Element | null) => void
+  isGuarded: boolean
+}`
+---
+
+<DocsShell
+  title="React API reference"
+  description="Provider, hook, scoped wrapper, callbacks, and shared guard options for React applications."
+>
+  <section class="docs-section" id="provider">
+    <p class="section-kicker">COMPONENT · PROVIDER</p>
+    <h2><code>ActivationGuardProvider</code></h2>
+    <p>
+      Installs one guard on a DOM subtree and provides guarded-state subscriptions to descendant
+      hooks. Without <code>root</code>, the provider adds a <code>display: contents</code> wrapper
+      that does not affect normal layout. Mount one provider around the smallest stable subtree
+      that includes the controls you want to protect.
+    </p>
+    <p>
+      Changing a guard configuration option tears down and recreates the guard, resetting its
+      in-flight interaction observations. Keep configuration stable during a press; changing a
+      callback function alone does not recreate it.
+    </p>
+    <Code code={providerExample} lang="tsx" theme="github-dark" />
+    <h3>Props</h3>
+    <div class="docs-table-wrap">
+      <table class="docs-table">
+        <thead><tr><th>Prop</th><th>Type</th><th>Default / behavior</th></tr></thead>
+        <tbody>
+          <tr><td><code>children</code></td><td><code>ReactNode</code></td><td>Subtree to observe.</td></tr>
+          <tr><td><code>mode</code></td><td><code>Mode | Partial&lt;Record&lt;PolicyId, Mode&gt;&gt;</code></td><td><code>'enforce'</code>. A partial map leaves unspecified policies enforced.</td></tr>
+          <tr><td><code>policies</code></td><td><code>PolicyId[]</code></td><td>All four policies: <code>age</code>, <code>continuity</code>, <code>semantics</code>, <code>doubleFire</code>.</td></tr>
+          <tr><td><code>cooldownMs</code></td><td><code>number</code></td><td><code>500</code>. Age threshold in milliseconds.</td></tr>
+          <tr><td><code>rectThresholdPx</code></td><td><code>number</code></td><td><code>4</code>. Continuity movement tolerance.</td></tr>
+          <tr><td><code>refractoryMs</code></td><td><code>number</code></td><td><code>300</code>. DoubleFire recency window.</td></tr>
+          <tr><td><code>semanticsTextCheck</code></td><td><code>boolean</code></td><td><code>false</code>. Also compare target text.</td></tr>
+          <tr><td><code>clickSuppressMs</code></td><td><code>number</code></td><td><code>500</code>. Window for matching a native follow-up click.</td></tr>
+          <tr><td><code>onDecision</code></td><td><code>(decision: Decision) =&gt; void</code></td><td>Called for every decision, allowed or blocked.</td></tr>
+          <tr><td><code>onSuspect</code></td><td><code>(decision: Decision) =&gt; void</code></td><td>Called when <code>allowed</code> is false, including report mode.</td></tr>
+          <tr><td><code>onBlocked</code></td><td><code>(element: Element) =&gt; void</code></td><td>Called after an enforced activation is canceled. Replaces the default shake.</td></tr>
+          <tr><td><code>blockAnimation</code></td><td><code>boolean</code></td><td><code>true</code>. Enables the default shake when no <code>onBlocked</code> callback is set.</td></tr>
+          <tr><td><code>blockAnimationMs</code></td><td><code>number</code></td><td><code>300</code>. Default shake duration.</td></tr>
+          <tr><td><code>root</code></td><td><code>Element | Document</code></td><td>Optional explicit root; avoids creating the provider wrapper.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="doc-note">
+      <strong>Callback distinction:</strong> <code>onSuspect</code> means a policy found an unsafe
+      verdict; report mode still lets that activation through. <code>onBlocked</code> runs only
+      after an enforced activation is actually canceled.
+    </p>
+  </section>
+
+  <section class="docs-section" id="hook">
+    <p class="section-kicker">HOOK · ELEMENT FEEDBACK</p>
+    <h2><code>useActivationGuard()</code></h2>
+    <p>
+      Returns a callback ref and a boolean for the most recent activation on that element. Attach
+      the ref to a native DOM element or a component that forwards a ref to one. The state is
+      event-driven; it updates when the guard reports a decision for the element.
+    </p>
+    <Code code={useGuardExample} lang="tsx" theme="github-dark" />
+    <ul class="docs-list">
+      <li><code>ref</code> has the type <code>(node: Element | null) =&gt; void</code>.</li>
+      <li><code>isGuarded</code> is true only after an enforced block; a subsequent allowed activation clears it.</li>
+      <li>Outside a provider, the hook is a no-op and does not throw.</li>
+      <li>Use a live region such as <code>role="status"</code> to explain a block and invite another attempt.</li>
+    </ul>
+  </section>
+
+  <section class="docs-section" id="scoped-wrapper">
+    <p class="section-kicker">COMPONENT · SCOPED PROVIDER</p>
+    <h2><code>ActivationGuard</code></h2>
+    <p>
+      A convenience wrapper with the same props as <code>ActivationGuardProvider</code>. It
+      installs a separate guard scoped to its subtree; it does not inherit or merge options from an
+      ancestor provider. Use it when a region needs an independent mode or policy configuration.
+    </p>
+    <Code code={`<ActivationGuard mode={{ age: 'report' }}>
+  <FrequentlyUpdatedPanel />
+</ActivationGuard>`} lang="tsx" theme="github-dark" />
+  </section>
+
+  <section class="docs-section" id="custom-animation">
+    <p class="section-kicker">BLOCK FEEDBACK</p>
+    <h2>Provide a custom animation</h2>
+    <p>
+      The callback receives the blocked interactive element after sparsh cancels the activation.
+      When it is supplied, sparsh does not also run its default shake. Callback errors are ignored
+      so visual feedback cannot interfere with the block.
+    </p>
+    <Code code={customFeedback} lang="tsx" theme="github-dark" />
+  </section>
+
+  <section class="docs-section" id="types">
+    <p class="section-kicker">RELATED TYPES</p>
+    <h2>Decision and mode</h2>
+    <p>
+      <code>Mode</code> is <code>'report' | 'enforce'</code>. <code>Decision</code> includes
+      <code>allowed</code> (the policy verdict), <code>enforced</code> (whether the activation was
+      blocked), optional <code>policy</code> and <code>reason</code>, input <code>event</code>{' '}
+      details, and a target snapshot summary. The binding re-exports these types from
+      <code>@sparsh/core</code>.
+    </p>
+    <Code code={publicTypes} lang="ts" theme="github-dark" />
+    <p>For policy behavior and accessibility details, see <a href="/docs/concepts/">Core concepts</a>.</p>
+  </section>
+</DocsShell>

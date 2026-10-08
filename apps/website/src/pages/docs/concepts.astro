@@ -1,0 +1,163 @@
+---
+import { Code } from 'astro:components'
+import DocsShell from '../../components/DocsShell.astro'
+
+const modeExample = `import { ActivationGuardProvider } from '@sparsh/react'
+
+<ActivationGuardProvider
+  mode={{ age: 'report' }}
+  policies={['age', 'continuity', 'semantics', 'doubleFire']}
+>
+  <Application />
+</ActivationGuardProvider>`
+
+const stableIdentityExample = `<ul>
+  {invoices.map((invoice) => (
+    <li key={invoice.id} data-guard-key={invoice.id}>
+      <button onClick={() => openInvoice(invoice.id)}>
+        Open {invoice.name}
+      </button>
+    </li>
+  ))}
+</ul>`
+---
+
+<DocsShell
+  title="Core concepts"
+  description="Learn what sparsh observes, how the policies decide, and how to tune the guard without breaking expected input."
+>
+  <section class="docs-section" id="interaction-model">
+    <p class="section-kicker">INTERACTION MODEL</p>
+    <h2>Protect the intent behind an activation</h2>
+    <p>
+      A user begins an interaction against the screen they can perceive. Before the browser commits
+      the click or key activation, an interface update may move the target, replace its identity, or
+      change what it means. sparsh records intent and a target snapshot, then compares the snapshot
+      at activation time. A suspicious activation can be reported or stopped according to mode.
+    </p>
+    <ol class="docs-list">
+      <li><strong>Resolve:</strong> map the raw event target to the nearest interactive element.</li>
+      <li><strong>Snapshot:</strong> record its perceivable age, position, identity, and semantic fingerprint.</li>
+      <li><strong>Evaluate:</strong> run applicable policies and produce one decision.</li>
+      <li><strong>Respond:</strong> allow the activation or cancel it, then emit callbacks for application feedback.</li>
+    </ol>
+  </section>
+
+  <section class="docs-section" id="modes">
+    <p class="section-kicker">MODES</p>
+    <h2>Enforce by default; use report to tune</h2>
+    <p>
+      The default mode is <code>enforce</code>. In <code>report</code> mode, policies still evaluate
+      and callbacks still fire, but the activation is allowed through. You can set one global mode
+      or override modes by policy.
+    </p>
+    <Code code={modeExample} lang="tsx" theme="github-dark" />
+    <p>
+      When a mode map is supplied, any omitted policy remains <code>enforce</code>. The first
+      applicable policy that returns a suspicious verdict determines the decision; a report-mode
+      verdict lets that activation through and ends evaluation for it. Consider policy order and
+      overlap when mixing modes.
+    </p>
+    <div class="docs-table-wrap">
+      <table class="docs-table">
+        <thead><tr><th>Decision field</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><code>allowed</code></td><td>The first suspicious policy verdict; false means a policy flagged the activation.</td></tr>
+          <tr><td><code>enforced</code></td><td>True only when that verdict was in enforce mode and sparsh stopped the activation.</td></tr>
+          <tr><td><code>policy</code></td><td>The policy that produced the verdict; absent when all applicable policies allow.</td></tr>
+          <tr><td><code>reason</code></td><td>Human-readable explanation for a suspicious verdict, when provided.</td></tr>
+          <tr><td><code>event</code></td><td>Input kind and activation phase.</td></tr>
+          <tr><td><code>target</code></td><td>Identity summary, perceivable age, and optional stable guard key.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="docs-section" id="policies">
+    <p class="section-kicker">POLICY REFERENCE</p>
+    <h2>Four independent signals</h2>
+    <div class="docs-table-wrap">
+      <table class="docs-table">
+        <thead><tr><th>Policy</th><th>What it checks</th><th>Inputs</th><th>Default</th></tr></thead>
+        <tbody>
+          <tr><td><code>age</code></td><td>Target has been perceivable for at least <code>cooldownMs</code>.</td><td>Pointer, keyboard, virtual</td><td>Enforce; threshold 500 ms</td></tr>
+          <tr><td><code>continuity</code></td><td>Target identity and rectangle stayed stable from pointer down to pointer up.</td><td>Pointer</td><td>Enforce; tolerance 4 px</td></tr>
+          <tr><td><code>semantics</code></td><td>Meaningful target properties did not change during the interaction.</td><td>All kinds; needs a stored intent snapshot</td><td>Enforce; text comparison off</td></tr>
+          <tr><td><code>doubleFire</code></td><td>A rapid residual press did not land on a new control at overlapping coordinates.</td><td>Pointer</td><td>Enforce; 300 ms window</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>Age</h3>
+    <p>
+      Age measures time since an element became perceivable, not simply when its DOM node was
+      created. A target younger than <code>cooldownMs</code> is flagged. Unknown or pre-existing
+      targets are treated as old (infinite age), which fails open. Age also applies to keyboard and
+      virtual activations; if the threshold catches legitimate fast keyboard use, configure Age in
+      report mode or tune the cooldown.
+    </p>
+    <h3>Continuity</h3>
+    <p>
+      Continuity compares identity and position across the pointer press. It does not run for
+      keyboard or virtual activations because they have no pointer-down snapshot.
+    </p>
+    <h3>Semantics</h3>
+    <p>
+      The default fingerprint checks disabled state, accessible label, role, link target or control
+      value, and <code>data-guard-key</code>. Text comparison is opt-in because counters, timestamps,
+      and live labels can change during an otherwise valid interaction. The current DOM host records
+      semantic intent on pointer down; without a stored intent snapshot, Semantics allows the
+      activation. Age still evaluates the target’s current age for keyboard and virtual input.
+    </p>
+    <h3>DoubleFire</h3>
+    <p>
+      This pointer-only policy looks for a different, newly visible target at overlapping
+      coordinates shortly after an allowed pointer activation. A quick repeat on the same stable
+      control is allowed; this policy is not a general double-click debounce.
+    </p>
+  </section>
+
+  <section class="docs-section" id="stable-identity">
+    <p class="section-kicker">DYNAMIC LISTS</p>
+    <h2>Give reused rows a stable identity</h2>
+    <p>
+      A framework key helps the renderer reconcile nodes, but it is not automatically available to
+      the DOM host. Add <code>data-guard-key</code> when one physical row can represent different
+      entities after a reorder or update.
+    </p>
+    <Code code={stableIdentityExample} lang="tsx" theme="github-dark" />
+    <p>
+      sparsh reads the nearest ancestor’s key. Without it, a recycled DOM element whose content
+      changes in place may look like the same target, especially while text comparison is disabled.
+    </p>
+  </section>
+
+  <section class="docs-section" id="accessibility">
+    <p class="section-kicker">INPUT AND ACCESSIBILITY</p>
+    <h2>Keyboard and assistive technology remain part of the model</h2>
+    <p>
+      The DOM host observes Pointer Events and activation keys Enter and Space. It does not intercept
+      Escape, Tab, focus changes, scrolling, or unrelated keys. Continuity and DoubleFire are
+      pointer-only. Age evaluates keyboard and virtual activations; Semantics only compares meaning
+      when it has a stored intent snapshot. Report mode is available if Age needs tuning for fast
+      keyboard users.
+    </p>
+    <p>
+      A block should be explained. Use <code>onDecision</code> or a per-element hook to show a
+      status message, preserve focus, and invite the user to try again. <code>onBlocked</code> is
+      optional visual feedback, not a replacement for an accessible explanation.
+    </p>
+  </section>
+
+  <section class="docs-section" id="limits">
+    <p class="section-kicker">KNOWN LIMITS</p>
+    <h2>Signals are intentionally conservative</h2>
+    <ul class="docs-list">
+      <li>Opacity-only reveals on an element that already exists are not detected by the current age tracking.</li>
+      <li>An overlay can cover an unmoved target without changing its resolved identity; occlusion is not generally detected.</li>
+      <li>Age treats unknown/pre-existing targets as old and allows them, favoring fewer false positives.</li>
+      <li>In-place entity changes need <code>data-guard-key</code> for reliable identity comparison.</li>
+      <li>Exceptions in policy evaluation fail open. Visual callback exceptions are ignored and do not affect cancellation.</li>
+    </ul>
+    <p>For binding-specific APIs, see the <a href="/docs/react/">React</a>, <a href="/docs/vue/">Vue</a>, and <a href="/docs/dom/">DOM</a> references.</p>
+  </section>
+</DocsShell>

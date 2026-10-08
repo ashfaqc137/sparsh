@@ -206,3 +206,9 @@ Phases: A Foundation · B Core engine · C Policies · D DOM host · E React · 
   canceled; callback errors are ignored. Added DOM timing/error tests and provider callback-forwarding
   tests, and documented the option. DOM, React, and Vue tests passed; package typechecks and Biome
   checks passed.
+- **Developer documentation expanded.** `/docs/` is now Getting Started, with separate Core Concepts,
+  React API, Vue API, and DOM/vanilla reference pages in a shared navigation shell that can accept
+  future framework references. Added policy/mode behavior, callback and type references, lifecycle,
+  accessibility and limitations, and Shiki syntax-highlighted code samples. Updated the site README
+  and fixed the existing known-limits link. `pnpm --filter website build` passed (Astro check: 0 errors,
+  warnings, or hints; all nine routes generated).

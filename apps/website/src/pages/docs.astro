@@ -1,118 +1,117 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro'
----
+import { Code } from 'astro:components'
+import DocsShell from '../components/DocsShell.astro'
 
-<BaseLayout
-  title="sparsh docs — getting started"
-  description="A friendly getting-started guide for adding sparsh to React or plain JavaScript, plus the options you’ll reach for."
->
-  <main class="content-page docs-page">
-    <section class="page-hero">
-      <p class="eyebrow"><span class="eyebrow-dot" /> The docs</p>
-      <h1>Okay, how do I<br /><span>add sparsh to my app?</span></h1>
-      <p class="lead">Start by letting sparsh watch what happens. Then decide if you want it to step in.</p>
-    </section>
-
-    <div class="docs-layout">
-      <aside class="docs-sidebar" aria-label="On this page">
-        <a href="#quick-start">Quick start</a>
-        <a href="#react-hook">React hook</a>
-        <a href="#vanilla">Vanilla JavaScript</a>
-        <a href="#options">Options and signals</a>
-        <a href="#limitations">Limitations</a>
-      </aside>
-
-      <div class="docs-content">
-        <section class="docs-section" id="quick-start">
-          <p class="section-kicker">01 · REACT</p>
-          <h2>Let’s get sparsh watching.</h2>
-          <p>Wrap your app (or the part you want to protect) in <code>ActivationGuardProvider</code>. It starts in enforce mode, so sparsh can stop suspicious activations. Choose report mode to observe decisions without blocking.</p>
-          <pre><code>{`import { ActivationGuardProvider } from '@sparsh/react'
+const reactProvider = `import { ActivationGuardProvider } from '@sparsh/react'
 
 export function App() {
   return (
-    <ActivationGuardProvider
-      mode="enforce"
-      onDecision={(decision) => {
-        if (!decision.allowed) {
-          analytics.track('unsteady_activation', decision)
-        }
-      }}
-    >
+    <ActivationGuardProvider mode="enforce">
       <YourApp />
     </ActivationGuardProvider>
   )
-}`}</code></pre>
-          <p class="doc-note"><strong>Quick heads-up:</strong> React, Vue, DOM, and core are in this repo, but the first public release hasn’t shipped yet. We’ll add the exact install command here when it does.</p>
-        </section>
+}`
 
-        <section class="docs-section" id="react-hook">
-          <p class="section-kicker">02 · GIVE A BLOCK A VOICE</p>
-          <h2>Don’t leave people wondering.</h2>
-          <p><code>useActivationGuard()</code> gives you a ref for a control and an <code>isGuarded</code> flag. Use it to explain a blocked tap and invite the person to try again.</p>
-          <pre><code>{`import { useActivationGuard } from '@sparsh/react'
+const vueProvider = `<script setup lang="ts">
+import { ActivationGuardProvider } from '@sparsh/vue'
+</script>
 
-function SaveButton() {
-  const { ref, isGuarded } = useActivationGuard()
+<template>
+  <ActivationGuardProvider mode="enforce">
+    <YourApp />
+  </ActivationGuardProvider>
+</template>`
 
-  return (
-    <>
-      <button ref={ref} data-guard-key="draft-42">
-        Save draft
-      </button>
-      {isGuarded && <p role="status">This changed. Please try again.</p>}
-    </>
-  )
-}`}</code></pre>
-          <p>Got a list that reuses rows? Put the item’s stable ID in <code>data-guard-key</code>. That way sparsh can tell when “row three” now belongs to someone else.</p>
-        </section>
+const observeDecisions = `import type { Decision } from '@sparsh/react'
 
-        <section class="docs-section" id="vanilla">
-          <p class="section-kicker">03 · PLAIN JAVASCRIPT</p>
-          <h2>No framework? No problem.</h2>
-          <p><code>@sparsh/dom</code> has a vanilla <code>createGuard</code> helper. Attach it to the smallest root that contains the interactions you want to watch, then clean it up when that UI goes away.</p>
-          <pre><code>{`import { createGuard } from '@sparsh/dom'
+function recordDecision(decision: Decision) {
+  if (decision.enforced) {
+    analytics.track('activation_blocked', {
+      policy: decision.policy,
+      kind: decision.event.kind,
+    })
+  }
+}`
+---
 
-const root = document.querySelector('#app')
-if (!root) throw new Error('App root not found')
-
-const guard = createGuard(root, {
-  mode: 'enforce',
-  onDecision: (decision) => console.log(decision),
-})
-
-// When the app root is torn down:
-guard.destroy()`}</code></pre>
-          <p>Using Vue? There’s a Vue 3 binding too: <code>@sparsh/vue</code>.</p>
-        </section>
-
-        <section class="docs-section" id="options">
-          <p class="section-kicker">04 · THE KNOBS YOU’LL REACH FOR</p>
-          <h2>What can I tweak?</h2>
-          <dl class="option-list">
-            <div><dt><code>mode</code></dt><dd><code>enforce</code> or <code>report</code>, for everything or one policy at a time. Defaults to enforce.</dd></div>
-            <div><dt><code>policies</code></dt><dd>Pick from <code>age</code>, <code>continuity</code>, <code>semantics</code>, and <code>doubleFire</code>. They’re all on by default.</dd></div>
-            <div><dt><code>cooldownMs</code></dt><dd>How long a target needs to be around before Age trusts it. Starts at 500 ms.</dd></div>
-            <div><dt><code>onDecision</code></dt><dd>Gets every decision, allowed or blocked, with the policy and reason.</dd></div>
-            <div><dt><code>onSuspect</code></dt><dd>A shortcut for decisions where <code>allowed</code> is false.</dd></div>
-            <div><dt><code>onBlocked</code></dt><dd>Runs after an enforced activation is canceled and receives its element. Use it for custom feedback; it replaces the default shake animation.</dd></div>
-            <div><dt><code>data-guard="off"</code></dt><dd>Let a subtree (like a “Try again” button) opt out.</dd></div>
-          </dl>
-          <p class="doc-note"><strong>A little tip:</strong> Age is the easiest policy to overtune. If it is too sensitive for your app, set Age to report mode while you tune its cooldown.</p>
-        </section>
-
-        <section class="docs-section limitations-section" id="limitations">
-          <p class="section-kicker">05 · THINGS TO KNOW</p>
-          <h2>What sparsh can’t catch (yet)</h2>
-          <ul>
-            <li>Opacity-only reveals on an element that was already there are invisible to the current age tracker.</li>
-            <li>An overlay can cover a button without changing the underlying target; sparsh may not spot that.</li>
-            <li>Reused list rows need <code>data-guard-key</code> so sparsh can tell when the item changed.</li>
-            <li>Text comparison is opt-in, since counters and “2 minutes ago” labels change all the time.</li>
-          </ul>
-          <p>If sparsh isn’t sure, it lets the interaction through. For the reasoning (and the accessibility bits), see <a href="/how-it-works/">How it works</a>.</p>
-        </section>
-      </div>
+<DocsShell
+  title="Getting started"
+  description="Install the right binding, put the guard around the UI you want to protect, and understand what happens when a tap looks unsafe."
+>
+  <section class="docs-section" id="availability">
+    <p class="section-kicker">BEFORE YOU START</p>
+    <h2>Choose a binding</h2>
+    <p>
+      sparsh separates its interaction engine from its platform adapters and framework bindings. Use
+      the binding that matches your app; the React and Vue providers install the browser DOM adapter
+      for you.
+    </p>
+    <div class="docs-table-wrap">
+      <table class="docs-table">
+        <thead><tr><th>Package</th><th>Use it when</th><th>Requirements</th></tr></thead>
+        <tbody>
+          <tr><td><code>@sparsh/react</code></td><td>Your UI is React.</td><td>React 18 or later</td></tr>
+          <tr><td><code>@sparsh/vue</code></td><td>Your UI is Vue 3.</td><td>Vue 3.3 or later; Composition API</td></tr>
+          <tr><td><code>@sparsh/dom</code></td><td>You use vanilla JavaScript or a different framework.</td><td>A browser DOM root</td></tr>
+        </tbody>
+      </table>
     </div>
-  </main>
-</BaseLayout>
+    <p class="doc-note">
+      <strong>Release status:</strong> these packages are currently developed in this repository
+      and are not yet published to npm. The examples below show the package APIs; install commands
+      will be added when a public release is available.
+    </p>
+  </section>
+
+  <section class="docs-section" id="react-setup">
+    <p class="section-kicker">01 · REACT</p>
+    <h2>Wrap the part of the app you want to protect</h2>
+    <p>
+      Add one provider near the root of the interactive surface. It observes activations in that
+      subtree, so most controls do not need a sparsh-specific prop or wrapper.
+    </p>
+    <Code code={reactProvider} lang="tsx" theme="github-dark" />
+    <p>
+      The provider is a client component and attaches its DOM listeners in an effect. In React
+      Server Component apps, place it in a client boundary. See the <a href="/docs/react/">React
+      API reference</a> for hooks, callbacks, and provider options.
+    </p>
+  </section>
+
+  <section class="docs-section" id="vue-setup">
+    <p class="section-kicker">02 · VUE</p>
+    <h2>Use the provider as a layout boundary</h2>
+    <p>
+      The Vue provider makes its guard available to descendants through Vue’s provide/inject
+      mechanism. It attaches after mount and removes its listeners when unmounted.
+    </p>
+    <Code code={vueProvider} lang="vue" theme="github-dark" />
+    <p>See the <a href="/docs/vue/">Vue API reference</a> for Composition API patterns and props.</p>
+  </section>
+
+  <section class="docs-section" id="first-feedback">
+    <p class="section-kicker">03 · OBSERVE THE RESULT</p>
+    <h2>Make a block understandable</h2>
+    <p>
+      Enforce mode is the default. A suspicious activation can be stopped, and <code>onDecision</code>
+      tells you whether a decision was allowed or enforced. Render a status message or record the
+      policy and input kind for diagnostics; avoid logging sensitive user content.
+    </p>
+    <Code code={observeDecisions} lang="tsx" theme="github-dark" />
+    <p>
+      Use report mode when tuning a policy: it still reports suspicious decisions, but lets the
+      activation through. <code>decision.allowed</code> is the policy verdict;
+      <code>decision.enforced</code> tells you whether sparsh actually blocked the interaction.
+    </p>
+  </section>
+
+  <section class="docs-section" id="next-steps">
+    <p class="section-kicker">NEXT STEPS</p>
+    <h2>Understand the signals before tuning them</h2>
+    <ul class="docs-list">
+      <li><a href="/docs/concepts/">Core concepts</a> explains modes, policies, accessibility behavior, and known limits.</li>
+      <li><a href="/docs/dom/">DOM / vanilla API</a> covers low-level integration and cleanup.</li>
+      <li><a href="/playground/">The playground</a> lets you try the React and Vue bindings against moving interfaces.</li>
+    </ul>
+  </section>
+</DocsShell>

@@ -1,10 +1,9 @@
 # apps/website
 
-Consumer-facing site and the source for sparsh's official product and API documentation. The site
-has five routes: `/` introduces the UX philosophy, `/how-it-works/` explains the policies and
-accessibility model, `/demo/` hosts the interactive inbox reshuffle, `/playground/` lets visitors
-try live React and Vue examples, and `/docs/` contains quick-start guidance, API examples, and current
-limitations. Expand the docs as the packages approach their first release.
+Consumer-facing site and the source for sparsh's official product and API documentation. Product
+routes include `/`, `/how-it-works/`, `/demo/`, and `/playground/`. Developer docs live under
+`/docs/`: getting started, core concepts, React, Vue, and low-level DOM references. Framework
+references are separate pages so future bindings can add focused API documentation.
 
 Built with **Astro** + `@astrojs/react`: the informational pages are static Astro, and the interactive
 demo (`src/components/HeroDemo.tsx`) and playground (`src/components/Playground.tsx`) are hydrated
