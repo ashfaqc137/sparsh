@@ -1,9 +1,11 @@
 import { defineConfig, devices } from 'playwright/test'
 
 const devServer = process.env.SPARSH_E2E_DEV === '1'
+const benchmarkOnly = process.env.SPARSH_BENCHMARK === '1'
 
 export default defineConfig({
   testDir: './e2e',
+  testMatch: benchmarkOnly ? ['performance.spec.ts'] : ['playground-bindings.spec.ts'],
   fullyParallel: true,
   retries: process.env.CI ? 1 : 0,
   reporter: 'list',

@@ -1,0 +1,125 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+---
+
+<BaseLayout title="Sparsh performance fixture" description="Local benchmark fixture for Sparsh runtime and observer overhead.">
+  <main id="benchmark-root" style="padding: 2rem; color: white;">
+    <h1>Sparsh performance fixture</h1>
+    <div id="virtual-list"></div>
+    <button id="benchmark-button" type="button">Benchmark target</button>
+    <pre id="benchmark-results">Waiting for benchmark script.</pre>
+  </main>
+</BaseLayout>
+
+<script>
+  import { createGuard } from '@sparsh/dom'
+
+  const root = document.querySelector<HTMLElement>('#benchmark-root')!
+  const list = document.querySelector<HTMLElement>('#virtual-list')!
+  const button = document.querySelector<HTMLButtonElement>('#benchmark-button')!
+  const dataset = Array.from({ length: 10_000 }, (_, index) => `Virtual row ${index}`)
+  const baselineButton = document.createElement('button')
+  baselineButton.type = 'button'
+  baselineButton.textContent = 'Unguarded baseline target'
+  document.body.append(baselineButton)
+  const results = document.querySelector<HTMLElement>('#benchmark-results')!
+
+  // Keep only a small viewport-sized set live, matching a virtualized 10k-row data set.
+  const rows = document.createDocumentFragment()
+  for (let i = 0; i < 30; i++) {
+    const row = document.createElement('div')
+    row.textContent = dataset[i]
+    rows.append(row)
+  }
+  list.append(rows)
+
+  const guard = createGuard(root, { blockAnimation: false })
+  const warmup = 500
+  const iterations = 5000
+
+  function dispatchActivation(target: HTMLButtonElement) {
+    target.dispatchEvent(
+      new PointerEvent('pointerdown', { bubbles: true, pointerId: 1, pointerType: 'mouse' }),
+    )
+    target.dispatchEvent(
+      new PointerEvent('pointerup', { bubbles: true, pointerId: 1, pointerType: 'mouse' }),
+    )
+    target.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+  }
+
+  function sample(guarded: boolean): number[] {
+    const durations: number[] = []
+    const batchSize = 100
+    const batches = iterations / batchSize
+    for (let batch = 0; batch < warmup / batchSize; batch++) {
+      for (let i = 0; i < batchSize; i++) {
+        dispatchActivation(guarded ? button : baselineButton)
+      }
+    }
+    for (let batch = 0; batch < batches; batch++) {
+      const start = performance.now()
+      for (let i = 0; i < batchSize; i++) {
+        dispatchActivation(guarded ? button : baselineButton)
+      }
+      durations.push((performance.now() - start) / batchSize)
+    }
+    return durations
+  }
+
+  function summarize(values: number[]) {
+    const sorted = [...values].sort((a, b) => a - b)
+    const percentile = (p: number) =>
+      sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * p))]
+    return { medianMs: percentile(0.5), p95Ms: percentile(0.95) }
+  }
+
+  async function measureMutations() {
+    const mutationDurations: number[] = []
+    for (let batch = 0; batch < 30; batch++) {
+      const fragment = document.createDocumentFragment()
+      for (let i = 0; i < 30; i++) {
+        const row = document.createElement('div')
+        row.textContent = dataset[(batch * 30 + i) % dataset.length]
+        fragment.append(row)
+      }
+      const start = performance.now()
+      list.replaceChildren(fragment)
+      await Promise.resolve()
+      mutationDurations.push(performance.now() - start)
+    }
+    return summarize(mutationDurations)
+  }
+
+  async function run() {
+    // An attached, pre-existing button is allowed by AgePolicy, so timings cover normal decisions.
+    const unguarded = sample(false)
+    const guarded = sample(true)
+    const observer = await measureMutations()
+    guard.destroy()
+
+    const baseline = summarize(unguarded)
+    const withGuard = summarize(guarded)
+    const output = {
+      environment: navigator.userAgent,
+      samples: { warmup, iterations },
+      interactionDispatch: {
+        unguarded: baseline,
+        guarded: withGuard,
+        addedMedianMs: withGuard.medianMs - baseline.medianMs,
+        addedP95Ms: withGuard.p95Ms - baseline.p95Ms,
+      },
+      virtualizedObserverFixture: {
+        datasetRows: 10000,
+        mountedRows: 30,
+        batches: 30,
+        rowsPerBatch: 30,
+        insertionAndObserverCallbackMs: observer,
+      },
+      note: 'Synthetic DOM event dispatch timings are diagnostic, not a cross-device guarantee or end-to-end input-to-paint measurement.',
+    }
+    results.textContent = JSON.stringify(output, null, 2)
+    document.documentElement.dataset.benchmarkComplete = 'true'
+  }
+
+  void run()
+</script>

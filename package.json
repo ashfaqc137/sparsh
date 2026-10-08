@@ -11,6 +11,7 @@
     "build": "pnpm -r run build",
     "test": "pnpm -r run test",
     "e2e": "playwright test",
+    "bench": "pnpm -r --filter './packages/*' run build && node scripts/package-sizes.mjs && SPARSH_BENCHMARK=1 playwright test",
     "lint": "biome check .",
     "typecheck": "tsc -b tsconfig.json",
     "typecheck:core-fence": "tsc -p packages/core/tsconfig.json --noEmit",

@@ -23,9 +23,7 @@ async function openPlayground(page: Page, framework: Framework, scenario: Scenar
   const scenarioButton = page.getByRole('button', { name: scenarioNames[scenario] })
   await scenarioButton.click()
   await expect(scenarioButton).toHaveAttribute('aria-pressed', 'true')
-  if (mode === 'Enforce') {
-    await page.getByRole('button', { name: 'Enforce', exact: true }).click()
-  }
+  await page.getByRole('button', { name: mode, exact: true }).click()
 
   const cooldown = page.getByRole('slider', { name: 'Cooldown in milliseconds' })
   await cooldown.focus()
