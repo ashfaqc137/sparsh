@@ -75,7 +75,7 @@ guarantee.
 
 ## Website
 
-`apps/website` is the consumer-facing site and official docs, deployed to Cloudflare Pages. See
+`apps/website` is the consumer-facing site and official docs, deployed to Cloudflare Workers. See
 [`apps/website/README.md`](./apps/website/README.md) for the build command and deployment settings.
 
 ## License

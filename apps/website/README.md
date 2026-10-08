@@ -24,27 +24,30 @@ binding. Both use workspace packages rather than mocks. Shared navigation and fo
   assumes the workspace packages are already built, since this site imports their published
   `dist` output (via each package's `exports` field), not their TypeScript source.
 
-## Deployment (Cloudflare Pages)
+## Deployment (Cloudflare Workers)
 
 This site is fully static (`astro.config.mjs` has no SSR adapter) and reads no environment
-variables at build time, so it deploys as a plain static asset bundle — no Pages Functions/Workers
-runtime needed.
+variables at build time, so it deploys as plain static assets — no Worker runtime code needed.
+`wrangler.jsonc` declares this via `assets.directory` and has no `main` field.
 
-Connect the GitHub repo in the Cloudflare dashboard (**Workers & Pages → Create → Pages → Connect
-to Git**) and configure:
+Connect the GitHub repo in the Cloudflare dashboard (**Workers & Pages → Create → Import a
+repository**) and configure:
 
 | Setting | Value |
 | --- | --- |
-| Framework preset | `None` |
-| Root directory | `/` (repo root — required so pnpm can resolve the workspace) |
-| Build command | `pnpm run build:website` |
-| Build output directory | `apps/website/dist` |
+| Root directory | `apps/website` (must point at this app, not the monorepo root — Wrangler's automatic project configuration refuses to run at a workspace root and errors with "detection logic has been run in the root of a workspace") |
+| Build command | `cd ../.. && pnpm run build:website` |
+| Deploy command | `npx wrangler deploy` (default — reads `assets.directory` from the committed `wrangler.jsonc`) |
 
-Cloudflare Pages auto-detects `pnpm-lock.yaml` and respects the root `package.json`'s
-`"packageManager"` field via Corepack, so no extra package-manager configuration is needed. Node
-version is pinned by the repo root's `.nvmrc`; override it with a `NODE_VERSION` environment
-variable in the Pages project settings if you need a different version. No build-time secrets or
-environment variables are required.
+Since `wrangler.jsonc` is already committed, Wrangler's automatic project configuration (which
+would otherwise try to auto-detect the framework and open a PR adding this file) is skipped
+entirely — it only triggers when no Wrangler config file exists.
+
+`wrangler` is pinned as a devDependency in this package's `package.json`; Workers Builds uses that
+version rather than whatever `npx` would otherwise resolve. The pinned `wrangler` version requires
+Node ≥22, which is why the repo root's `.nvmrc` is set to `22` — override it with a `NODE_VERSION`
+environment variable in the project settings only if you also bump the pinned `wrangler` version
+accordingly. No build-time secrets or environment variables are required.
 
 Every push to the production branch triggers a new deployment; every pull request gets its own
 preview URL automatically.

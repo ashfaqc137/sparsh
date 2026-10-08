@@ -1,0 +1,9 @@
+{
+  "name": "sparsh",
+  // Fully static site (astro.config.mjs has no server adapter) — no `main` worker script,
+  // only static assets. See apps/website/README.md "Deployment" for dashboard settings.
+  "compatibility_date": "2026-10-08",
+  "assets": {
+    "directory": "./dist"
+  }
+}
