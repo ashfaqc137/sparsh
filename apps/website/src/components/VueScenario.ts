@@ -10,6 +10,7 @@ export const VueScenario = defineComponent({
     mode: { type: String as () => Mode, required: true },
     cooldownMs: { type: Number, required: true },
     onDecision: { type: Function as PropType<(d: Decision) => void>, required: true },
+    onReset: { type: Function as PropType<() => void>, required: true },
   },
   setup(props) {
     const phase = ref<'ready' | 'armed' | 'changed'>('ready')
@@ -23,8 +24,10 @@ export const VueScenario = defineComponent({
     }
     const start = () => {
       window.clearTimeout(timer)
+      timer = 0
       opened.value = ''
       decisions.value = []
+      props.onReset()
       phase.value = 'armed'
       timer = window.setTimeout(
         () => {
@@ -32,6 +35,14 @@ export const VueScenario = defineComponent({
         },
         props.scenario === 'meaning' ? 450 : props.scenario === 'inbox' ? 1400 : 900,
       )
+    }
+    const reset = () => {
+      window.clearTimeout(timer)
+      timer = 0
+      opened.value = ''
+      decisions.value = []
+      phase.value = 'ready'
+      props.onReset()
     }
     const act = (name: string) => {
       opened.value = name
@@ -172,7 +183,7 @@ export const VueScenario = defineComponent({
                   : null,
                 button(
                   phase.value === 'ready' ? '▶  Start scenario' : '↻  Reset scenario',
-                  start,
+                  phase.value === 'ready' ? start : reset,
                   phase.value === 'ready' ? 'pg-start' : 'pg-reset',
                 ),
                 h(

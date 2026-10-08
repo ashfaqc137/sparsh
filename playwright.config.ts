@@ -19,8 +19,9 @@ export default defineConfig({
   ],
   webServer: {
     command: devServer
-      ? 'pnpm --filter website dev --host 127.0.0.1 --port 4322 --force'
-      : 'pnpm --filter website build && pnpm --filter website preview --host 127.0.0.1 --port 4322 --strictPort',
+      ? 'node_modules/.bin/astro dev --host 127.0.0.1 --port 4322 --force'
+      : 'node_modules/.bin/astro build && node_modules/.bin/astro preview --host 127.0.0.1 --port 4322 --strictPort',
+    cwd: 'apps/website',
     url: 'http://127.0.0.1:4322/playground/',
     reuseExistingServer: false,
     timeout: 120_000,

@@ -3,7 +3,8 @@
 `playground-bindings.spec.ts` drives the real `/playground/` page and its live examples. It covers
 the inbox reshuffle, late render, and changing button scenarios against both `@sparsh/react` and
 `@sparsh/vue`, in report and enforce modes. Each binding also gets a stable-target negative case in
-both modes.
+both modes. Start/replay and reset behavior are checked too, including timer cancellation and
+restoring the inbox after Leo arrives.
 
 The suite uses real browser pointer input, including a held press for the changing-button case.
 It asserts both the instrumentation result and whether the action actually ran, so report mode

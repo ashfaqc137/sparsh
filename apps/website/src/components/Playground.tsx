@@ -30,9 +30,10 @@ type DemoProps = {
   mode: Mode
   cooldownMs: number
   onDecision: (d: Decision) => void
+  onReset: () => void
 }
 
-function Scene({ scenario, mode, cooldownMs, onDecision }: DemoProps) {
+function Scene({ scenario, mode, cooldownMs, onDecision, onReset }: DemoProps) {
   const [phase, setPhase] = useState<'ready' | 'armed' | 'changed'>('ready')
   const [opened, setOpened] = useState('')
   const [decisions, setDecisions] = useState<Decision[]>([])
@@ -44,11 +45,21 @@ function Scene({ scenario, mode, cooldownMs, onDecision }: DemoProps) {
   }
   const start = () => {
     timer.current.forEach(window.clearTimeout)
+    timer.current = []
     setOpened('')
     setDecisions([])
+    onReset()
     setPhase('armed')
     const delay = scenario === 'meaning' ? 450 : scenario === 'inbox' ? 1400 : 900
     timer.current = [window.setTimeout(() => setPhase('changed'), delay)]
+  }
+  const reset = () => {
+    timer.current.forEach(window.clearTimeout)
+    timer.current = []
+    setOpened('')
+    setDecisions([])
+    setPhase('ready')
+    onReset()
   }
   const guardedAction = (name: string) => {
     setOpened(name)
@@ -159,7 +170,7 @@ function Scene({ scenario, mode, cooldownMs, onDecision }: DemoProps) {
             ▶ &nbsp;Start scenario
           </button>
         ) : (
-          <button type="button" className="pg-reset" onClick={start}>
+          <button type="button" className="pg-reset" onClick={reset}>
             ↻ &nbsp;Reset scenario
           </button>
         )}
@@ -195,14 +206,14 @@ function Scene({ scenario, mode, cooldownMs, onDecision }: DemoProps) {
   )
 }
 
-function VueMount({ scenario, mode, cooldownMs, onDecision }: DemoProps) {
+function VueMount({ scenario, mode, cooldownMs, onDecision, onReset }: DemoProps) {
   const mountRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (!mountRef.current) return
-    const app = createApp(VueScenario, { scenario, mode, cooldownMs, onDecision })
+    const app = createApp(VueScenario, { scenario, mode, cooldownMs, onDecision, onReset })
     app.mount(mountRef.current)
     return () => app.unmount()
-  }, [scenario, mode, cooldownMs, onDecision])
+  }, [scenario, mode, cooldownMs, onDecision, onReset])
   return <div ref={mountRef} />
 }
 
@@ -220,6 +231,7 @@ export function Playground() {
   const [lastDecision, setLastDecision] = useState<Decision | null>(null)
   const [hydrated, setHydrated] = useState(false)
   const onDecision = useCallback((d: Decision) => setLastDecision(d), [])
+  const onReset = useCallback(() => setLastDecision(null), [])
   const current = scenarios[scenario]
   useEffect(() => setHydrated(true), [])
   return (
@@ -328,6 +340,7 @@ export function Playground() {
               mode={mode}
               cooldownMs={cooldownMs}
               onDecision={onDecision}
+              onReset={onReset}
             />
           ) : (
             <VueMount
@@ -335,6 +348,7 @@ export function Playground() {
               mode={mode}
               cooldownMs={cooldownMs}
               onDecision={onDecision}
+              onReset={onReset}
             />
           )}
         </div>

@@ -114,4 +114,36 @@ for (const framework of ['React', 'Vue'] as const) {
       )
     })
   }
+
+  test(`${framework}: inbox reset cancels an armed reshuffle and clears an arrived message`, async ({
+    page,
+  }) => {
+    const scene = await openPlayground(page, framework, 'inbox', 'Report')
+    const start = page.getByRole('button', { name: /Start scenario/ })
+    const reset = page.getByRole('button', { name: /Reset scenario/ })
+    const leo = page.getByTestId('leo-message')
+
+    await start.click()
+    await expect(reset).toBeVisible()
+    await reset.click()
+    await expect(start).toBeVisible()
+    await expect(leo).toHaveCount(0)
+    await expect(scene.getByTestId('decision-result')).toHaveCount(0)
+
+    // The cancelled timer must not deliver Leo after reset.
+    await page.waitForTimeout(1_500)
+    await expect(leo).toHaveCount(0)
+
+    // Reset also restores the initial inbox after the reshuffle has completed.
+    await start.click()
+    await expect(leo).toBeVisible({ timeout: 3_000 })
+    await page.getByRole('button', { name: /Reset scenario/ }).click()
+    await expect(start).toBeVisible()
+    await expect(leo).toHaveCount(0)
+    await expect(scene.getByTestId('scenario-result')).toHaveCount(0)
+
+    // The restored scenario can be started again.
+    await start.click()
+    await expect(leo).toBeVisible({ timeout: 3_000 })
+  })
 }
