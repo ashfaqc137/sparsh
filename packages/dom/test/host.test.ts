@@ -227,6 +227,45 @@ describe('createDomHost', () => {
     expect(animate).not.toHaveBeenCalled()
   })
 
+  it('custom onBlocked feedback replaces the shake and runs after the click is canceled', () => {
+    const onBlocked = vi.fn()
+    host.destroy()
+    host = createDomHost(document.body, { onBlocked })
+    const animate = vi.fn()
+    ;(btn as unknown as { animate: typeof animate }).animate = animate
+
+    host.onActivationEvent((e) => {
+      if (e.phase === 'activation') host.block(e)
+    })
+
+    firePointerEvent(btn, 'pointerdown', { pointerId: 1 })
+    firePointerEvent(btn, 'pointerup', { pointerId: 1 })
+    expect(onBlocked).not.toHaveBeenCalled()
+
+    const click = fireClick(btn)
+    expect(click.defaultPrevented).toBe(true)
+    expect(onBlocked).toHaveBeenCalledTimes(1)
+    expect(onBlocked).toHaveBeenCalledWith(btn)
+    expect(animate).not.toHaveBeenCalled()
+  })
+
+  it('custom onBlocked feedback also runs for a blocked virtual click and cannot break cancellation', () => {
+    const onBlocked = vi.fn(() => {
+      throw new Error('animation failed')
+    })
+    host.destroy()
+    host = createDomHost(document.body, { onBlocked })
+    host.onActivationEvent((e) => {
+      if (e.phase === 'activation') host.block(e)
+    })
+
+    const click = fireClick(btn, { detail: 0 })
+
+    expect(click.defaultPrevented).toBe(true)
+    expect(onBlocked).toHaveBeenCalledTimes(1)
+    expect(onBlocked).toHaveBeenCalledWith(btn)
+  })
+
   it('block() respects a custom blockAnimationMs', () => {
     host.destroy()
     host = createDomHost(document.body, { blockAnimationMs: 150 })

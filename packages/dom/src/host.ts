@@ -38,6 +38,12 @@ export interface DomHostOptions {
   blockAnimation?: boolean
   /** Duration (ms) of the default block animation. Default 300. */
   blockAnimationMs?: number
+  /**
+   * Custom visual feedback for an enforced block. Receives the blocked interactive element after
+   * the activation has been canceled. When provided, this replaces the default shake animation.
+   * Exceptions are ignored because custom feedback must not affect blocking.
+   */
+  onBlocked?: (element: Element) => void
 }
 
 /** `createDomHost`'s return type: the `Host` port plus lifecycle teardown (not part of `Host`). */
@@ -59,6 +65,15 @@ export function createDomHost(root: Element | Document, opts: DomHostOptions = {
   const clickSuppressMs = opts.clickSuppressMs ?? DEFAULT_CLICK_SUPPRESS_MS
   const blockAnimationEnabled = opts.blockAnimation ?? true
   const blockAnimationMs = opts.blockAnimationMs ?? DEFAULT_BLOCK_ANIMATION_MS
+  const onBlocked = opts.onBlocked
+
+  function notifyBlocked(el: Element): void {
+    try {
+      onBlocked?.(el)
+    } catch {
+      // Custom visual feedback must never change the result of an enforced block.
+    }
+  }
 
   const activationCbs = new Set<(e: ActivationEvent) => void>()
   const clearCbs = new Set<(s: IntentClearSignal) => void>()
@@ -186,6 +201,7 @@ export function createDomHost(root: Element | Document, opts: DomHostOptions = {
       if (blocked) {
         e.preventDefault()
         stopImmediate(e)
+        if (onBlocked !== undefined) notifyBlocked(el)
       }
       return
     }
@@ -246,8 +262,14 @@ export function createDomHost(root: Element | Document, opts: DomHostOptions = {
       native.preventDefault()
       stopImmediate(native)
       const el = fromHandle(e.target)
-      if (blockAnimationEnabled) playDefaultBlockAnimation(el, blockAnimationMs)
-      if (native.type === 'click') return // native IS the click (virtual activation) — done.
+      if (native.type === 'click') {
+        if (onBlocked !== undefined) notifyBlocked(el)
+        else if (blockAnimationEnabled) playDefaultBlockAnimation(el, blockAnimationMs)
+        return // native IS the click (virtual activation) — done.
+      }
+      if (onBlocked === undefined && blockAnimationEnabled) {
+        playDefaultBlockAnimation(el, blockAnimationMs)
+      }
       // native is pointerup/keydown: canceling it does not stop the browser's own follow-up
       // click for real mouse/keyboard input (see the comment on `pendingClick`). Mark the
       // already-armed pending click so `onClick` cancels it when it actually arrives.

@@ -72,6 +72,35 @@ describe('<ActivationGuardProvider>', () => {
     wrapper.unmount()
   })
 
+  it('passes onBlocked feedback and keeps the latest callback without recreating the guard', async () => {
+    const firstHandler = vi.fn()
+    const latestHandler = vi.fn()
+    const App = defineComponent({
+      props: { onBlocked: { type: Function, required: true } },
+      setup(props) {
+        return () =>
+          h(
+            ActivationGuardProvider,
+            { onBlocked: props.onBlocked as (element: Element) => void },
+            () => h('button', { type: 'button' }, 'Click'),
+          )
+      },
+    })
+
+    const wrapper = mount(App, { attachTo: container, props: { onBlocked: firstHandler } })
+    const button = container.querySelector('button') as HTMLButtonElement
+    const hostOptions = createGuardMock.mock.calls[0]?.[1]
+    hostOptions?.onBlocked?.(button)
+    expect(firstHandler).toHaveBeenCalledWith(button)
+
+    await wrapper.setProps({ onBlocked: latestHandler })
+    expect(createGuardMock).toHaveBeenCalledTimes(1)
+    hostOptions?.onBlocked?.(button)
+    expect(latestHandler).toHaveBeenCalledWith(button)
+
+    wrapper.unmount()
+  })
+
   it('recreates the guard when a meaningful option (cooldownMs) changes', async () => {
     const App = defineComponent({
       props: { cooldownMs: { type: Number, required: true } },

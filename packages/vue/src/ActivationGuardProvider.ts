@@ -74,6 +74,7 @@ const PROVIDER_PROP_NAMES = [
   'clickSuppressMs',
   'blockAnimation',
   'blockAnimationMs',
+  'onBlocked',
 ] as const
 
 /**
@@ -94,6 +95,7 @@ function serializeOptions(opts: DomGuardOptions): string {
     clickSuppressMs,
     blockAnimation,
     blockAnimationMs,
+    onBlocked,
   } = opts
   return JSON.stringify({
     mode,
@@ -105,6 +107,7 @@ function serializeOptions(opts: DomGuardOptions): string {
     clickSuppressMs,
     blockAnimation,
     blockAnimationMs,
+    hasCustomBlockFeedback: onBlocked !== undefined,
   })
 }
 
@@ -130,13 +133,15 @@ export const ActivationGuardProvider = defineComponent(
     provide(GuardKey, contextValue)
 
     function domOptsFromProps(): DomGuardOptions {
-      const { onSuspect: _onSuspect, root: _root, ...domOpts } = props
+      const { onSuspect: _onSuspect, onBlocked: _onBlocked, root: _root, ...domOpts } = props
       return domOpts
     }
 
     // A plain computed (reactive) string: Vue's equality check on it already gives us "only
     // re-run when the option set actually changes" for free, mirroring React's `optionsKey`.
-    const optionsKey = computed(() => serializeOptions(domOptsFromProps()))
+    const optionsKey = computed(() =>
+      serializeOptions({ ...domOptsFromProps(), onBlocked: props.onBlocked }),
+    )
 
     function recreateGuard(): void {
       guard?.destroy()
@@ -145,6 +150,9 @@ export const ActivationGuardProvider = defineComponent(
       if (rootNode === null || rootNode === undefined) return
       guard = createGuard(rootNode, {
         ...domOptsFromProps(),
+        ...(props.onBlocked === undefined
+          ? {}
+          : { onBlocked: (element) => props.onBlocked?.(element) }),
         onDecision: (decision) => {
           props.onDecision?.(decision)
           if (decision.allowed === false) props.onSuspect?.(decision)

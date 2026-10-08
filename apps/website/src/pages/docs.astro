@@ -95,6 +95,7 @@ guard.destroy()`}</code></pre>
             <div><dt><code>cooldownMs</code></dt><dd>How long a target needs to be around before Age trusts it. Starts at 500 ms.</dd></div>
             <div><dt><code>onDecision</code></dt><dd>Gets every decision, allowed or blocked, with the policy and reason.</dd></div>
             <div><dt><code>onSuspect</code></dt><dd>A shortcut for decisions where <code>allowed</code> is false.</dd></div>
+            <div><dt><code>onBlocked</code></dt><dd>Runs after an enforced activation is canceled and receives its element. Use it for custom feedback; it replaces the default shake animation.</dd></div>
             <div><dt><code>data-guard="off"</code></dt><dd>Let a subtree (like a “Try again” button) opt out.</dd></div>
           </dl>
           <p class="doc-note"><strong>A little tip:</strong> Age is the easiest policy to overtune. If it is too sensitive for your app, set Age to report mode while you tune its cooldown.</p>

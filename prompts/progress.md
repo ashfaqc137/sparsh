@@ -201,3 +201,8 @@ Phases: A Foundation · B Core engine · C Policies · D DOM host · E React · 
   not run.
 - **Playground order.** Moved “THE SETUP” above the interactive workbench so the live code example is
   presented before the scenario. `git diff --check` passed; tests were not run.
+- **Custom blocked feedback.** Added `onBlocked(element)` to DOM host options and surfaced it through
+  React/Vue providers. It replaces the default shake and runs only after an enforced activation is
+  canceled; callback errors are ignored. Added DOM timing/error tests and provider callback-forwarding
+  tests, and documented the option. DOM, React, and Vue tests passed; package typechecks and Biome
+  checks passed.

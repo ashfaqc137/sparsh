@@ -59,6 +59,7 @@ function serializeOptions(opts: DomGuardOptions): string {
     clickSuppressMs,
     blockAnimation,
     blockAnimationMs,
+    onBlocked,
   } = opts
   return JSON.stringify({
     mode,
@@ -70,6 +71,7 @@ function serializeOptions(opts: DomGuardOptions): string {
     clickSuppressMs,
     blockAnimation,
     blockAnimationMs,
+    hasCustomBlockFeedback: onBlocked !== undefined,
   })
 }
 
@@ -94,6 +96,8 @@ export function ActivationGuardProvider(props: ActivationGuardProviderProps): Re
   onDecisionRef.current = onDecision
   const onSuspectRef = useRef(onSuspect)
   onSuspectRef.current = onSuspect
+  const onBlockedRef = useRef(domOpts.onBlocked)
+  onBlockedRef.current = domOpts.onBlocked
 
   // Stable forever: closes over refs, never needs to change identity across renders, so context
   // consumers (the hook) don't re-render just because the provider re-rendered.
@@ -124,6 +128,9 @@ export function ActivationGuardProvider(props: ActivationGuardProviderProps): Re
 
     const guard = createGuard(rootNode, {
       ...domOptsRef.current,
+      ...(domOptsRef.current.onBlocked === undefined
+        ? {}
+        : { onBlocked: (element) => onBlockedRef.current?.(element) }),
       onDecision: (decision) => {
         onDecisionRef.current?.(decision)
         if (decision.allowed === false) onSuspectRef.current?.(decision)
