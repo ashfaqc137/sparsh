@@ -4,7 +4,7 @@
 > A framework-agnostic UX-safety primitive that prevents **accidental activation of unstable UI**:
 > a user forms intent against a snapshot of the screen, the UI mutates before their tap/click/keypress
 > lands, and the activation is stolen. sparsh detects that the target was not *perceivable long enough*
-> or *changed identity/meaning* between intent and activation, and (optionally) blocks it.
+> or *changed identity/meaning* between intent and activation, and blocks suspicious activations by default.
 
 This `prompts/` directory is the **single source of truth** for building sparsh. It is written so that
 **any LLM can read it cold and understand the entire project** — the problem, the philosophy, the
@@ -36,9 +36,8 @@ governing spec docs.
 These are hard rules derived from the failure modes of every prior attempt at this category. Violating
 them silently reintroduces the exact bugs sparsh exists to prevent.
 
-1. **Report-only by default.** Nothing is ever blocked unless a policy is explicitly in `enforce` mode.
-   The default mode does *nothing* but emit `onDecision`. This is both the safety property and the
-   adoption wedge. Never change the default to `enforce`.
+1. **Enforce by default.** Suspicious activations are blocked unless a policy is explicitly in `report`
+   mode. `onDecision` reports every decision in both modes; teams can use report mode to tune policies.
 
 2. **Fail open, everywhere.** If sparsh cannot be *sure* an activation is untrustworthy, it allows it.
    An unseen/pre-existing element is treated as old. A missing signal never causes a block. A false

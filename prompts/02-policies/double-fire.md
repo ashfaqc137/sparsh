@@ -5,7 +5,7 @@ or repeat event lands on whatever is now underneath.
 
 **Applies to:** pointer input (`mouse`/`touch`/`pen`). Not `key`/`virtual`.
 
-**Default mode:** `report`.
+**Default mode:** `enforce` (D21).
 
 > This policy was under-specified in earlier drafts (a file existed with no spec). It has its own,
 > narrow spec here so it doesn't silently do nothing.

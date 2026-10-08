@@ -45,7 +45,7 @@ const applyButton = document.getElementById('apply-config') as HTMLButtonElement
 
 function globalMode(): Mode {
   for (const r of globalModeRadios) if (r.checked) return r.value as Mode
-  return 'report'
+  return 'enforce'
 }
 
 function buildModeOption(): Mode | Partial<Record<PolicyId, Mode>> {

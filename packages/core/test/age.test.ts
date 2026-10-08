@@ -28,7 +28,7 @@ describe('AgePolicy', () => {
     expect(host.blocked).toHaveLength(1)
   })
 
-  it('default report mode: verdict blocked but NOT enforced (D6)', () => {
+  it('explicit report mode: verdict blocked but NOT enforced', () => {
     const { host, decisions } = setup('report', 500)
     const t = makeTarget({ ageMs: 120 })
     host.register(t.handle, t.data)

@@ -14,7 +14,7 @@ error boundary.
 - Out: policy internals, DOM.
 
 ## Deliverables
-- Mode resolver: `modeFor(policyId): Mode`, defaulting **all policies to `report`**.
+- Mode resolver: `modeFor(policyId): Mode`, defaulting **all policies to `enforce`** (D21).
 - On a policy verdict `allowed:false`: `enforced = modeFor(policy) === 'enforce'`; call `host.block(e)`
   only if `enforced`.
 - `onDecision` invoked **every** activation with a fully-populated `Decision` (allowed cases too).
@@ -24,17 +24,17 @@ error boundary.
   decision with a diagnostic reason.
 
 ## Acceptance (unit, fake host)
-- Default config blocks nothing; `onDecision` fires with `allowed` reflecting verdicts, `enforced:false`.
-- Set one policy to `enforce`: only that policy's untrusted verdicts call `host.block`; others still only
-  report.
+- Default config enforces suspicious policy verdicts; `onDecision` fires for every activation.
+- Set one policy to `report`: that policy's untrusted verdicts do not call `host.block`; other policies
+  remain enforced.
 - `neverBlock` event and `guardOff` target are never blocked, in any mode.
 - A policy that throws does not block and does not crash the pipeline (fail open).
 - `isGuarded(handle)` reflects the most recent enforced block for that handle.
 
 ## References
 - `../../01-architecture/core-contract.md` (Decision, invariants)
-- `../../01-architecture/decisions.md` D6, D7, D11
-- `../conventions.md` (fail open, report default)
+- `../../01-architecture/decisions.md` D7, D11, D21
+- `../conventions.md` (fail open, enforce default)
 
 ## Notes
 - `onSuspect` is just `onDecision` filtered to `allowed===false`; bindings may add that sugar (not core's

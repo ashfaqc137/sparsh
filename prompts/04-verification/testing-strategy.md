@@ -36,8 +36,8 @@ No browser needed — this proves core correctness in Node.
 | 20 | `data-guard="off"` target | never blocked, any mode | engine |
 | 21 | `neverBlock` (esc/focus/scroll) | never blocked, any mode | engine |
 | 22 | policy throws | fail open (allow), no crash | engine |
-| 23 | default mode | nothing enforced; `onDecision` fires for all | engine |
-| 24 | one policy `enforce`, others `report` | only that policy blocks | engine |
+| 23 | default mode | suspicious activations enforced; `onDecision` fires for all | engine |
+| 24 | one policy `report`, others `enforce` | only enforced policy blocks on its violation | engine |
 
 ## Layer 2 — Real-input integration (Playwright) — non-negotiable
 

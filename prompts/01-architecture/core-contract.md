@@ -119,7 +119,7 @@ export interface IntentClearSignal {
 
 ```ts
 export interface GuardOptions {
-  /** Global mode, or per-policy override. Default: 'report' for ALL policies. */
+  /** Global mode, or per-policy override. Default: 'enforce' for ALL policies. */
   mode?: Mode | Partial<Record<PolicyId, Mode>>
 
   /** Age cooldown. Default 500. */

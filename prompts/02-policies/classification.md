@@ -46,8 +46,8 @@ Keyboard activation, screen-reader clicks, and `.click()` produce **no `pointerd
   **must not run** — running it would find no stored intent and (if implemented naively) block every AT
   activation forever.
 - **Age applies to every kind, including `key`/`virtual`** (decision D12). A freshly-rendered control
-  activated by keyboard within the cooldown *is* flagged — but Age is report-mode by default, so this is
-  observable, not breaking, until a team opts in.
+  activated by keyboard within the cooldown *is* flagged and can be blocked in the default enforce
+  mode. Configure Age as report if this is too sensitive for the application.
 - **Semantics applies to every kind** — meaning changes matter regardless of modality. For `key`/`virtual`
   with no pointerdown, the "intent" snapshot for Semantics is taken at **first-visible** (the same anchor
   Age uses) rather than at pointerdown.

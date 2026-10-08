@@ -7,7 +7,7 @@
  * Zero DOM. This module must compile with `lib: ["ES2022"]` only.
  */
 
-/** Report-only (default) never blocks; enforce may actually block an untrusted activation. */
+/** Enforce (default) may block a suspicious activation; report-only records it without blocking. */
 export type Mode = 'report' | 'enforce'
 
 export type PolicyId = 'age' | 'continuity' | 'semantics' | 'doubleFire'

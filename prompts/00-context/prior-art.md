@@ -66,5 +66,4 @@ mouse.**
 The Age cooldown default is **500ms**. Two independent sources landed near it: Chromium's double-click
 interval and the CLS `hadRecentInput` exclusion window. Treat this as a *reasonable default*, not gospel —
 the stated motor-planning window is 150–300ms, so 500ms is deliberately generous to protect false
-positives. It is configurable, and Age is report-mode by default precisely because it is the
-tuning-sensitive policy.
+positives. It is configurable, and teams can set Age to report mode while tuning this signal.

@@ -4,7 +4,7 @@
  * reports every decision. Zero DOM — all platform access is through `host`.
  *
  * See `prompts/01-architecture/core-contract.md` ("Engine responsibilities" + "Invariants") and
- * `prompts/03-implementation/conventions.md` (report-by-default, fail-open, a11y carve-out).
+ * `prompts/03-implementation/conventions.md` (enforce-by-default, fail-open, a11y carve-out).
  */
 
 import type { Decision } from './decision.js'
@@ -14,7 +14,7 @@ import type { LastActivation, Policy, PolicyContext } from './policy.js'
 import type { ActivationEvent, Mode, PolicyId, TargetHandle, TargetSnapshot } from './types.js'
 
 export interface GuardOptions {
-  /** Global mode, or per-policy override. Default: 'report' for ALL policies (D6). */
+  /** Global mode, or per-policy override. Default: 'enforce' for ALL policies. */
   mode?: Mode | Partial<Record<PolicyId, Mode>>
   /** Age cooldown, ms. Default 500. */
   cooldownMs?: number
@@ -72,7 +72,7 @@ export function createGuard(host: Host, opts: GuardOptions = {}): Guard {
 
   function modeFor(policyId: PolicyId): Mode {
     if (typeof opts.mode === 'string') return opts.mode
-    return opts.mode?.[policyId] ?? 'report'
+    return opts.mode?.[policyId] ?? 'enforce'
   }
 
   // Pointer-id-scoped intent (cleared on pointercancel/lostpointercapture and after activation).

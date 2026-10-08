@@ -8,8 +8,7 @@ sub-case where the whole press lands after the element is already enabled, caugh
 **Applies to:** all input kinds. For pointer input the intent anchor is `pointerdown`; for `key`/`virtual`
 (no pointerdown) the intent anchor is **first-visible** (same anchor Age uses).
 
-**Default mode:** `report`. The `disabled`→enabled sub-check is high-value and low-risk; consider it a
-candidate for early enforcement, but keep the default `report`.
+**Default mode:** `enforce` (D21). The `disabled`→enabled sub-check is high-value and low-risk.
 
 ## The rule
 

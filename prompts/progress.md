@@ -186,3 +186,18 @@ Phases: A Foundation · B Core engine · C Policies · D DOM host · E React · 
   tsup/rollup-plugin-dts incompatibility with `"composite": true`). Engine-contract extensions
   documented above and mirrored into `core-contract.md` in the same change.
 - _(previous)_ — documentation scaffold created under `prompts/`; old `PLAN.md` removed.
+- **D21 applied: enforce mode is now the default.** Core mode resolution defaults omitted and
+  unspecified per-policy modes to `enforce`; the vanilla Storybook opens in enforce mode; the website
+  playground and its docs describe and select enforce by default. Report remains available explicitly.
+  Updated core coverage and the normative contract/decision/policy docs. `git diff --check` passed;
+  tests were not run in this task.
+- **Playground polish.** The changing-meaning scenario now shows a compact animated spinner beside
+  “Please wait…” and uses a standard cursor. Decision reasons format millisecond values as seconds to
+  two decimal places, and the React result message uses plain spacing instead of displaying the literal
+  `&nbsp;` entity. `git diff --check` passed; tests were not run.
+- **Playground code colors.** Added client-side token coloring for the generated JSX and Vue snippets;
+  tag names, attributes, strings, keywords, numbers, and punctuation have distinct colors. The snippet
+  remains selectable text and updates with the framework/settings. `git diff --check` passed; tests were
+  not run.
+- **Playground order.** Moved “THE SETUP” above the interactive workbench so the live code example is
+  presented before the scenario. `git diff --check` passed; tests were not run.

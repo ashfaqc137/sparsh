@@ -411,7 +411,8 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lime); outline-
 .pg-empty-slot { color: #797d70; font-size: 11px; }
 .pg-action { padding: 12px 18px; border: 0; border-radius: 8px; background: #c7e66d; color: #25291b; font: inherit; font-size: 11px; font-weight: 750; cursor: pointer; }
 .pg-action span { padding-left: 9px; }
-.pg-disabled { background: #484c40; color: #a2a695; cursor: wait; }
+.pg-disabled { background: #484c40; color: #a2a695; cursor: default; }
+.pg-spinner { display: inline-block; width: 12px; height: 12px; margin-right: 8px; vertical-align: -2px; border: 2px solid #a2a69566; border-top-color: #d7ee97; border-radius: 50%; animation: pg-spin .8s linear infinite; }
 .pg-meaning { min-height: 194px; gap: 8px; }
 .pg-upload-icon { display: grid; width: 33px; height: 33px; place-items: center; border-radius: 10px; background: #363b2c; color: #d7ee97; font-size: 20px; }
 .pg-meaning > strong { color: #eeefe6; font-size: 13px; }
@@ -433,8 +434,15 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--lime); outline-
 .pg-code-section h2 { margin: 10px 0; color: #edeede; font-size: 23px; letter-spacing: -.03em; }
 .pg-code-section p, .pg-footnote { color: #a0a394; font-size: 12px; line-height: 1.65; }
 .pg-code-section pre { overflow-x: auto; margin: 0; padding: 18px; border: 1px solid #34372e; border-radius: 12px; background: #171914; color: #d1e4a3; font-size: 10px; line-height: 1.75; }
+.pg-code-keyword { color: #c792ea; }
+.pg-code-tag { color: #80cbc4; }
+.pg-code-attribute { color: #82aaff; }
+.pg-code-string { color: #c3e88d; }
+.pg-code-number { color: #f78c6c; }
+.pg-code-punctuation { color: #89ddff; }
 .pg-footnote { text-align: center; font-size: 10px; }
 @keyframes pg-arrive { from { opacity: 0; transform: translateY(-7px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pg-spin { to { transform: rotate(360deg); } }
 @media (max-width: 680px) {
   .pg-toolbar { align-items: flex-start; flex-direction: column; gap: 12px; padding: 14px; }
   .pg-scenario-tabs { padding-inline: 10px; gap: 5px; }

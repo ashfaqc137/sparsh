@@ -49,11 +49,11 @@ import BaseLayout from '../layouts/BaseLayout.astro'
     <section class="report-panel">
       <div class="report-mark" aria-hidden="true">◎</div>
       <div>
-        <p class="section-kicker">START WITH THE TRAINING WHEELS ON</p>
-        <h2>Watch first. Block later.</h2>
-        <p>By default, sparsh runs in <code>report</code> mode. It tells you when a tap looks suspicious but lets it through. Once you’ve seen how the signals behave in your app, you can switch on <code>enforce</code> for the policies you’re comfortable with.</p>
+        <p class="section-kicker">DEFAULT PROTECTION</p>
+        <h2>Suspicious taps are stopped.</h2>
+        <p>By default, sparsh runs in <code>enforce</code> mode and stops suspicious activations. You can switch to <code>report</code> mode to observe decisions without blocking, or set modes per policy.</p>
       </div>
-      <div class="mode-pills"><span>report <small>default</small></span><span>enforce <small>opt in</small></span></div>
+      <div class="mode-pills"><span>enforce <small>default</small></span><span>report <small>observe only</small></span></div>
     </section>
 
     <section class="accessibility-note">

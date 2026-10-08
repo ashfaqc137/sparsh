@@ -4,7 +4,7 @@ import { createGuard } from '../src/engine.js'
 import { activationEvent, createFakeHost, intentEvent, makeTarget } from './fake-host.js'
 
 describe('engine — mode / decision plumbing', () => {
-  it('row 23: default mode blocks nothing; onDecision fires for every activation', () => {
+  it('default enforce mode blocks suspicious activations; onDecision fires for every activation', () => {
     const host = createFakeHost()
     const decisions: Decision[] = []
     createGuard(host, { onDecision: (d) => decisions.push(d) })
@@ -15,16 +15,18 @@ describe('engine — mode / decision plumbing', () => {
     host.fire(activationEvent('mouse', t.handle, { pointerId: 1, timeStamp: 10 }))
 
     expect(decisions).toHaveLength(1)
-    // Age's own verdict is "blocked" (young), but nothing is ENFORCED by default (report mode).
-    expect(decisions[0]?.enforced).toBe(false)
-    expect(host.blocked).toHaveLength(0)
+    expect(decisions[0]?.enforced).toBe(true)
+    expect(host.blocked).toHaveLength(1)
   })
 
-  it('row 24: one policy enforce, others report ⇒ only that policy blocks', () => {
+  it('one policy report and others enforce ⇒ report policy does not block', () => {
     const host = createFakeHost()
     const decisions: Decision[] = []
-    // Enforce continuity only; age stays report.
-    createGuard(host, { mode: { continuity: 'enforce' }, onDecision: (d) => decisions.push(d) })
+    // Age is explicitly report; continuity and the other unspecified policies remain enforced.
+    createGuard(host, {
+      mode: { continuity: 'enforce', age: 'report' },
+      onDecision: (d) => decisions.push(d),
+    })
 
     // (a) Age would flag this (young), but age is report ⇒ not enforced, not even the reported
     // blocking policy since continuity runs first and passes (down/up match) here.

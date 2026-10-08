@@ -1,17 +1,53 @@
 import type { Decision, Mode } from '@sparsh/core'
 import { ActivationGuardProvider } from '@sparsh/react'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { createApp } from 'vue'
+import { formatDecisionReason } from './formatDecisionReason'
 import { VueScenario } from './VueScenario'
 
 type Scenario = 'inbox' | 'late' | 'meaning'
 type Framework = 'react' | 'vue'
 
+function highlightCode(code: string): ReactNode[] {
+  const tokenPattern = /("[^"]*"|'[^']*'|<\/?[A-Za-z][\w.-]*|[A-Za-z_:][\w:.-]*(?=\s*=)|\b(?:import|from)\b|\b\d+\b|[{}[\]<>/=])/g
+  const highlighted: ReactNode[] = []
+  let offset = 0
+
+  for (const match of code.matchAll(tokenPattern)) {
+    const index = match.index
+    const token = match[0]
+    if (index > offset) highlighted.push(code.slice(offset, index))
+
+    const className =
+      token.startsWith('"') || token.startsWith("'")
+        ? 'pg-code-string'
+        : token.startsWith('<')
+          ? 'pg-code-tag'
+          : token === 'import' || token === 'from'
+            ? 'pg-code-keyword'
+            : /^\d+$/.test(token)
+              ? 'pg-code-number'
+              : /^[A-Za-z_:]/.test(token)
+                ? 'pg-code-attribute'
+                : 'pg-code-punctuation'
+
+    highlighted.push(
+      <span className={className} key={`${index}-${token}`}>
+        {token}
+      </span>,
+    )
+    offset = index + token.length
+  }
+
+  if (offset < code.length) highlighted.push(code.slice(offset))
+  return highlighted
+}
+
 const scenarios: Record<Scenario, { title: string; description: string; instruction: string }> = {
   inbox: {
     title: 'The inbox reshuffle',
-    description: 'A new message arrives just as you tap Maya’s row.',
-    instruction: 'Press start, aim at Maya’s message, then tap as Leo’s new message arrives.',
+    description: 'Leo’s message takes Maya’s place just as your press begins.',
+    instruction: 'Press start, press and hold Maya’s row, then release after Leo arrives.',
   },
   late: {
     title: 'The late render',
@@ -82,19 +118,6 @@ function Scene({ scenario, mode, cooldownMs, onDecision, onReset }: DemoProps) {
               <span>Inbox</span>
               <span>3 unread</span>
             </div>
-            <button
-              data-testid="maya-message"
-              type="button"
-              className={`pg-mail-row ${phase === 'armed' ? 'pg-target' : ''}`}
-              onClick={() => guardedAction('Maya’s message')}
-            >
-              <b className="pg-avatar">M</b>
-              <span>
-                <strong>Maya Chen</strong>
-                <small>Can you take a look at this?</small>
-              </span>
-              <time>9:41</time>
-            </button>
             {phase === 'changed' && (
               <button
                 data-testid="leo-message"
@@ -112,6 +135,19 @@ function Scene({ scenario, mode, cooldownMs, onDecision, onReset }: DemoProps) {
                 <time>now</time>
               </button>
             )}
+            <button
+              data-testid="maya-message"
+              type="button"
+              className={`pg-mail-row ${phase === 'armed' ? 'pg-target' : ''}`}
+              onClick={() => guardedAction('Maya’s message')}
+            >
+              <b className="pg-avatar">M</b>
+              <span>
+                <strong>Maya Chen</strong>
+                <small>Can you take a look at this?</small>
+              </span>
+              <time>9:41</time>
+            </button>
             <div className="pg-mail-row pg-muted">
               <b className="pg-avatar pg-avatar-gold">A</b>
               <span>
@@ -161,7 +197,14 @@ function Scene({ scenario, mode, cooldownMs, onDecision, onReset }: DemoProps) {
               className={`pg-action ${phase === 'armed' ? 'pg-target' : ''} ${phase !== 'changed' ? 'pg-disabled' : ''}`}
               onClick={() => phase === 'changed' && guardedAction('Publish update')}
             >
-              {phase === 'changed' ? 'Publish update' : 'Please wait…'}
+              {phase === 'changed' ? (
+                'Publish update'
+              ) : (
+                <>
+                  <span className="pg-spinner" aria-hidden="true" />
+                  Please wait…
+                </>
+              )}
             </button>
           </div>
         )}
@@ -180,7 +223,7 @@ function Scene({ scenario, mode, cooldownMs, onDecision, onReset }: DemoProps) {
             : scenario === 'meaning'
               ? 'Hold the button through the change to see sparsh catch the shift.'
               : scenario === 'inbox'
-                ? 'Tap Maya’s row just as Leo’s new message arrives.'
+                ? 'Keep holding Maya’s row. Release after Leo takes her place.'
                 : 'Go now — the interface is changing under your tap.'}
         </p>
         {opened && (
@@ -194,11 +237,11 @@ function Scene({ scenario, mode, cooldownMs, onDecision, onReset }: DemoProps) {
             className={`pg-result ${decisions[0].allowed ? 'pg-result-ok' : mode === 'report' ? 'pg-result-report' : 'pg-result-block'}`}
           >
             {decisions[0].allowed
-              ? '✓ &nbsp; Tap allowed — this target was stable.'
+              ? '✓  Tap allowed — this target was stable.'
               : mode === 'report'
-                ? `◉ &nbsp; sparsh spotted a ${decisions[0].policy ?? 'suspicious'} tap. Report mode lets it through.`
-                : `✋ &nbsp; sparsh caught the ${decisions[0].policy ?? 'suspicious'} tap before it landed.`}
-            {decisions[0].reason && <small>{decisions[0].reason}</small>}
+                ? `◉  sparsh spotted a ${decisions[0].policy ?? 'suspicious'} tap. Report mode lets it through.`
+                : `✋  sparsh caught the ${decisions[0].policy ?? 'suspicious'} tap before it landed.`}
+            {decisions[0].reason && <small>{formatDecisionReason(decisions[0].reason)}</small>}
           </div>
         )}
       </div>
@@ -226,7 +269,7 @@ function exampleCode(framework: Framework, scenario: Scenario, mode: Mode, coold
 export function Playground() {
   const [framework, setFramework] = useState<Framework>('react')
   const [scenario, setScenario] = useState<Scenario>('inbox')
-  const [mode, setMode] = useState<Mode>('report')
+  const [mode, setMode] = useState<Mode>('enforce')
   const [cooldownMs, setCooldownMs] = useState(500)
   const [lastDecision, setLastDecision] = useState<Decision | null>(null)
   const [hydrated, setHydrated] = useState(false)
@@ -252,6 +295,16 @@ export function Playground() {
           fair.
         </p>
       </div>
+      <section className="pg-code-section">
+        <div>
+          <span className="eyebrow">THE SETUP</span>
+          <h2>A small wrapper. A calmer interface.</h2>
+          <p>This example follows your framework, scenario, mode, and cooldown settings.</p>
+        </div>
+        <pre>
+          <code>{highlightCode(exampleCode(framework, scenario, mode, cooldownMs))}</code>
+        </pre>
+      </section>
       <section className="pg-workbench" aria-label="sparsh playground">
         <div className="pg-toolbar">
           <fieldset className="pg-control-group">
@@ -373,20 +426,10 @@ export function Playground() {
                   : mode === 'report'
                     ? 'The suspicious activation was recorded and allowed through, so you can tune before blocking.'
                     : 'The activation was prevented because the target was too new or changed beneath your pointer.'
-                : 'Try the scenario once in each mode. Report mode observes; enforce mode can block suspicious activations.'}
+                : 'Enforce mode is on by default. Switch to report mode to observe suspicious activations without blocking them.'}
             </p>
           </div>
         </div>
-      </section>
-      <section className="pg-code-section">
-        <div>
-          <span className="eyebrow">THE SETUP</span>
-          <h2>A small wrapper. A calmer interface.</h2>
-          <p>This example follows your framework, scenario, mode, and cooldown settings.</p>
-        </div>
-        <pre>
-          <code>{exampleCode(framework, scenario, mode, cooldownMs)}</code>
-        </pre>
       </section>
       <p className="pg-footnote">
         These are real React and Vue bindings running in your browser. No account or sandbox setup

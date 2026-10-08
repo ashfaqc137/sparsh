@@ -39,11 +39,11 @@ core DOM-free and unlocks a future native host without touching core.
 **Consequences:** `core` defines `Host`; `dom` implements it. All measurement (incl. age heuristic) lives
 behind the port.
 
-### D6 · Report-only by default; enforcement is per-policy · Accepted
+### D6 · Report-only by default; enforcement is per-policy · Superseded by D21
 **Rationale:** installing global input interception must never break an app on day one; also the adoption
 wedge (measure first). Continuity is near-zero false-positive and can be enforced early; Age is
 tuning-sensitive and stays report by default.
-**Consequences:** default `mode` is `'report'` for all policies. `onDecision` fires in both modes.
+**Historical consequences:** default `mode` was `'report'` for all policies. `onDecision` fires in both modes.
 
 ### D7 · Fail open everywhere · Accepted
 **Rationale:** false positives (a real click ignored) are existential; false negatives (a rare mistap) are
@@ -75,7 +75,8 @@ focus, or scroll in any mode.
 ### D12 · AgePolicy applies to ALL interaction kinds (incl. keyboard/virtual) · Accepted
 **Rationale:** decision by project owner. Keeps the model uniform; perception matters regardless of input
 modality. The nuance (fast keyboard/AT users hitting a freshly-focused control within the cooldown) is
-handled at implementation time, and is already absorbed by Age being **report-mode by default** (D6).
+handled at implementation time; applications that need to tune this behavior can configure Age in
+report mode (D21).
 **Consequences:** Age evaluates for `key`/`virtual` too. Watch for false positives on fast keyboard users;
 this is a tuning concern, not an architectural one. (Continuity remains pointer-only per D11.)
 
@@ -134,3 +135,12 @@ config surface with no measurable benefit yet.
 caching layer exists today — full rebuilds/tests run every time. **Revisit** once `apps/demo` (T20) and
 the Playwright suite (T21) make the build graph heavy enough that uncached runs are a real cost; at that
 point turbo (or nx) can be reintroduced with a new ADR without any change to package boundaries or code.
+
+### D21 · Enforce by default; report remains opt-in · Accepted
+**Rationale:** the default experience should demonstrate sparsh's protective behavior directly across
+the core API, examples, and website. Teams can still choose report mode globally or per policy when
+they need to observe decisions without blocking.
+**Consequences:** omitted mode and unspecified per-policy modes resolve to `'enforce'`. Report mode is
+available through explicit configuration. This supersedes D6; `onDecision` continues to fire in both
+modes. Age and keyboard activations can now be blocked by default, so applications that need to tune
+Age's cooldown should configure that policy as `report` explicitly.

@@ -6,8 +6,7 @@ variant, and the mid-press half of case 1 (interstitial appears between down and
 **Applies to:** pointer input only (`mouse`/`touch`/`pen`). **Never `key`/`virtual`** — they have no
 `pointerdown` (see `classification.md`). Applying it to AT input would permanently break activation.
 
-**Default mode:** `report`, but this is the **lowest false-positive policy** and the safest to enforce
-early. Teams can enforce Continuity while leaving Age in report.
+**Default mode:** `enforce` (D21). Teams can configure this policy independently when needed.
 
 ## The rule
 

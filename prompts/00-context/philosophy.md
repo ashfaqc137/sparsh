@@ -23,23 +23,21 @@ Three orthogonal policies over one shared listener implement that sentence:
 Plus **DoubleFire** for the residual-event case, and a **classification** layer that decides which
 policies even apply to a given input kind.
 
-## Report-only by default — the philosophical core
+## Enforcement by default; report mode remains available
 
-Global input interception is a frightening thing to install. The failure mode — "my app randomly ignores
-clicks" — gets a library deleted on first occurrence. So **the default does nothing**:
+Global input interception needs an observable, predictable contract. sparsh defaults to **enforce mode**
+so its protective behavior is active immediately; teams can choose report mode while tuning policies:
 
 ```ts
-mode: 'report' | 'enforce'   // default: 'report'
+mode: 'report' | 'enforce'   // default: 'enforce'
 ```
 
-In `report`, every policy still evaluates and fires `onDecision`, but **nothing is blocked**. Teams
-instrument a bug class they currently *cannot even see*, look at real data from their own app, then enable
-enforcement **per policy**. A team can enforce Continuity (near-zero false-positive risk) while leaving
-Age in report mode (tuning-sensitive).
+In `report`, every policy still evaluates and fires `onDecision`, but **nothing is blocked**. Teams can
+use report mode globally or per policy to inspect decisions without blocking; Age can be set to report
+while tuning its cooldown.
 
-This is simultaneously:
-- the **safety property** (installing sparsh can never break your app on day one), and
-- the **adoption wedge** (it makes an invisible, self-blamed bug class *measurable*).
+`onDecision` keeps enforcement observable, and report mode supports policy tuning when an application
+needs that additional control.
 
 ## Why this is hard to sell — and the answer
 
@@ -67,4 +65,4 @@ mistap. This is a product requirement, not a nicety.
 3. **Framework-agnostic by construction.** The philosophy should outlive React. `core` is the contract we
    want Vue/Svelte/Angular authors to build against.
 4. **Legibility over silence.** Explain blocks.
-5. **Measure before enforce.** Report mode first, always.
+5. **Make protection observable.** Every decision fires `onDecision`, whether allowed or blocked.

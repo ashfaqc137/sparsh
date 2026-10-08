@@ -1,6 +1,7 @@
 import type { Decision, Mode } from '@sparsh/core'
 import { ActivationGuardProvider } from '@sparsh/vue'
 import { type PropType, defineComponent, h, onBeforeUnmount, ref } from 'vue'
+import { formatDecisionReason } from './formatDecisionReason'
 
 type Scenario = 'inbox' | 'late' | 'meaning'
 
@@ -83,24 +84,6 @@ export const VueScenario = defineComponent({
                         h('span', 'Inbox'),
                         h('span', '3 unread'),
                       ]),
-                      h(
-                        'button',
-                        {
-                          'data-testid': 'maya-message',
-                          class: ['pg-mail-row', phase.value === 'armed' && 'pg-target']
-                            .filter(Boolean)
-                            .join(' '),
-                          onClick: () => act('Maya’s message'),
-                        },
-                        [
-                          h('b', { class: 'pg-avatar' }, 'M'),
-                          h('span', [
-                            h('strong', 'Maya Chen'),
-                            h('small', 'Can you take a look at this?'),
-                          ]),
-                          h('time', '9:41'),
-                        ],
-                      ),
                       phase.value === 'changed'
                         ? h(
                             'button',
@@ -119,6 +102,24 @@ export const VueScenario = defineComponent({
                             ],
                           )
                         : null,
+                      h(
+                        'button',
+                        {
+                          'data-testid': 'maya-message',
+                          class: ['pg-mail-row', phase.value === 'armed' && 'pg-target']
+                            .filter(Boolean)
+                            .join(' '),
+                          onClick: () => act('Maya’s message'),
+                        },
+                        [
+                          h('b', { class: 'pg-avatar' }, 'M'),
+                          h('span', [
+                            h('strong', 'Maya Chen'),
+                            h('small', 'Can you take a look at this?'),
+                          ]),
+                          h('time', '9:41'),
+                        ],
+                      ),
                       h('div', { class: 'pg-mail-row pg-muted' }, [
                         h('b', { class: 'pg-avatar pg-avatar-gold' }, 'A'),
                         h('span', [
@@ -177,7 +178,12 @@ export const VueScenario = defineComponent({
                             .join(' '),
                           onClick: () => phase.value === 'changed' && act('Publish update'),
                         },
-                        phase.value === 'changed' ? 'Publish update' : 'Please wait…',
+                        phase.value === 'changed'
+                          ? 'Publish update'
+                          : [
+                              h('span', { class: 'pg-spinner', 'aria-hidden': 'true' }),
+                              'Please wait…',
+                            ],
                       ),
                     ])
                   : null,
@@ -191,14 +197,14 @@ export const VueScenario = defineComponent({
                   { class: 'pg-instruction' },
                   phase.value === 'ready'
                     ? props.scenario === 'inbox'
-                      ? 'Press start, aim at Maya’s message, then tap as Leo’s new message arrives.'
+                      ? 'Press start, press and hold Maya’s row, then release after Leo arrives.'
                       : props.scenario === 'late'
                         ? 'Press start, then tap the highlighted space as soon as the button appears.'
                         : 'Press start, then press and hold the button until it becomes available.'
                     : props.scenario === 'meaning'
                       ? 'Hold the button through the change to see sparsh catch the shift.'
                       : props.scenario === 'inbox'
-                        ? 'Tap Maya’s row just as Leo’s new message arrives.'
+                        ? 'Keep holding Maya’s row. Release after Leo takes her place.'
                         : 'Go now — the interface is changing under your tap.',
                 ),
                 opened.value
@@ -228,7 +234,9 @@ export const VueScenario = defineComponent({
                           : props.mode === 'report'
                             ? `◉  sparsh spotted a ${decisions.value[0].policy ?? 'suspicious'} tap. Report mode lets it through.`
                             : `✋  sparsh caught the ${decisions.value[0].policy ?? 'suspicious'} tap before it landed.`,
-                        decisions.value[0].reason ? h('small', decisions.value[0].reason) : null,
+                        decisions.value[0].reason
+                          ? h('small', formatDecisionReason(decisions.value[0].reason))
+                          : null,
                       ],
                     )
                   : null,

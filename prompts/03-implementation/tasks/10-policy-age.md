@@ -6,10 +6,10 @@ Package: core (engine-side rule; `ageMs` is host-supplied)
 ## Goal
 Implement the perception policy: block activations on targets younger than `cooldownMs`. The engine-side
 logic is trivial; the value depends on the host computing `ageMs` as *perceivability* (T15). Age applies to
-**all** input kinds (D12) and defaults to **report** mode.
+**all** input kinds (D12) and defaults to **enforce** mode (D21).
 
 ## Scope
-- In: the `ageMs >= cooldownMs` rule; applies-to-all; report-by-default reliance.
+- In: the `ageMs >= cooldownMs` rule; applies-to-all; enforce-by-default behavior.
 - Out: how `ageMs` is measured (that's the dom host, T15); DoubleFire's use of the same signal (T11).
 
 ## Deliverables
@@ -20,18 +20,18 @@ logic is trivial; the value depends on the host computing `ageMs` as *perceivabi
 - `ageMs === Infinity` (unseen/pre-existing) ⇒ always allowed (fail open).
 
 ## Acceptance (unit, fake host)
-- age 120ms, cooldown 500 ⇒ **blocked** (verdict); with default report mode, `enforced:false`.
+- age 120ms, cooldown 500 ⇒ **blocked** (verdict and enforced by default).
 - age 600ms ⇒ **allowed**.
 - age `Infinity` (pre-existing element) ⇒ **allowed**.
-- `key`/`virtual` activation with young age ⇒ verdict **blocked** but report-mode ⇒ not enforced.
+- `key`/`virtual` activation with young age ⇒ blocked in enforce mode unless Age is configured as report.
 - After cooldown, the same key/virtual activation ⇒ **allowed** (never permanently blocked).
 
 ## References
 - `../../02-policies/age.md` (normative, incl. perceivability heuristic the host implements)
-- `../../01-architecture/decisions.md` D12, D13, D6, D7
+- `../../01-architecture/decisions.md` D12, D13, D7, D21
 
 ## Notes
 - Do not bake the perceivability logic into core — core only reads `ageMs`. Keeping it host-side lets the
   heuristic improve without touching the contract.
-- The keyboard-within-cooldown flag is intentional and safe *only because* Age defaults to report. Never
-  flip Age's default to enforce.
+- Keyboard activations within the cooldown can be blocked by default; configure Age as report if the
+  cooldown is too sensitive for an application.

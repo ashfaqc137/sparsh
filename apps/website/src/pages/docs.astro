@@ -26,13 +26,13 @@ import BaseLayout from '../layouts/BaseLayout.astro'
         <section class="docs-section" id="quick-start">
           <p class="section-kicker">01 · REACT</p>
           <h2>Let’s get sparsh watching.</h2>
-          <p>Wrap your app (or the part you want to keep an eye on) in <code>ActivationGuardProvider</code>. It starts in report mode, so sparsh will tell you what it notices without blocking anyone’s clicks.</p>
+          <p>Wrap your app (or the part you want to protect) in <code>ActivationGuardProvider</code>. It starts in enforce mode, so sparsh can stop suspicious activations. Choose report mode to observe decisions without blocking.</p>
           <pre><code>{`import { ActivationGuardProvider } from '@sparsh/react'
 
 export function App() {
   return (
     <ActivationGuardProvider
-      mode="report"
+      mode="enforce"
       onDecision={(decision) => {
         if (!decision.allowed) {
           analytics.track('unsteady_activation', decision)
@@ -77,7 +77,7 @@ const root = document.querySelector('#app')
 if (!root) throw new Error('App root not found')
 
 const guard = createGuard(root, {
-  mode: 'report',
+  mode: 'enforce',
   onDecision: (decision) => console.log(decision),
 })
 
@@ -90,14 +90,14 @@ guard.destroy()`}</code></pre>
           <p class="section-kicker">04 · THE KNOBS YOU’LL REACH FOR</p>
           <h2>What can I tweak?</h2>
           <dl class="option-list">
-            <div><dt><code>mode</code></dt><dd><code>report</code> or <code>enforce</code>, for everything or one policy at a time. Defaults to report.</dd></div>
+            <div><dt><code>mode</code></dt><dd><code>enforce</code> or <code>report</code>, for everything or one policy at a time. Defaults to enforce.</dd></div>
             <div><dt><code>policies</code></dt><dd>Pick from <code>age</code>, <code>continuity</code>, <code>semantics</code>, and <code>doubleFire</code>. They’re all on by default.</dd></div>
             <div><dt><code>cooldownMs</code></dt><dd>How long a target needs to be around before Age trusts it. Starts at 500 ms.</dd></div>
             <div><dt><code>onDecision</code></dt><dd>Gets every decision, allowed or blocked, with the policy and reason.</dd></div>
             <div><dt><code>onSuspect</code></dt><dd>A shortcut for decisions where <code>allowed</code> is false.</dd></div>
             <div><dt><code>data-guard="off"</code></dt><dd>Let a subtree (like a “Try again” button) opt out.</dd></div>
           </dl>
-          <p class="doc-note"><strong>A little tip:</strong> Age is the easiest policy to overtune. Leave it in report mode while you get a feel for how often new targets show up, then enforce if it makes sense for your app.</p>
+          <p class="doc-note"><strong>A little tip:</strong> Age is the easiest policy to overtune. If it is too sensitive for your app, set Age to report mode while you tune its cooldown.</p>
         </section>
 
         <section class="docs-section limitations-section" id="limitations">

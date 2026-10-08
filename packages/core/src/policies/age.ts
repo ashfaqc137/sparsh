@@ -2,7 +2,7 @@
  * AgePolicy — perception. Blocks activations on targets younger than `cooldownMs`. All the
  * difficulty is in how the host computes `ageMs` (perceivability, not DOM insertion — D13); the
  * engine-side rule is trivial. Applies to ALL input kinds, including key/virtual (D12) — safe
- * only because Age defaults to `report` (D6).
+ * only when Age is configured as `report`; the global default is `enforce` (D21).
  *
  * See `prompts/02-policies/age.md`.
  */

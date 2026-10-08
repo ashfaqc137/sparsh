@@ -5,7 +5,7 @@ catches it, since down & up both land on the new element).
 
 **Applies to:** all input kinds, including `key`/`virtual` (decision D12).
 
-**Default mode:** `report` (this is the tuning-sensitive policy; do not enforce by default).
+**Default mode:** `enforce` (D21). Configure `report` explicitly while tuning the cooldown if needed.
 
 ## The rule
 
@@ -82,5 +82,5 @@ Matches Chromium's double-click interval and the CLS `hadRecentInput` window. Th
 - Hidden-then-revealed surface → age counts from reveal, not from mount.
 - Disabled-then-enabled control (including a pre-existing, page-load-disabled one) → age counts from the
   enable moment, not from mount/page-load.
-- Keyboard activation of a fresh control within cooldown → flagged (report by default), and **works
-  normally after the window** (never permanently blocked).
+- Keyboard activation of a fresh control within cooldown → blocked in enforce mode; configure Age as
+  report if this is too sensitive. It **works normally after the window** (never permanently blocked).

@@ -6,8 +6,8 @@ exists to prevent.
 
 ## Correctness invariants (non-negotiable)
 
-- **Report by default.** Default `mode` is `'report'` for all policies. Blocking only when a policy is
-  explicitly `'enforce'`. (D6)
+- **Enforce by default.** Default `mode` is `'enforce'` for all policies. Set a policy or the global
+  mode to `'report'` to record suspicious activations without blocking. (D21)
 - **Fail open.** Any uncertainty, missing signal, or thrown error ⇒ `allowed: true`, no block. Wrap policy
   evaluation and host snapshots in try/catch that defaults to allow. (D7)
 - **Never block Escape / focus / scroll**, in any mode. Filtered at the host boundary + defensively via
