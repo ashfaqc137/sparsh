@@ -32,10 +32,10 @@ Install the integration for your app with npm:
 npm install @sparshlabs/dom
 
 # React (React is a peer dependency)
-npm install @sparshlabs/react react
+npm install @sparshlabs/react
 
 # Vue (Vue is a peer dependency)
-npm install @sparshlabs/vue vue
+npm install @sparshlabs/vue
 ```
 
 `@sparshlabs/dom` is also the browser integration used by the framework packages and is installed
