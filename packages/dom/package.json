@@ -1,6 +1,6 @@
 {
   "name": "@sparshlabs/dom",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Browser host implementing @sparshlabs/core's ports; the vanilla / no-framework entry point.",
   "license": "MIT",
   "type": "module",

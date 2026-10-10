@@ -1,6 +1,6 @@
 {
   "name": "@sparshlabs/react",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "React binding for sparsh: <ActivationGuardProvider>, useActivationGuard(), <ActivationGuard>.",
   "license": "MIT",
   "type": "module",

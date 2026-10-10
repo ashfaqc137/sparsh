@@ -1,5 +1,13 @@
 # @sparshlabs/dom
 
+## 0.1.1
+
+### Patch Changes
+
+- Fix `@sparshlabs/core` dependency being published as the literal workspace protocol
+  (`workspace:*`) instead of a resolved semver range, which made 0.1.0 uninstallable outside the
+  monorepo.
+
 ## 0.1.0
 
 ### Minor Changes

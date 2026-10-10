@@ -1,5 +1,13 @@
 # @sparshlabs/react
 
+## 0.1.1
+
+### Patch Changes
+
+- Fix `@sparshlabs/core` and `@sparshlabs/dom` dependencies being published as the literal
+  workspace protocol (`workspace:*`) instead of resolved semver ranges, which made 0.1.0
+  uninstallable outside the monorepo.
+
 ## 0.1.0
 
 ### Minor Changes

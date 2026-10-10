@@ -1,6 +1,6 @@
 {
   "name": "@sparshlabs/vue",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Vue 3 (Composition API) binding for sparsh: <ActivationGuardProvider>, useActivationGuard(), <ActivationGuard>.",
   "license": "MIT",
   "type": "module",
