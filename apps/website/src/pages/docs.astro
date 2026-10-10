@@ -32,6 +32,10 @@ function recordDecision(decision: Decision) {
     })
   }
 }`
+
+const installReact = 'npm install @sparshlabs/react react'
+const installVue = 'npm install @sparshlabs/vue vue'
+const installDom = 'npm install @sparshlabs/dom'
 ---
 
 <DocsShell
@@ -58,10 +62,12 @@ function recordDecision(decision: Decision) {
       </table>
     </div>
     <p class="doc-note">
-      <strong>Release status:</strong> these packages are currently developed in this repository
-      and are not yet published to npm. The examples below show the package APIs; install commands
-      will be added when a public release is available.
+      Install the package that matches your app. The React and Vue bindings bring in
+      <code>@sparshlabs/dom</code> automatically; install it directly only for vanilla JS or a
+      custom host.
     </p>
+    <Code code={installDom} lang="sh" theme="github-dark" />
+    <p>See <a href="/docs/dom/">DOM / vanilla API</a> for the direct <code>createGuard</code> usage.</p>
   </section>
 
   <section class="docs-section" id="react-setup">
@@ -71,6 +77,7 @@ function recordDecision(decision: Decision) {
       Add one provider near the root of the interactive surface. It observes activations in that
       subtree, so most controls do not need a sparsh-specific prop or wrapper.
     </p>
+    <Code code={installReact} lang="sh" theme="github-dark" />
     <Code code={reactProvider} lang="tsx" theme="github-dark" />
     <p>
       The provider is a client component and attaches its DOM listeners in an effect. In React
@@ -86,6 +93,7 @@ function recordDecision(decision: Decision) {
       The Vue provider makes its guard available to descendants through Vue’s provide/inject
       mechanism. It attaches after mount and removes its listeners when unmounted.
     </p>
+    <Code code={installVue} lang="sh" theme="github-dark" />
     <Code code={vueProvider} lang="vue" theme="github-dark" />
     <p>See the <a href="/docs/vue/">Vue API reference</a> for Composition API patterns and props.</p>
   </section>

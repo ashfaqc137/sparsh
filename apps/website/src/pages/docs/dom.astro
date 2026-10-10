@@ -2,6 +2,8 @@
 import { Code } from 'astro:components'
 import DocsShell from '../../components/DocsShell.astro'
 
+const installDom = 'npm install @sparshlabs/dom'
+
 const setupExample = `import { createGuard } from '@sparshlabs/dom'
 
 const appRoot = document.querySelector('#app')
@@ -50,6 +52,7 @@ const guard = createGuard(document.body, {
       root, and returns a handle for querying block state and cleaning up. Prefer the smallest stable
       root that contains all controls you want guarded.
     </p>
+    <Code code={installDom} lang="sh" theme="github-dark" />
     <Code code={setupExample} lang="ts" theme="github-dark" />
     <h3>Returned guard</h3>
     <ul class="docs-list">

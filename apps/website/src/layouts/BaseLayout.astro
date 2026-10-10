@@ -33,12 +33,14 @@ const {
         <a href="/demo/" aria-current={Astro.url.pathname.startsWith('/demo') ? 'page' : undefined}>Demo</a>
         <a href="/playground/" aria-current={Astro.url.pathname.startsWith('/playground') ? 'page' : undefined}>Playground</a>
         <a href="/docs/" aria-current={Astro.url.pathname.startsWith('/docs') ? 'page' : undefined}>Docs</a>
+        <a href="https://github.com/ashfaqc137/sparsh" target="_blank" rel="noreferrer">GitHub</a>
       </nav>
     </header>
     <slot />
     <footer class="site-footer">
       <a href="/" class="footer-brand">sparsh <span>·</span> trustworthy touch</a>
       <span>Made for interfaces that move.</span>
+      <a href="https://github.com/ashfaqc137/sparsh" target="_blank" rel="noreferrer">Source on GitHub</a>
     </footer>
   </body>
 </html>
