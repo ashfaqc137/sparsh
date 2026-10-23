@@ -11,7 +11,7 @@ const scenarioNames: Record<Scenario, string> = {
 }
 
 async function openPlayground(page: Page, framework: Framework, scenario: Scenario, mode: Mode) {
-  await page.goto('/playground/')
+  await page.goto('/sparsh/playground/')
   await expect(page.getByTestId('playground-root')).toHaveAttribute('data-hydrated', 'true')
 
   if (framework === 'Vue') {

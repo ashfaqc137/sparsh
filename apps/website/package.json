@@ -6,12 +6,15 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro check && astro build",
+    "build": "astro check && astro build && cp _headers dist/",
     "preview": "astro preview",
     "typecheck": "astro check"
   },
   "dependencies": {
     "@astrojs/react": "^4.2.0",
+    "@fontsource/dm-mono": "5.3.0",
+    "@fontsource/dm-sans": "5.3.0",
+    "@fontsource/manrope": "5.3.0",
     "@sparshlabs/core": "workspace:*",
     "@sparshlabs/dom": "workspace:*",
     "@sparshlabs/react": "workspace:*",

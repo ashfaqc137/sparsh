@@ -1,5 +1,12 @@
 ---
+import '@fontsource/dm-sans/400.css'
+import '@fontsource/dm-sans/700.css'
+import '@fontsource/manrope/600.css'
+import '@fontsource/manrope/700.css'
+import '@fontsource/dm-mono/400.css'
+import '../styles/sparshlabs.css'
 import '../styles.css'
+import { href, routePath } from '../lib/paths'
 
 interface Props {
   title: string
@@ -10,6 +17,9 @@ const {
   title,
   description = 'sparsh is a framework-agnostic UX-safety primitive that blocks accidental UI activation.',
 } = Astro.props
+
+const path = routePath(Astro.url)
+const repo = 'https://github.com/ashfaqc137/sparsh'
 ---
 
 <!doctype html>
@@ -19,36 +29,43 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#11120f" />
+    <link rel="icon" type="image/svg+xml" href={href('/favicon.svg')} />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
   </head>
   <body>
+    <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header">
-      <a class="brand" href="/" aria-label="sparsh home">
-        <span class="brand-mark" aria-hidden="true">s</span>
-        <span>sparsh</span>
-      </a>
+      <div class="brand">
+        <a class="brand-lab" href="/">sparshlabs</a>
+        <span class="brand-sep" aria-hidden="true">/</span>
+        <a class="brand-home" href={href('/')} aria-label="sparsh home">
+          <span class="brand-mark" aria-hidden="true">s</span>
+          <span>sparsh</span>
+        </a>
+      </div>
       <nav class="site-nav" aria-label="Main navigation">
-        <a href="/" aria-current={Astro.url.pathname === '/' ? 'page' : undefined}>
+        <a href={href('/')} aria-current={path === '/' ? 'page' : undefined}>
           <svg aria-hidden="true" viewBox="0 0 16 16"><path d="m8 1 1.7 5.3L15 8l-5.3 1.7L8 15l-1.7-5.3L1 8l5.3-1.7L8 1Z" /></svg>
           Why sparsh
         </a>
-        <a href="/how-it-works/" aria-current={Astro.url.pathname.startsWith('/how-it-works') ? 'page' : undefined}>
+        <a href={href('/how-it-works/')} aria-current={path.startsWith('/how-it-works') ? 'page' : undefined}>
           <svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 4h9m0 0L8.5 1.5M11 4 8.5 6.5M14 12H5m0 0 2.5-2.5M5 12l2.5 2.5" /></svg>
           How it works
         </a>
-        <a href="/demo/" aria-current={Astro.url.pathname.startsWith('/demo') ? 'page' : undefined}>
+        <a href={href('/demo/')} aria-current={path.startsWith('/demo') ? 'page' : undefined}>
           <svg aria-hidden="true" viewBox="0 0 16 16"><path d="m3 2 9 7-4.2.5L6 13 3 2Z" /></svg>
           Demo
         </a>
-        <a href="/playground/" aria-current={Astro.url.pathname.startsWith('/playground') ? 'page' : undefined}>
+        <a href={href('/playground/')} aria-current={path.startsWith('/playground') ? 'page' : undefined}>
           <svg aria-hidden="true" viewBox="0 0 16 16"><path d="m5.5 3-4 5 4 5M10.5 3l4 5-4 5M9 2 7 14" /></svg>
           Playground
         </a>
-        <a href="/docs/" aria-current={Astro.url.pathname.startsWith('/docs') ? 'page' : undefined}>
+        <a href={href('/docs/')} aria-current={path.startsWith('/docs') ? 'page' : undefined}>
           <svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2 3.5A1.5 1.5 0 0 1 3.5 2H8v11H3.5A1.5 1.5 0 0 0 2 14.5v-11ZM14 3.5A1.5 1.5 0 0 0 12.5 2H8v11h4.5a1.5 1.5 0 0 1 1.5 1.5v-11Z" /></svg>
           Docs
         </a>
-        <a href="https://github.com/ashfaqc137/sparsh" target="_blank" rel="noreferrer">
+        <a href={repo} target="_blank" rel="noreferrer">
           <svg aria-hidden="true" viewBox="0 0 16 16"><path d="M8 .8a7.2 7.2 0 0 0-2.28 14.03c.36.07.49-.16.49-.35v-1.25c-2 .44-2.42-.85-2.42-.85-.33-.83-.8-1.05-.8-1.05-.65-.45.05-.44.05-.44.72.05 1.1.74 1.1.74.64 1.1 1.68.78 2.09.6.06-.47.25-.78.45-.96-1.6-.18-3.28-.8-3.28-3.57 0-.79.28-1.43.74-1.93-.08-.18-.32-.91.07-1.9 0 0 .6-.19 1.98.74a6.9 6.9 0 0 1 3.6 0c1.38-.93 1.98-.74 1.98-.74.39.99.15 1.72.07 1.9.46.5.74 1.14.74 1.93 0 2.78-1.68 3.39-3.29 3.57.26.22.48.66.48 1.33v1.88c0 .19.13.42.5.35A7.2 7.2 0 0 0 8 .8Z" /></svg>
           GitHub
         </a>
@@ -56,9 +73,13 @@ const {
     </header>
     <slot />
     <footer class="site-footer">
-      <a href="/" class="footer-brand">sparsh <span>·</span> trustworthy touch</a>
-      <span>Made for interfaces that move.</span>
-      <a href="https://github.com/ashfaqc137/sparsh" target="_blank" rel="noreferrer">Source on GitHub</a>
+      <a href={href('/')} class="footer-brand">sparsh <span>·</span> trustworthy touch</a>
+      <span>MIT licensed · Made for interfaces that move</span>
+      <span class="footer-links">
+        <a href="/">A sparshlabs project</a>
+        <span aria-hidden="true">·</span>
+        <a href={repo} target="_blank" rel="noreferrer">Source on GitHub</a>
+      </span>
     </footer>
   </body>
 </html>

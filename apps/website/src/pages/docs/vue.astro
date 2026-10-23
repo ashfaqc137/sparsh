@@ -1,6 +1,7 @@
 ---
 import { Code } from 'astro:components'
 import DocsShell from '../../components/DocsShell.astro'
+import { href } from '../../lib/paths'
 
 const providerExample = `<script setup lang="ts">
 import { ActivationGuardProvider, type Decision } from '@sparshlabs/vue'
@@ -102,7 +103,7 @@ export interface Decision {
       camelCase prop names.
     </p>
     <h3>Props</h3>
-    <div class="docs-table-wrap">
+    <div class="table-wrap">
       <table class="docs-table">
         <thead><tr><th>Prop</th><th>Type</th><th>Default / behavior</th></tr></thead>
         <tbody>
@@ -134,7 +135,7 @@ export interface Decision {
       <code>Ref&lt;boolean&gt;</code> that becomes true when the element is actually blocked.
     </p>
     <Code code={hookExample} lang="vue" theme="github-dark" />
-    <ul class="docs-list">
+    <ul>
       <li>The returned <code>ref</code> is a callback: <code>(node: Element | null) =&gt; void</code>.</li>
       <li><code>isGuarded</code> is automatically unwrapped in templates and resets after an allowed activation.</li>
       <li>Without a provider ancestor, the composable is a no-op and does not throw.</li>
@@ -153,7 +154,7 @@ export interface Decision {
     <Code code={`<ActivationGuard :mode="{ age: 'report' }">
   <FrequentlyUpdatedPanel />
 </ActivationGuard>`} lang="vue" theme="github-dark" />
-    <p class="doc-note">
+    <p class="callout">
       <strong>Nesting providers:</strong> each provider installs its own capture-phase listeners
       and policy pipeline — nothing is merged or inherited from an ancestor. When providers
       overlap the same DOM, the outermost one sees pointer/click/key events first and, if it
@@ -183,7 +184,7 @@ export interface Decision {
       <code>Mode</code>, <code>PolicyId</code>, and <code>Decision</code> are re-exported from
       <code>@sparshlabs/vue</code>. A decision’s <code>allowed</code> field records the policy verdict;
       <code>enforced</code> says whether it actually stopped the activation. See
-      <a href="/docs/concepts/">Core concepts</a> for policy behavior and accessibility details.
+      <a href={href('/docs/concepts/')}>Core concepts</a> for policy behavior and accessibility details.
     </p>
     <Code code={publicTypes} lang="ts" theme="github-dark" />
   </section>

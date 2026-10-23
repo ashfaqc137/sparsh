@@ -1,12 +1,13 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
+import { href } from '../lib/paths'
 ---
 
 <BaseLayout
   title="How sparsh works — a quick tour"
   description="A quick, plain-language tour of how sparsh checks whether the target under a tap stayed put and kept its meaning."
 >
-  <main class="content-page explainer-page">
+  <main id="main" class="content-page explainer-page">
     <section class="page-hero">
       <p class="eyebrow"><span class="eyebrow-dot" /> How sparsh works</p>
       <h1>Sometimes the page moves<br /><span>between “I meant that” and click.</span></h1>
@@ -21,12 +22,12 @@ import BaseLayout from '../layouts/BaseLayout.astro'
       <div class="flow-step flow-decision"><span>03</span><strong>sparsh checks the tap</strong><p>Does it still match what you were trying to do?</p></div>
     </section>
 
-    <section class="belief-section" aria-labelledby="performance-title">
+    <section class="split-section" aria-labelledby="performance-title">
       <div class="section-heading">
         <p class="section-kicker">BUILT TO STAY OUT OF THE WAY</p>
         <h2 id="performance-title">What does sparsh cost?</h2>
       </div>
-      <div class="belief-copy">
+      <div class="prose">
         <p>
           sparsh checks an activation as it happens. It uses a small set of shared event listeners
           and does work for the interaction, rather than keeping a registry of every control in your
@@ -40,7 +41,7 @@ import BaseLayout from '../layouts/BaseLayout.astro'
       </div>
     </section>
 
-    <section class="policy-section">
+    <section class="section">
       <div class="section-heading">
         <p class="section-kicker">FOUR WAYS A TAP CAN GO SIDEWAYS</p>
         <h2>What does sparsh check?</h2>
@@ -82,7 +83,7 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 
     <section class="limits-note">
       <p class="section-kicker">A QUICK REALITY CHECK</p>
-      <p>sparsh would rather miss a tricky case than block a tap it can’t explain. It doesn’t catch every visual change yet—opacity-only reveals and some overlays can slip by. <a href="/docs/concepts/#limits">See the full policy behavior and known limits.</a></p>
+      <p>sparsh would rather miss a tricky case than block a tap it can’t explain. It doesn’t catch every visual change yet—opacity-only reveals and some overlays can slip by. <a href={href('/docs/concepts/#limits')}>See the full policy behavior and known limits.</a></p>
     </section>
   </main>
 </BaseLayout>

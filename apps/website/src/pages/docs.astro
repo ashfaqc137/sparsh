@@ -1,6 +1,7 @@
 ---
 import { Code } from 'astro:components'
 import DocsShell from '../components/DocsShell.astro'
+import { href } from '../lib/paths'
 
 const reactProvider = `import { ActivationGuardProvider } from '@sparshlabs/react'
 
@@ -50,8 +51,8 @@ const installDom = 'npm install @sparshlabs/dom'
       the binding that matches your app; the React and Vue providers install the browser DOM adapter
       for you.
     </p>
-    <p class="doc-note">A small naming note: <em>sparsh</em> means “touch” in Sanskrit.</p>
-    <div class="docs-table-wrap">
+    <p class="callout">A small naming note: <em>sparsh</em> means “touch” in Sanskrit.</p>
+    <div class="table-wrap">
       <table class="docs-table">
         <thead><tr><th>Package</th><th>Use it when</th><th>Requirements</th></tr></thead>
         <tbody>
@@ -61,13 +62,13 @@ const installDom = 'npm install @sparshlabs/dom'
         </tbody>
       </table>
     </div>
-    <p class="doc-note">
+    <p class="callout">
       Install the package that matches your app. The React and Vue bindings bring in
       <code>@sparshlabs/dom</code> automatically; install it directly only for vanilla JS or a
       custom host.
     </p>
     <Code code={installDom} lang="sh" theme="github-dark" />
-    <p>See <a href="/docs/dom/">DOM / vanilla API</a> for the direct <code>createGuard</code> usage.</p>
+    <p>See <a href={href('/docs/dom/')}>DOM / vanilla API</a> for the direct <code>createGuard</code> usage.</p>
   </section>
 
   <section class="docs-section" id="react-setup">
@@ -81,7 +82,7 @@ const installDom = 'npm install @sparshlabs/dom'
     <Code code={reactProvider} lang="tsx" theme="github-dark" />
     <p>
       The provider is a client component and attaches its DOM listeners in an effect. In React
-      Server Component apps, place it in a client boundary. See the <a href="/docs/react/">React
+      Server Component apps, place it in a client boundary. See the <a href={href('/docs/react/')}>React
       API reference</a> for hooks, callbacks, and provider options.
     </p>
   </section>
@@ -95,7 +96,7 @@ const installDom = 'npm install @sparshlabs/dom'
     </p>
     <Code code={installVue} lang="sh" theme="github-dark" />
     <Code code={vueProvider} lang="vue" theme="github-dark" />
-    <p>See the <a href="/docs/vue/">Vue API reference</a> for Composition API patterns and props.</p>
+    <p>See the <a href={href('/docs/vue/')}>Vue API reference</a> for Composition API patterns and props.</p>
   </section>
 
   <section class="docs-section" id="first-feedback">
@@ -117,10 +118,10 @@ const installDom = 'npm install @sparshlabs/dom'
   <section class="docs-section" id="next-steps">
     <p class="section-kicker">NEXT STEPS</p>
     <h2>Understand the signals before tuning them</h2>
-    <ul class="docs-list">
-      <li><a href="/docs/concepts/">Core concepts</a> explains modes, policies, accessibility behavior, and known limits.</li>
-      <li><a href="/docs/dom/">DOM / vanilla API</a> covers low-level integration and cleanup.</li>
-      <li><a href="/playground/">The playground</a> lets you try the React and Vue bindings against moving interfaces.</li>
+    <ul>
+      <li><a href={href('/docs/concepts/')}>Core concepts</a> explains modes, policies, accessibility behavior, and known limits.</li>
+      <li><a href={href('/docs/dom/')}>DOM / vanilla API</a> covers low-level integration and cleanup.</li>
+      <li><a href={href('/playground/')}>The playground</a> lets you try the React and Vue bindings against moving interfaces.</li>
     </ul>
   </section>
 </DocsShell>

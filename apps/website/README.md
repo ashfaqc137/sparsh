@@ -5,15 +5,31 @@ routes include `/`, `/how-it-works/`, `/demo/`, and `/playground/`. Developer do
 `/docs/`: getting started, core concepts, React, Vue, and low-level DOM references. Framework
 references are separate pages so future bindings can add focused API documentation.
 
+The site is served at [sparshlabs.com/sparsh/](https://sparshlabs.com/sparsh/), one of the
+[sparshlabs](https://github.com/ashfaqc137/sparshlabs) project sites, so every route lives under
+the `/sparsh` base (`astro.config.mjs`). Internal links go through `href()` from
+`src/lib/paths.ts` (`href('/docs/')` → `/sparsh/docs/`); never hardcode a root-absolute path.
+
 Built with **Astro** + `@astrojs/react`: the informational pages are static Astro, and the interactive
 demo (`src/components/HeroDemo.tsx`) and playground (`src/components/Playground.tsx`) are hydrated
 React islands (`client:load`). The playground mounts its Vue example with the real `@sparshlabs/vue`
 binding. Both use workspace packages rather than mocks. Shared navigation and footer live in
 `src/layouts/BaseLayout.astro`.
 
+## Styles
+
+- `src/styles/sparshlabs.css` is the shared sparshlabs theme (tokens, header, footer, heroes,
+  sections, cards, docs layout, code, tables), so sparsh, OwnCI and sparshlabs.com look like one
+  family. It is a **synced copy** of `theme/sparshlabs.css` in the sparshlabs repo: change the
+  theme there and run `npm run sync-theme` in that repo, which rewrites this file.
+- `src/styles.css` holds sparsh-only styles (demo, playground, explainer). Use the theme's tokens
+  (`--accent`, `--text-body`, `--surface-2`, …), not raw hex, for UI chrome; the light inbox
+  mock-ups keep their own illustration palette.
+- Fonts (DM Sans, Manrope, DM Mono) are self-hosted through `@fontsource`.
+
 ## Scripts
 
-- `pnpm --filter website dev` — local dev server
+- `pnpm --filter website dev` — local dev server at http://localhost:4321/sparsh/
 - `pnpm --filter website build` — `astro check` + production build
 - `pnpm --filter website preview` — preview the production build
 - `pnpm --filter website typecheck` — `astro check` only
@@ -29,6 +45,13 @@ binding. Both use workspace packages rather than mocks. Shared navigation and fo
 This site is fully static (`astro.config.mjs` has no SSR adapter) and reads no environment
 variables at build time, so it deploys as plain static assets — no Worker runtime code needed.
 `wrangler.jsonc` declares this via `assets.directory` and has no `main` field.
+
+It is served at `sparshlabs.com/sparsh/` through the route in `wrangler.jsonc`
+(`sparshlabs.com/sparsh*`); the root of sparshlabs.com is a separate Worker from the sparshlabs
+repo. Workers static assets don't strip a path prefix, so the pages are built into
+`dist/sparsh/` and wrangler serves `dist/`. `_headers` (security and cache headers, patterns
+under `/sparsh/`) must sit at the root of that directory, so it lives next to this README and
+`build` copies it into `dist/`. `404.astro` is served for unknown `/sparsh/…` paths.
 
 Connect the GitHub repo in the Cloudflare dashboard (**Workers & Pages → Create → Import a
 repository**) and configure:
@@ -50,4 +73,5 @@ environment variable in the project settings only if you also bump the pinned `w
 accordingly. No build-time secrets or environment variables are required.
 
 Every push to the production branch triggers a new deployment; every pull request gets its own
-preview URL automatically.
+preview URL automatically. On a preview URL the site is at `/sparsh/` (the bare root returns
+404), because that is where the build puts it.

@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import { href } from '../lib/paths'
+---
+
+<BaseLayout title="Page not found · sparsh">
+  <main id="main" class="content-page not-found">
+    <section class="page-hero hero">
+      <p class="eyebrow"><span class="eyebrow-dot"></span> 404</p>
+      <h1>That tap found<br /><span>nothing to open.</span></h1>
+      <p class="lead">The page you were looking for doesn’t exist.</p>
+      <div class="hero-actions">
+        <a class="button-primary" href={href('/')}>Back home <span aria-hidden="true">→</span></a>
+        <a class="button-secondary" href={href('/docs/')}>Docs</a>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

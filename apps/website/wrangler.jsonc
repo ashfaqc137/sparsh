@@ -2,8 +2,12 @@
   "name": "sparsh",
   // Fully static site (astro.config.mjs has no server adapter) — no `main` worker script,
   // only static assets. See apps/website/README.md "Deployment" for dashboard settings.
+  // Served at sparshlabs.com/sparsh/; the pages live in dist/sparsh/ so the request path maps
+  // straight onto the assets directory.
   "compatibility_date": "2026-10-08",
   "assets": {
-    "directory": "./dist"
-  }
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  },
+  "routes": [{ "pattern": "sparshlabs.com/sparsh*", "zone_name": "sparshlabs.com" }]
 }

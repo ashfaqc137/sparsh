@@ -1,6 +1,7 @@
 ---
 import { Code } from 'astro:components'
 import DocsShell from '../../components/DocsShell.astro'
+import { href } from '../../lib/paths'
 
 const modeExample = `import { ActivationGuardProvider } from '@sparshlabs/react'
 
@@ -35,7 +36,7 @@ const stableIdentityExample = `<ul>
       change what it means. sparsh records intent and a target snapshot, then compares the snapshot
       at activation time. A suspicious activation can be reported or stopped according to mode.
     </p>
-    <ol class="docs-list">
+    <ol>
       <li><strong>Resolve:</strong> map the raw event target to the nearest interactive element.</li>
       <li><strong>Snapshot:</strong> record its perceivable age, position, identity, and semantic fingerprint.</li>
       <li><strong>Evaluate:</strong> run applicable policies and produce one decision.</li>
@@ -58,7 +59,7 @@ const stableIdentityExample = `<ul>
       verdict lets that activation through and ends evaluation for it. Consider policy order and
       overlap when mixing modes.
     </p>
-    <div class="docs-table-wrap">
+    <div class="table-wrap">
       <table class="docs-table">
         <thead><tr><th>Decision field</th><th>Meaning</th></tr></thead>
         <tbody>
@@ -76,7 +77,7 @@ const stableIdentityExample = `<ul>
   <section class="docs-section" id="policies">
     <p class="section-kicker">POLICY REFERENCE</p>
     <h2>Four independent signals</h2>
-    <div class="docs-table-wrap">
+    <div class="table-wrap">
       <table class="docs-table">
         <thead><tr><th>Policy</th><th>What it checks</th><th>Inputs</th><th>Default</th></tr></thead>
         <tbody>
@@ -151,13 +152,13 @@ const stableIdentityExample = `<ul>
   <section class="docs-section" id="limits">
     <p class="section-kicker">KNOWN LIMITS</p>
     <h2>Signals are intentionally conservative</h2>
-    <ul class="docs-list">
+    <ul>
       <li>Opacity-only reveals on an element that already exists are not detected by the current age tracking.</li>
       <li>An overlay can cover an unmoved target without changing its resolved identity; occlusion is not generally detected.</li>
       <li>Age treats unknown/pre-existing targets as old and allows them, favoring fewer false positives.</li>
       <li>In-place entity changes need <code>data-guard-key</code> for reliable identity comparison.</li>
       <li>Exceptions in policy evaluation fail open. Visual callback exceptions are ignored and do not affect cancellation.</li>
     </ul>
-    <p>For binding-specific APIs, see the <a href="/docs/react/">React</a>, <a href="/docs/vue/">Vue</a>, and <a href="/docs/dom/">DOM</a> references.</p>
+    <p>For binding-specific APIs, see the <a href={href('/docs/react/')}>React</a>, <a href={href('/docs/vue/')}>Vue</a>, and <a href={href('/docs/dom/')}>DOM</a> references.</p>
   </section>
 </DocsShell>

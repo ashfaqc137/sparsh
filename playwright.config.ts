@@ -26,7 +26,7 @@ export default defineConfig({
       ? 'node_modules/.bin/astro dev --host 127.0.0.1 --port 4322 --force'
       : 'node_modules/.bin/astro build && node_modules/.bin/astro preview --host 127.0.0.1 --port 4322 --strictPort',
     cwd: 'apps/website',
-    url: 'http://127.0.0.1:4322/playground/',
+    url: 'http://127.0.0.1:4322/sparsh/playground/',
     reuseExistingServer: false,
     timeout: 120_000,
   },

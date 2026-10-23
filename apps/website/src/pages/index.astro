@@ -1,13 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
+import { href } from '../lib/paths'
 ---
 
 <BaseLayout
   title="sparsh — help taps land where people mean"
   description="Ever tap one thing and open something else? sparsh helps keep taps lined up with what people meant to do."
 >
-  <main class="content-page philosophy-page">
-    <section class="philosophy-hero">
+  <main id="main" class="content-page philosophy-page">
+    <section class="hero">
       <p class="eyebrow"><span class="eyebrow-dot" /> For those “wait, I tapped what?” moments</p>
       <h1>Ever tap one thing<br /><span>and open something else?</span></h1>
       <p class="lead">
@@ -15,8 +16,8 @@ import BaseLayout from '../layouts/BaseLayout.astro'
         careless—it’s the UI changing mid-move. sparsh gives your tap a second chance.
       </p>
       <div class="hero-actions">
-        <a class="button-primary" href="/demo/">See the inbox mix-up <span aria-hidden="true">↗</span></a>
-        <a class="button-secondary" href="/how-it-works/">Peek under the hood</a>
+        <a class="button-primary" href={href('/demo/')}>See the inbox mix-up <span aria-hidden="true">↗</span></a>
+        <a class="button-secondary" href={href('/how-it-works/')}>Peek under the hood</a>
       </div>
       <div class="intent-visual" aria-label="A user's intended action remains the reference as the interface changes">
         <div class="intent-node"><span class="node-icon">◎</span><small>YOU MEAN TO</small><strong>Open Maya’s message</strong></div>
@@ -27,12 +28,12 @@ import BaseLayout from '../layouts/BaseLayout.astro'
       </div>
     </section>
 
-    <section class="belief-section">
+    <section class="split-section">
       <div class="section-heading">
         <p class="section-kicker">THE WHOLE IDEA</p>
         <h2>A tap is more than a spot on the screen.</h2>
       </div>
-      <div class="belief-copy">
+      <div class="prose">
         <p>
           When someone taps, they’re saying: <em>this is what I saw, and this is what I meant.</em>
           If the page changes while their hand is on its way, the screen may now point somewhere
@@ -46,34 +47,34 @@ import BaseLayout from '../layouts/BaseLayout.astro'
       </div>
     </section>
 
-    <section class="values-section" aria-labelledby="values-title">
+    <section class="section" aria-labelledby="values-title">
       <div class="section-heading">
         <p class="section-kicker">A FEW THINGS WE CARE ABOUT</p>
         <h2 id="values-title">Helpful, not fussy.</h2>
       </div>
-      <div class="value-grid">
-        <article class="value-card">
-          <span class="value-number">01</span>
+      <div class="card-grid">
+        <article class="card">
+          <span class="card-number">01</span>
           <h3>Don’t blame the person</h3>
           <p>If the screen changed under their finger, don’t pretend they meant to tap the new thing.</p>
         </article>
-        <article class="value-card">
-          <span class="value-number">02</span>
+        <article class="card">
+          <span class="card-number">02</span>
           <h3>Let good taps through</h3>
           <p>When the screen stays put and the tap makes sense, sparsh should stay out of the way.</p>
         </article>
-        <article class="value-card">
-          <span class="value-number">03</span>
+        <article class="card">
+          <span class="card-number">03</span>
           <h3>If we stop a tap, say why</h3>
           <p>No mysterious dead buttons. Explain what moved, then let the person try again.</p>
         </article>
       </div>
     </section>
 
-    <section class="philosophy-cta">
+    <section class="cta-band">
       <span class="cta-spark" aria-hidden="true">✳</span>
       <div><p class="section-kicker">GOT A FEW SECONDS?</p><h2>Try the inbox mix-up.</h2><p>It’s a tiny demo of a very real “wait, what just happened?”</p></div>
-      <a class="button-primary" href="/demo/">Let’s see it <span aria-hidden="true">→</span></a>
+      <a class="button-primary" href={href('/demo/')}>Let’s see it <span aria-hidden="true">→</span></a>
     </section>
   </main>
 </BaseLayout>

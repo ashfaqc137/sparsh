@@ -280,6 +280,7 @@ export function Playground() {
   useEffect(() => setHydrated(true), [])
   return (
     <main
+      id="main"
       className="content-page playground-page"
       data-testid="playground-root"
       data-hydrated={hydrated}

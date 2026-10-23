@@ -1,6 +1,7 @@
 ---
 import { Code } from 'astro:components'
 import DocsShell from '../../components/DocsShell.astro'
+import { href } from '../../lib/paths'
 
 const providerExample = `import {
   ActivationGuardProvider,
@@ -107,7 +108,7 @@ export interface UseActivationGuardResult {
     </p>
     <Code code={providerExample} lang="tsx" theme="github-dark" />
     <h3>Props</h3>
-    <div class="docs-table-wrap">
+    <div class="table-wrap">
       <table class="docs-table">
         <thead><tr><th>Prop</th><th>Type</th><th>Default / behavior</th></tr></thead>
         <tbody>
@@ -128,7 +129,7 @@ export interface UseActivationGuardResult {
         </tbody>
       </table>
     </div>
-    <p class="doc-note">
+    <p class="callout">
       <strong>Callback distinction:</strong> <code>onSuspect</code> means a policy found an unsafe
       verdict; report mode still lets that activation through. <code>onBlocked</code> runs only
       after an enforced activation is actually canceled.
@@ -144,7 +145,7 @@ export interface UseActivationGuardResult {
       event-driven; it updates when the guard reports a decision for the element.
     </p>
     <Code code={useGuardExample} lang="tsx" theme="github-dark" />
-    <ul class="docs-list">
+    <ul>
       <li><code>ref</code> has the type <code>(node: Element | null) =&gt; void</code>.</li>
       <li><code>isGuarded</code> is true only after an enforced block; a subsequent allowed activation clears it.</li>
       <li>Outside a provider, the hook is a no-op and does not throw.</li>
@@ -163,7 +164,7 @@ export interface UseActivationGuardResult {
     <Code code={`<ActivationGuard mode={{ age: 'report' }}>
   <FrequentlyUpdatedPanel />
 </ActivationGuard>`} lang="tsx" theme="github-dark" />
-    <p class="doc-note">
+    <p class="callout">
       <strong>Nesting providers:</strong> each provider installs its own capture-phase listeners
       and policy pipeline — nothing is merged or inherited from an ancestor. When providers
       overlap the same DOM, the outermost one sees pointer/click/key events first and, if it
@@ -198,6 +199,6 @@ export interface UseActivationGuardResult {
       <code>@sparshlabs/core</code>.
     </p>
     <Code code={publicTypes} lang="ts" theme="github-dark" />
-    <p>For policy behavior and accessibility details, see <a href="/docs/concepts/">Core concepts</a>.</p>
+    <p>For policy behavior and accessibility details, see <a href={href('/docs/concepts/')}>Core concepts</a>.</p>
   </section>
 </DocsShell>

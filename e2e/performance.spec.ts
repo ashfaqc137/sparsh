@@ -1,7 +1,7 @@
 import { expect, test } from 'playwright/test'
 
 test('reports Sparsh interaction and virtualized observer measurements', async ({ page }) => {
-  await page.goto('/performance/')
+  await page.goto('/sparsh/performance/')
   await expect(page.locator('html')).toHaveAttribute('data-benchmark-complete', 'true', {
     timeout: 30_000,
   })

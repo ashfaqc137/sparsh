@@ -25,13 +25,13 @@ for (const viewport of viewports) {
     await page.setViewportSize({ width: viewport.width, height: viewport.height })
 
     for (const route of pages) {
-      await page.goto(route.path)
+      await page.goto(`/sparsh${route.path}`)
       await expect(page.locator(route.landmark)).toBeVisible()
       if (route.path === '/playground/') {
         await expect(page.getByTestId('playground-root')).toHaveAttribute('data-hydrated', 'true')
       }
       if (route.path === '/docs/') {
-        const table = page.locator('.docs-table-wrap')
+        const table = page.locator('.table-wrap')
         const sizes = await table.evaluate((element) => ({
           clientWidth: element.clientWidth,
           scrollWidth: element.scrollWidth,

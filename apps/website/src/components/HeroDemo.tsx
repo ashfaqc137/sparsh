@@ -141,7 +141,7 @@ export function HeroDemo() {
       blockAnimation={false}
       onSuspect={handleBlocked}
     >
-      <main className="landing">
+      <main id="main" className="landing">
         <section className="hero-copy" id="top" aria-labelledby="hero-title">
           <p className="eyebrow">
             <span className="eyebrow-dot" /> Let’s see what your tap finds
