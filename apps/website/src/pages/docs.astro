@@ -23,6 +23,20 @@ import { ActivationGuardProvider } from '@sparshlabs/vue'
   </ActivationGuardProvider>
 </template>`
 
+const angularProvider = `import { Component } from '@angular/core'
+import { ActivationGuardDirective } from '@sparshlabs/angular'
+
+@Component({
+  selector: 'app-root',
+  imports: [ActivationGuardDirective],
+  template: \`
+    <main sparshGuard mode="enforce">
+      <app-shell />
+    </main>
+  \`,
+})
+export class AppComponent {}`
+
 const observeDecisions = `import type { Decision } from '@sparshlabs/react'
 
 function recordDecision(decision: Decision) {
@@ -36,6 +50,7 @@ function recordDecision(decision: Decision) {
 
 const installReact = 'npm install @sparshlabs/react'
 const installVue = 'npm install @sparshlabs/vue'
+const installAngular = 'npm install @sparshlabs/angular'
 const installDom = 'npm install @sparshlabs/dom'
 ---
 
@@ -48,8 +63,8 @@ const installDom = 'npm install @sparshlabs/dom'
     <h2>Choose a binding</h2>
     <p>
       sparsh separates its interaction engine from its platform adapters and framework bindings. Use
-      the binding that matches your app; the React and Vue providers install the browser DOM adapter
-      for you.
+      the binding that matches your app; the React, Vue, and Angular bindings install the browser DOM
+      adapter for you.
     </p>
     <p class="callout">A small naming note: <em>sparsh</em> means “touch” in Sanskrit.</p>
     <div class="table-wrap">
@@ -58,12 +73,13 @@ const installDom = 'npm install @sparshlabs/dom'
         <tbody>
           <tr><td><code>@sparshlabs/react</code></td><td>Your UI is React.</td><td>React 18 or later</td></tr>
           <tr><td><code>@sparshlabs/vue</code></td><td>Your UI is Vue 3.</td><td>Vue 3.3 or later; Composition API</td></tr>
+          <tr><td><code>@sparshlabs/angular</code></td><td>Your UI is Angular.</td><td>Angular 22 or later</td></tr>
           <tr><td><code>@sparshlabs/dom</code></td><td>You use vanilla JavaScript or a different framework.</td><td>A browser DOM root</td></tr>
         </tbody>
       </table>
     </div>
     <p class="callout">
-      Install the package that matches your app. The React and Vue bindings bring in
+      Install the package that matches your app. The React, Vue, and Angular bindings bring in
       <code>@sparshlabs/dom</code> automatically; install it directly only for vanilla JS or a
       custom host.
     </p>
@@ -99,8 +115,22 @@ const installDom = 'npm install @sparshlabs/dom'
     <p>See the <a href={href('/docs/vue/')}>Vue API reference</a> for Composition API patterns and props.</p>
   </section>
 
+  <section class="docs-section" id="angular-setup">
+    <p class="section-kicker">03 · ANGULAR</p>
+    <h2>Put the directive on the element you want to protect</h2>
+    <p>
+      The <code>sparshGuard</code> directive guards the element it’s placed on and everything inside
+      it, without adding a wrapper. It attaches after the first render, never runs during
+      server-side rendering, and removes its listeners when the element is destroyed. To guard the
+      whole document instead, add <code>provideActivationGuard()</code> to your application config.
+    </p>
+    <Code code={installAngular} lang="sh" theme="github-dark" />
+    <Code code={angularProvider} lang="ts" theme="github-dark" />
+    <p>See the <a href={href('/docs/angular/')}>Angular API reference</a> for the provider, the element-feedback directive, and inputs.</p>
+  </section>
+
   <section class="docs-section" id="first-feedback">
-    <p class="section-kicker">03 · OBSERVE THE RESULT</p>
+    <p class="section-kicker">04 · OBSERVE THE RESULT</p>
     <h2>Make a block understandable</h2>
     <p>
       Enforce mode is the default. A suspicious activation can be stopped, and <code>onDecision</code>

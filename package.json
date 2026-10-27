@@ -2,7 +2,7 @@
   "name": "sparsh",
   "private": true,
   "version": "0.0.0",
-  "description": "Monorepo for @sparshlabs/* — a framework-agnostic UX-safety primitive against accidental UI activation.",
+  "description": "Monorepo for @sparshlabs/* \u2014 a framework-agnostic UX-safety primitive against accidental UI activation.",
   "license": "MIT",
   "packageManager": "pnpm@9.15.0",
   "engines": {
@@ -15,7 +15,7 @@
     "e2e": "playwright test",
     "bench": "pnpm -r --filter './packages/*' run build && node scripts/package-sizes.mjs && SPARSH_BENCHMARK=1 playwright test",
     "lint": "biome check .",
-    "typecheck": "tsc -b tsconfig.json",
+    "typecheck": "tsc -b tsconfig.json && pnpm --filter @sparshlabs/angular typecheck",
     "typecheck:core-fence": "tsc -p packages/core/tsconfig.json --noEmit",
     "release": "changeset version && changeset publish",
     "changeset": "changeset"
@@ -26,5 +26,14 @@
     "playwright": "1.63.0",
     "typescript": "^5.7.2",
     "vitest": "^2.1.8"
+  },
+  "pnpm": {
+    "packageExtensions": {
+      "@analogjs/vite-plugin-angular": {
+        "peerDependencies": {
+          "typescript": "*"
+        }
+      }
+    }
   }
 }

@@ -15,6 +15,7 @@ const pages = [
   { path: '/docs/concepts/', landmark: 'main.docs-page' },
   { path: '/docs/react/', landmark: 'main.docs-page' },
   { path: '/docs/vue/', landmark: 'main.docs-page' },
+  { path: '/docs/angular/', landmark: 'main.docs-page' },
   { path: '/docs/dom/', landmark: 'main.docs-page' },
 ]
 

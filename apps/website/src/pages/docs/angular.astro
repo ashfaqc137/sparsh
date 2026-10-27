@@ -1,0 +1,231 @@
+---
+import { Code } from 'astro:components'
+import DocsShell from '../../components/DocsShell.astro'
+import { href } from '../../lib/paths'
+
+const directiveExample = `import { Component } from '@angular/core'
+import { ActivationGuardDirective, type Decision } from '@sparshlabs/angular'
+
+@Component({
+  selector: 'app-root',
+  imports: [ActivationGuardDirective],
+  template: \`
+    <main
+      sparshGuard
+      mode="enforce"
+      [cooldownMs]="500"
+      (decision)="handleDecision($event)"
+    >
+      <app-shell />
+    </main>
+  \`,
+})
+export class AppComponent {
+  handleDecision(decision: Decision) {
+    if (!decision.allowed) {
+      console.info('Suspicious activation:', decision.reason)
+    }
+  }
+}`
+
+const providerExample = `// app.config.ts
+import type { ApplicationConfig } from '@angular/core'
+import { provideActivationGuard } from '@sparshlabs/angular'
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideActivationGuard({
+      mode: 'enforce',
+      onSuspect: (decision) => console.info('Suspicious activation:', decision.reason),
+    }),
+  ],
+}`
+
+const targetExample = `import { Component } from '@angular/core'
+import { ActivationGuardTarget } from '@sparshlabs/angular'
+
+@Component({
+  selector: 'app-save-button',
+  imports: [ActivationGuardTarget],
+  template: \`
+    <button type="button" sparshGuardTarget #guard="sparshGuardTarget">
+      Save draft
+    </button>
+    @if (guard.isGuarded()) {
+      <p role="status">The screen changed. Try again.</p>
+    }
+  \`,
+})
+export class SaveButtonComponent {}`
+
+const customFeedback = `import { Component } from '@angular/core'
+import { ActivationGuardDirective } from '@sparshlabs/angular'
+
+@Component({
+  selector: 'app-root',
+  imports: [ActivationGuardDirective],
+  template: \`
+    <main sparshGuard [onBlocked]="animateBlocked">
+      <app-shell />
+    </main>
+  \`,
+})
+export class AppComponent {
+  animateBlocked = (element: Element) => {
+    element.animate(
+      [
+        { transform: 'scale(1)' },
+        { transform: 'scale(0.96)' },
+        { transform: 'scale(1)' },
+      ],
+      { duration: 220, easing: 'ease-out' },
+    )
+  }
+}`
+
+const publicTypes = `import type { InputKind, Phase, PolicyId } from '@sparshlabs/core'
+import type { Signal } from '@angular/core'
+
+// [sparshGuardTarget], via exportAs: 'sparshGuardTarget'
+export declare class ActivationGuardTarget {
+  readonly isGuarded: Signal<boolean>
+}
+
+export interface Decision {
+  allowed: boolean
+  enforced: boolean
+  policy?: PolicyId
+  reason?: string
+  event: { kind: InputKind; phase: Phase }
+  target: {
+    identity: unknown
+    ageMs: number
+    guardKey?: string
+  }
+}`
+---
+
+<DocsShell
+  title="Angular API reference"
+  description="Guard directive, app-wide provider, per-element target directive, callbacks, and shared guard options for Angular 22 and later."
+>
+  <section class="docs-section" id="directive">
+    <p class="section-kicker">DIRECTIVE · GUARD ROOT</p>
+    <h2><code>[sparshGuard]</code></h2>
+    <p>
+      Add <code>sparshGuard</code> to any element to guard everything inside it. The element itself
+      becomes the guard root, so no wrapper element is rendered. The guard attaches after the first
+      render and removes its listeners when the element is destroyed. It never runs during
+      server-side rendering.
+    </p>
+    <p>
+      Changing a guard configuration input recreates the guard and resets in-flight interaction
+      observations. Keep configuration stable during a press. Changes to <code>onBlocked</code> and
+      the output handlers are picked up without recreating the guard.
+    </p>
+    <Code code={directiveExample} lang="ts" theme="github-dark" />
+    <p>
+      Numeric and boolean inputs also accept static attribute strings, such as
+      <code>cooldownMs="800"</code>. Import <code>ActivationGuardDirective</code> into each
+      standalone component (or NgModule) whose template uses it.
+    </p>
+    <h3>Inputs and outputs</h3>
+    <div class="table-wrap">
+      <table class="docs-table">
+        <thead><tr><th>Name</th><th>Type</th><th>Default / behavior</th></tr></thead>
+        <tbody>
+          <tr><td><code>mode</code></td><td><code>Mode | Partial&lt;Record&lt;PolicyId, Mode&gt;&gt;</code></td><td><code>'enforce'</code>. Unspecified policies in a mode map remain enforced.</td></tr>
+          <tr><td><code>policies</code></td><td><code>PolicyId[]</code></td><td>All four policies by default.</td></tr>
+          <tr><td><code>cooldownMs</code></td><td><code>number</code></td><td><code>500</code>. Age policy threshold in milliseconds.</td></tr>
+          <tr><td><code>rectThresholdPx</code></td><td><code>number</code></td><td><code>4</code>. Continuity movement tolerance.</td></tr>
+          <tr><td><code>refractoryMs</code></td><td><code>number</code></td><td><code>300</code>. DoubleFire recency window.</td></tr>
+          <tr><td><code>semanticsTextCheck</code></td><td><code>boolean</code></td><td><code>false</code>. Also compare target text.</td></tr>
+          <tr><td><code>clickSuppressMs</code></td><td><code>number</code></td><td><code>500</code>. Matching native click window.</td></tr>
+          <tr><td><code>onBlocked</code></td><td><code>(element: Element) =&gt; void</code></td><td>Called after an enforced activation is canceled; replaces the default shake.</td></tr>
+          <tr><td><code>blockAnimation</code></td><td><code>boolean</code></td><td><code>true</code>. Enables the default shake when no custom callback is set.</td></tr>
+          <tr><td><code>blockAnimationMs</code></td><td><code>number</code></td><td><code>300</code>. Default shake duration.</td></tr>
+          <tr><td><code>(decision)</code></td><td><code>Decision</code></td><td>Output. Emits for allowed and suspicious decisions.</td></tr>
+          <tr><td><code>(suspect)</code></td><td><code>Decision</code></td><td>Output. Emits when a policy verdict is suspicious, including report mode.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="docs-section" id="provider">
+    <p class="section-kicker">PROVIDER · APP-WIDE</p>
+    <h2><code>provideActivationGuard()</code></h2>
+    <p>
+      Guards the whole document from your application config, or from any environment injector
+      such as a lazy route’s <code>providers</code>. It takes the same options as the directive,
+      with <code>onDecision</code> and <code>onSuspect</code> callbacks in place of outputs.
+    </p>
+    <Code code={providerExample} lang="ts" theme="github-dark" />
+    <ul>
+      <li>Pass <code>root: () =&gt; element</code> to guard a specific element instead of <code>document</code>. It’s a factory so it runs only in the browser, after the first render.</li>
+      <li>Options are fixed for the injector’s lifetime. Use the directive for options that change at runtime.</li>
+      <li>The guard is removed when the injector is destroyed.</li>
+    </ul>
+  </section>
+
+  <section class="docs-section" id="target">
+    <p class="section-kicker">DIRECTIVE · ELEMENT FEEDBACK</p>
+    <h2><code>[sparshGuardTarget]</code></h2>
+    <p>
+      Put <code>sparshGuardTarget</code> on an element to observe it, and read its
+      <code>isGuarded()</code> signal through a template reference. The signal becomes true when
+      that element is actually blocked.
+    </p>
+    <Code code={targetExample} lang="ts" theme="github-dark" />
+    <ul>
+      <li>It uses the nearest <code>[sparshGuard]</code> ancestor, otherwise the app-wide guard from <code>provideActivationGuard()</code>.</li>
+      <li><code>isGuarded()</code> resets after an allowed activation.</li>
+      <li>Without any guard above it, the directive is a no-op and does not throw.</li>
+    </ul>
+  </section>
+
+  <section class="docs-section" id="scoped-guard">
+    <p class="section-kicker">DIRECTIVE · SCOPED GUARD</p>
+    <h2>Nested <code>[sparshGuard]</code></h2>
+    <p>
+      A <code>sparshGuard</code> inside another one installs a separate guard on its own subtree.
+      Options are not merged with an ancestor’s, and descendants’ <code>[sparshGuardTarget]</code>
+      directives use the nearest guard.
+    </p>
+    <Code code={`<section sparshGuard [mode]="{ age: 'report' }">
+  <app-frequently-updated-panel />
+</section>`} lang="html" theme="github-dark" />
+    <p class="callout">
+      <strong>Nesting guards:</strong> each guard installs its own capture-phase listeners and
+      policy pipeline. Nothing is merged or inherited from an ancestor. When guards overlap the
+      same DOM, the outermost one sees pointer, click, and key events first. If it blocks, the
+      inner guard never sees that interaction. That’s the intended behavior for a scoped override.
+      Guarding the same region twice by accident, for example with both
+      <code>provideActivationGuard()</code> and a top-level <code>sparshGuard</code>, is usually a
+      mistake. sparsh logs a <code>console.warn</code> whenever a new guard’s root overlaps one
+      that’s already active, so you can tell the two cases apart.
+    </p>
+  </section>
+
+  <section class="docs-section" id="custom-feedback">
+    <p class="section-kicker">BLOCK FEEDBACK</p>
+    <h2>Customize the blocked animation</h2>
+    <p>
+      <code>onBlocked</code> runs after cancellation and receives the interactive element. A
+      callback exception is ignored so it cannot affect the guard’s decision. Define it as an arrow
+      function property if it needs <code>this</code>.
+    </p>
+    <Code code={customFeedback} lang="ts" theme="github-dark" />
+  </section>
+
+  <section class="docs-section" id="types">
+    <p class="section-kicker">RELATED TYPES</p>
+    <h2>Decision and mode</h2>
+    <p>
+      <code>Mode</code>, <code>PolicyId</code>, and <code>Decision</code> are re-exported from
+      <code>@sparshlabs/angular</code>. A decision’s <code>allowed</code> field records the policy
+      verdict; <code>enforced</code> says whether it actually stopped the activation. See
+      <a href={href('/docs/concepts/')}>Core concepts</a> for policy behavior and accessibility details.
+    </p>
+    <Code code={publicTypes} lang="ts" theme="github-dark" />
+  </section>
+</DocsShell>
