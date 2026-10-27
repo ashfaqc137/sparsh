@@ -3,7 +3,7 @@
 **sparsh helps prevent a tap from activating the wrong thing when an interface changes under the
 user.** A page can shift, a new item can appear, or a control can change while someone is pressing
 it. sparsh checks whether the target still matches what the person first interacted with, and can
-stop a suspicious activation before it commits.
+stop a suspicious activation before it commits. 
 
 ## What sparsh checks
 
