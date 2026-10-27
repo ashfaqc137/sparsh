@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js",
+    "outDir": "dist",
+    "rootDir": "src"
+  },
+  "references": [{ "path": "../core" }, { "path": "../dom" }],
+  "include": ["src"]
+}

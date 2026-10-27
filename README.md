@@ -23,7 +23,8 @@ Sparsh does not block Escape, focus changes, or scrolling.
 
 - `@sparshlabs/core` contains the framework-independent decision engine.
 - `@sparshlabs/dom` connects the engine to browser events and also provides a vanilla DOM API.
-- `@sparshlabs/react`, `@sparshlabs/vue`, and `@sparshlabs/angular` provide framework bindings.
+- `@sparshlabs/react`, `@sparshlabs/vue`, `@sparshlabs/angular`, and `@sparshlabs/solidjs` provide
+  framework bindings.
 
 Install the integration for your app with npm:
 
@@ -39,6 +40,9 @@ npm install @sparshlabs/vue
 
 # Angular 22+ (Angular is a peer dependency)
 npm install @sparshlabs/angular
+
+# SolidJS 1.8+ (solid-js is a peer dependency)
+npm install @sparshlabs/solidjs
 ```
 
 `@sparshlabs/dom` is also the browser integration used by the framework packages and is installed
@@ -87,6 +91,7 @@ Package ESM entry sizes from the same runs:
 | `@sparshlabs/dom` | 12,646 bytes | 3,243 bytes |
 | `@sparshlabs/react` | 3,752 bytes | 1,186 bytes |
 | `@sparshlabs/vue` | 3,840 bytes | 1,308 bytes |
+| `@sparshlabs/solidjs` | 3,515 bytes | 1,197 bytes |
 | `@sparshlabs/angular` | 16,627 bytes | 4,984 bytes |
 
 These are individual package entry files before app bundling or tree-shaking, not the total

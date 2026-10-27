@@ -1,0 +1,44 @@
+{
+  "name": "@sparshlabs/solidjs",
+  "version": "0.0.0",
+  "description": "SolidJS binding for sparsh: <ActivationGuardProvider>, useActivationGuard(), <ActivationGuard>.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run --passWithNoTests && vitest run -c vitest.config.ssr.ts",
+    "test:watch": "vitest",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@sparshlabs/core": "workspace:*",
+    "@sparshlabs/dom": "workspace:*"
+  },
+  "peerDependencies": {
+    "solid-js": "^1.8.0"
+  },
+  "devDependencies": {
+    "jsdom": "^25.0.1",
+    "solid-js": "^1.9.17",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vite-plugin-solid": "^2.11.14",
+    "vitest": "^2.1.8"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
