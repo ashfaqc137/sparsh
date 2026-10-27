@@ -31,7 +31,8 @@ for (const viewport of viewports) {
       if (route.path === '/playground/') {
         await expect(page.getByTestId('playground-root')).toHaveAttribute('data-hydrated', 'true')
       }
-      if (route.path === '/docs/') {
+      // Phones scroll the table inside its wrapper; at tablet width it fits.
+      if (route.path === '/docs/' && viewport.width < 768) {
         const table = page.locator('.table-wrap')
         const sizes = await table.evaluate((element) => ({
           clientWidth: element.clientWidth,
