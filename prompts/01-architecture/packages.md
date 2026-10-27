@@ -86,24 +86,64 @@ cannot call it directly — it would need a parallel surface (e.g. a component `
 option, or a mixin exposing `this.$activationGuard`). That surface is a deliberately deferred,
 separate extension, not built in v1.
 
+## `@sparshlabs/angular`
+
+**Responsibility:** the Angular binding; covers the same surface as `@sparshlabs/react`/`@sparshlabs/vue`,
+expressed in Angular idiom (directives + DI instead of components + context). Angular 22+.
+
+- Exports:
+  - `ActivationGuardDirective` (`[sparshGuard]`) — primary API. The directive's host element *is*
+    the guard root, so there's no `display: contents` wrapper and no `root` input. Signal inputs
+    mirror the `DomGuardOptions` passthrough (`mode`, `cooldownMs`, …, `onBlocked`); decisions
+    surface as outputs, `(decision)` and `(suspect)`. A nested `[sparshGuard]` is the scoped
+    override — React/Vue's `<ActivationGuard>`, same "nested provider" framing (D10).
+  - `provideActivationGuard(config)` — app-wide guard from an environment injector
+    (`app.config.ts`, a lazy route), on `document` or a `root` factory. Options are static for the
+    injector's lifetime; runtime-changing options use the directive.
+  - `ActivationGuardTarget` (`[sparshGuardTarget]`) — `useActivationGuard()`'s counterpart; exposes
+    an `isGuarded()` signal via `exportAs`. A directive gets its host DOM node for free, so there is
+    no ref callback (the reason React/Vue need a hook/composable, D16).
+  - `GUARD_CONTEXT` (an `InjectionToken`) — the DI equivalent of React context / Vue's `GuardKey`.
+    DI's nearest-provider lookup resolves the closest `[sparshGuard]`, else the app-wide guard, else
+    a never-throwing default.
+- Both entry points share an internal `GuardHost` (create / recreate-on-meaningful-change /
+  destroy) and start the guard in `afterNextRender` — after the initial children exist, matching
+  React's `useEffect` / Vue's `onMounted` — and never on the server (Angular doesn't run
+  after-render hooks during a server render; a `PLATFORM_ID` check is defense in depth).
+  `test/ssr.test.ts` renders all three APIs with `@angular/platform-server` in a DOM-less Node
+  environment to prove it.
+- **Built with ng-packagr, not tsup.** Published Angular libraries must be partially compiled by
+  the Angular compiler (Angular Package Format) so any consumer's linker can finish compiling them;
+  esbuild can't emit that. It's built against Angular 22.2 (the supported floor) so the output links
+  in 22 and every later major. ng-packagr writes `dist/package.json`, and the package publishes
+  from `dist` (`publishConfig.directory`); `pnpm publish` resolves `workspace:*` there as usual.
+  Tests compile AOT under Vitest with `@analogjs/vite-plugin-angular`, and
+  `test/angular-version.test.ts` fails if the run resolves a different Angular major.
+- **Its own toolchain.** Angular 22's compiler needs TypeScript 6.0 and its test stack Vitest 4,
+  while the rest of the workspace is on TypeScript 5.7 / Vitest 2. So this package pins TypeScript
+  6.0 and Vitest 4 in its own devDependencies and is left out of the root `tsc -b` graph; its
+  `typecheck` script runs on its local TypeScript instead.
+- Depends on: `@sparshlabs/core`, `@sparshlabs/dom`, `@angular/core` + `@angular/common` (peers, `>=22`).
+
 ## Dependency direction (must never invert)
 
 ```
-react  ──▶  dom  ──▶  core
-vue    ──▶  dom  ──▶  core
-   └───────────────▶  core   (react/vue also import core types directly)
+react    ──▶  dom  ──▶  core
+vue      ──▶  dom  ──▶  core
+angular  ──▶  dom  ──▶  core
+   └─────────────────▶  core   (the adapters also import core types directly)
 ```
 
 - `core` depends on nothing.
 - `dom` depends on `core` only.
 - `react` depends on `core` + `dom` + react (peer).
 - `vue` depends on `core` + `dom` + vue (peer).
+- `angular` depends on `core` + `dom` + `@angular/core`/`@angular/common` (peers).
 - No package imports a sibling "upward". No framework-adapter package imports another framework's
   adapter.
 
 ## Future packages (not built in v1)
 
-`@sparshlabs/svelte`, `@sparshlabs/angular` — each a thin binding over `core` + `dom`, same shape as
-`@sparshlabs/react`/`@sparshlabs/vue`. An Options-API-compatible surface for `@sparshlabs/vue` (mixin/`inject`-
+`@sparshlabs/svelte` — a thin binding over `core` + `dom`, same shape as the existing adapters. An Options-API-compatible surface for `@sparshlabs/vue` (mixin/`inject`-
 based, see above) is also deferred. `@sparshlabs/native` (or separate) — a *different host*, shared
 philosophy only, not shared code. See `decisions.md` for why native is deferred.

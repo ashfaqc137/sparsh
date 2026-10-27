@@ -7,7 +7,14 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": ["dist", "coverage", ".turbo", "node_modules", ".astro"]
+    "ignore": [
+      "dist",
+      "coverage",
+      ".turbo",
+      "node_modules",
+      ".astro",
+      "apps/website/src/styles/sparshlabs.css"
+    ]
   },
   "formatter": {
     "enabled": true,

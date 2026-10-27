@@ -1,0 +1,13 @@
+{
+  // Used by @analogjs/vite-plugin-angular to compile the directives (and test host components)
+  // under Vitest. Not part of the `tsc -b` graph.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "incremental": false,
+    "rootDir": "."
+  },
+  "include": ["src", "test"]
+}

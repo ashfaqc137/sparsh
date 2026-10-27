@@ -23,7 +23,7 @@ Sparsh does not block Escape, focus changes, or scrolling.
 
 - `@sparshlabs/core` contains the framework-independent decision engine.
 - `@sparshlabs/dom` connects the engine to browser events and also provides a vanilla DOM API.
-- `@sparshlabs/react` and `@sparshlabs/vue` provide framework bindings.
+- `@sparshlabs/react`, `@sparshlabs/vue`, and `@sparshlabs/angular` provide framework bindings.
 
 Install the integration for your app with npm:
 
@@ -36,6 +36,9 @@ npm install @sparshlabs/react
 
 # Vue (Vue is a peer dependency)
 npm install @sparshlabs/vue
+
+# Angular 22+ (Angular is a peer dependency)
+npm install @sparshlabs/angular
 ```
 
 `@sparshlabs/dom` is also the browser integration used by the framework packages and is installed
@@ -84,9 +87,12 @@ Package ESM entry sizes from the same runs:
 | `@sparshlabs/dom` | 12,646 bytes | 3,243 bytes |
 | `@sparshlabs/react` | 3,752 bytes | 1,186 bytes |
 | `@sparshlabs/vue` | 3,840 bytes | 1,308 bytes |
+| `@sparshlabs/angular` | 16,627 bytes | 4,984 bytes |
 
 These are individual package entry files before app bundling or tree-shaking, not the total
-download size for a consumer. The project’s performance target is less than 1 ms of added work per
+download size for a consumer. The Angular entry is ng-packagr's partially compiled FESM output,
+which keeps source comments and Angular's partial declarations; the app's Angular linker and
+minifier reduce it further (about 9.4 KB raw / 2.4 KB gzip with comments stripped alone). The project’s performance target is less than 1 ms of added work per
 interaction; the fixture results above are diagnostic measurements, not a cross-device benchmark
 guarantee.
 

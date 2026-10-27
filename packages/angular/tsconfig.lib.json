@@ -1,0 +1,19 @@
+{
+  // ng-packagr (the Angular compiler, ngtsc) build only — it emits partial-Ivy APF output that any
+  // consumer app's Angular linker can finish compiling. Like the other packages'
+  // tsconfig.build.json, this is a non-composite view of the same sources; `tsc -b` (project
+  // references, typecheck) keeps using tsconfig.json.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "composite": false,
+    "declarationMap": false,
+    "incremental": false,
+    "inlineSources": true,
+    "sourceMap": true
+  },
+  "angularCompilerOptions": {
+    "compilationMode": "partial",
+    "strictTemplates": true,
+    "strictInjectionParameters": true
+  }
+}
