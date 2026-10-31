@@ -1,12 +1,14 @@
 {
   "name": "@sparshlabs/svelte",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Svelte 5 binding for sparsh: <ActivationGuardProvider>, useActivationGuard(), <ActivationGuard>.",
   "license": "MIT",
   "type": "module",
   "svelte": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "sideEffects": ["**/*.svelte"],
+  "sideEffects": [
+    "**/*.svelte"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -14,7 +16,9 @@
       "default": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "svelte-package -i src -o dist",
     "dev": "svelte-package -i src -o dist --watch",

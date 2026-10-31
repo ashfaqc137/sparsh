@@ -1,6 +1,6 @@
 {
   "name": "@sparshlabs/vue",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Vue 3 (Composition API) binding for sparsh: <ActivationGuardProvider>, useActivationGuard(), <ActivationGuard>.",
   "license": "MIT",
   "type": "module",
@@ -15,7 +15,9 @@
       "require": "./dist/index.cjs"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",

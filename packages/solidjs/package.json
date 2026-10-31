@@ -1,6 +1,6 @@
 {
   "name": "@sparshlabs/solidjs",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "SolidJS binding for sparsh: <ActivationGuardProvider>, useActivationGuard(), <ActivationGuard>.",
   "license": "MIT",
   "type": "module",
@@ -15,7 +15,9 @@
       "require": "./dist/index.cjs"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
