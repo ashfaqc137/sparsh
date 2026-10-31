@@ -8,7 +8,7 @@
  *
  * Composition-API-only (v1): this composable can only be called from inside `setup()` (or
  * `<script setup>`), so an Options API component cannot call it directly. Options API support is
- * intentionally deferred — see `prompts/01-architecture/packages.md` for the decision.
+ * intentionally deferred — see `docs/design/architecture/packages.md` for the decision.
  */
 
 import type { TargetHandle } from '@sparshlabs/core'

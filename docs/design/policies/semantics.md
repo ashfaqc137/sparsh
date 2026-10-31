@@ -44,8 +44,8 @@ badge, a price that ticks, a "2m ago" timestamp. These change constantly while t
 unchanged. Therefore:
 
 - The default fingerprint comparison uses `disabled` + `ariaLabel` + `role` + `hrefOrValue` + `guardKey`.
-- `text` is compared **only** when explicitly enabled (`GuardOptions.semanticsTextCheck: true`,
-  implemented in T09), and even then callers should scope it to the label element, not the whole
+- `text` is compared **only** when explicitly enabled (`GuardOptions.semanticsTextCheck: true`),
+  and even then callers should scope it to the label element, not the whole
   subtree.
 - Prefer `aria-label` / `data-guard-key` as the stable meaning signal over raw text.
 
@@ -70,7 +70,7 @@ sparsh does **not** pretend to cover case 5 — documented explicitly, not silen
   already tracks this for Age) as the intent baseline, re-read at activation. This means Semantics can
   still catch a `disabled`→enabled flip for keyboard activation.
 
-## Edge cases to test (see 04-verification)
+## Edge cases to test (see `testing-strategy.md`)
 
 - `disabled` → enabled between down and up → **blocked**.
 - label "Add to cart" → "Remove from cart" **with** text-check enabled → blocked; with default (no text

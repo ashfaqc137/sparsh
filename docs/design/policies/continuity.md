@@ -59,7 +59,7 @@ engine clears its per-`pointerId` map on them.
 
 Continuity is one leg of a tripod; it is not meant to be complete alone.
 
-## Edge cases to test (see 04-verification)
+## Edge cases to test (see `testing-strategy.md`)
 
 - down then up, same stable element, no movement → **allowed** (the dominant happy path; must never
   false-positive).

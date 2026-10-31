@@ -57,7 +57,7 @@ ageMs = now - becamePerceivableAt
 - Occlusion by another element at the same coordinates — not caught by IO.
 - These are acceptable given fail-open; they can be improved *inside the host* later. Do **not** add
   expensive per-frame visibility polling to chase them — that violates the perf budget (D19).
-- See `../../LIMITATIONS.md` for the full, user-facing writeup of these (and other) gaps, including the
+- See `../../../LIMITATIONS.md` for the full, user-facing writeup of these (and other) gaps, including the
   broader class of CSS-only paint reveals (`visibility`, `filter`, `clip-path`, `backdrop-filter`) that
   share this same root cause.
 
@@ -71,9 +71,9 @@ intent snapshot. For `key`/`virtual`, same: evaluate `ageMs` at activation.
 
 Matches Chromium's double-click interval and the CLS `hadRecentInput` window. The motor-planning window is
 150–300ms; 500ms is deliberately generous to protect against false positives. Configurable via
-`cooldownMs`. See `00-context/prior-art.md`.
+`cooldownMs`. See `context/prior-art.md`.
 
-## Edge cases to test (see 04-verification)
+## Edge cases to test (see `testing-strategy.md`)
 
 - Late-mounted target under a stationary pointer, activated within cooldown → blocked (enforce) / reported
   (report).

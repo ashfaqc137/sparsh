@@ -7,7 +7,7 @@
  * Never degrades into a general debounce — a rapid legitimate repeat press on the SAME stable
  * control (`activation.identity === lastActivation.identity`) always passes.
  *
- * See `prompts/02-policies/double-fire.md`.
+ * See `docs/design/policies/double-fire.md`.
  */
 
 import type { Policy, PolicyContext, Verdict } from '../policy.js'

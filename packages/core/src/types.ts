@@ -1,8 +1,8 @@
 /**
  * Core types for sparsh — the normative public contract.
  *
- * Mirrors `prompts/01-architecture/core-contract.md`. If this file diverges from that doc,
- * update the doc in the same change (see `prompts/03-implementation/conventions.md`).
+ * Mirrors `docs/design/architecture/core-contract.md`. If this file diverges from that doc,
+ * update the doc in the same change (see `docs/design/conventions.md`).
  *
  * Zero DOM. This module must compile with `lib: ["ES2022"]` only.
  */
@@ -14,7 +14,7 @@ export type PolicyId = 'age' | 'continuity' | 'semantics' | 'doubleFire'
 
 /**
  * How the activation was produced. Drives which policies apply — see
- * `prompts/02-policies/classification.md` for the full a11y carve-out rationale.
+ * `docs/design/policies/classification.md` for the full a11y carve-out rationale.
  *
  * - mouse / touch / pen: real pointer input, distinguished by `PointerEvent.pointerType`.
  * - key: keyboard activation (Enter/Space on an activatable element).
@@ -79,7 +79,7 @@ export interface Fingerprint {
   /**
    * Trimmed textContent — OPT-IN / scoped. Raw text diffing causes false positives on stable
    * controls with live text (counters, "2m ago" timestamps). Only compared when a caller opts in.
-   * See `prompts/02-policies/semantics.md` (D14).
+   * See `docs/design/policies/semantics.md` (D14).
    */
   text?: string
   ariaLabel?: string

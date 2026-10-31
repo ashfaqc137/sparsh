@@ -21,7 +21,7 @@ or repeat event lands on whatever is now underneath.
 ## The rule
 
 Maintain a short **post-activation refractory window** per root (default: **300ms**, a dedicated
-value smaller than the default `cooldownMs` (500ms) — decided during T05/T11 implementation and
+value smaller than the default `cooldownMs` (500ms) — decided during implementation and
 exposed as `GuardOptions.refractoryMs`):
 
 ```
@@ -61,7 +61,7 @@ repros before adding complexity.**
   after a collapse — legitimate rapid repeat clicks on the *same stable* control must still pass (that's a
   required negative test).
 
-## Edge cases to test (see 04-verification)
+## Edge cases to test (see `testing-strategy.md`)
 
 - dialog closes on click; a residual `click` lands on the button now underneath → **blocked**.
 - rapid legitimate double-click on the *same* stable button → **allowed** (must not regress).

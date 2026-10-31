@@ -4,7 +4,7 @@
  * engine-side rule is trivial. Applies to ALL input kinds, including key/virtual (D12) — safe
  * only when Age is configured as `report`; the global default is `enforce` (D21).
  *
- * See `prompts/02-policies/age.md`.
+ * See `docs/design/policies/age.md`.
  */
 
 import type { Policy, PolicyContext, Verdict } from '../policy.js'

@@ -3,8 +3,8 @@
  * tracks per-interaction intent state, runs the applicable policy pipeline at activation, and
  * reports every decision. Zero DOM — all platform access is through `host`.
  *
- * See `prompts/01-architecture/core-contract.md` ("Engine responsibilities" + "Invariants") and
- * `prompts/03-implementation/conventions.md` (enforce-by-default, fail-open, a11y carve-out).
+ * See `docs/design/architecture/core-contract.md` ("Engine responsibilities" + "Invariants") and
+ * `docs/design/conventions.md` (enforce-by-default, fail-open, a11y carve-out).
  */
 
 import type { Decision } from './decision.js'

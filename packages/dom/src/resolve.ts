@@ -1,6 +1,6 @@
 /**
- * Target resolution — `resolveTarget(raw)` per `core-contract.md` and
- * `prompts/03-implementation/tasks/13-dom-host-target-resolution.md`.
+ * Target resolution — `resolveTarget(raw)` per
+ * `docs/design/architecture/core-contract.md`.
  *
  * Resolves a raw event target (often a text node or nested `<span>`) to the interactive element
  * the user meant to activate, and wraps it as an opaque `TargetHandle`. The identity for DOM is

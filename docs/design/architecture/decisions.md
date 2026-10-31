@@ -91,7 +91,7 @@ documented and improvable inside the host without touching core.
 **Rationale:** live text (counters, "2m ago") on otherwise-stable controls would cause false positives.
 The `disabled`→enabled transition is the high-value, near-free check.
 **Consequences:** default Semantics checks `disabled` + `aria-label` + `href/value` + `guardKey`; raw
-`text` comparison is opt-in/scoped. See `02-policies/semantics.md`.
+`text` comparison is opt-in/scoped. See `policies/semantics.md`.
 
 ### D15 · Entity identity for list reorder is opt-in via `data-guard-key` · Accepted
 **Rationale:** row 3 becoming a different invoice is invisible to any DOM fingerprint. Honest layering,
@@ -131,7 +131,7 @@ executes in topological (dependency-graph) order natively, and `tsc -b` (tsconfi
 already gives fast, correctly-ordered typechecking across the graph. Turbo added a devDependency and a
 config surface with no measurable benefit yet.
 **Consequences:** `turbo.json` removed; `turbo` removed from root devDependencies; root scripts
-(`build`, `test`, `typecheck`) now call `pnpm -r run ...` / `tsc -b` directly (see `tooling.md`). No
+(`build`, `test`, `typecheck`) now call `pnpm -r run ...` / `tsc -b` directly (see root `package.json`). No
 caching layer exists today — full rebuilds/tests run every time. **Revisit** once `apps/demo` (T20) and
 the Playwright suite (T21) make the build graph heavy enough that uncached runs are a real cost; at that
 point turbo (or nx) can be reintroduced with a new ADR without any change to package boundaries or code.

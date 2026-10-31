@@ -84,7 +84,7 @@ blocks. The one piece that *does* differ is the per-element hook equivalent: `us
 is a composable and is only callable inside `setup()`/`<script setup>`. An Options API component
 cannot call it directly — it would need a parallel surface (e.g. a component `inject: [...]`
 option, or a mixin exposing `this.$activationGuard`). That surface is a deliberately deferred,
-separate extension, not built in v1.
+separate extension, not built in v1 ([#14](https://github.com/ashfaqc137/sparsh/issues/14)).
 
 ## `@sparshlabs/angular`
 
@@ -152,7 +152,8 @@ Solid 1.8+.
   serves client rendering, SSR and hydration. Tests use JSX via `vite-plugin-solid`.
 - Named `solidjs` (the framework's own npm package is `solid-js`).
 - Depends on: `@sparshlabs/core`, `@sparshlabs/dom`, `solid-js` (peer, `^1.8`). Solid 2.0 changes
-  effect and lifecycle semantics; support is deferred until it is stable.
+  effect and lifecycle semantics; support is deferred until it is stable
+  ([#15](https://github.com/ashfaqc137/sparsh/issues/15)).
 
 ## `@sparshlabs/svelte`
 
@@ -213,8 +214,7 @@ svelte   ──▶  dom  ──▶  core
 - No package imports a sibling "upward". No framework-adapter package imports another framework's
   adapter.
 
-## Future packages (not built in v1)
+## Native
 
-An Options-API-compatible surface for `@sparshlabs/vue` (mixin/`inject`-based, see above) is
-deferred. `@sparshlabs/native` (or separate) — a *different host*, shared
-philosophy only, not shared code. See `decisions.md` for why native is deferred.
+Native (Android/iOS/React Native) would be a *different host*: shared philosophy only, not shared
+code. Deferred, not precluded — see D17 in `decisions.md`.

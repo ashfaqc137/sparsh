@@ -2,7 +2,7 @@ import type { Rect } from './types.js'
 
 /**
  * Max of |Δx|, |Δy| of the rect origin. Cheap, allocation-free displacement measure used by
- * ContinuityPolicy. See `prompts/02-policies/continuity.md`.
+ * ContinuityPolicy. See `docs/design/policies/continuity.md`.
  */
 export function rectDelta(a: Rect, b: Rect): number {
   const dx = Math.abs(a.x - b.x)

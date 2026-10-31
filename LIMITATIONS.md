@@ -6,8 +6,8 @@
 > Nothing here is a bug — these are either explicit design trade-offs (fail-open, perf budget) or gaps not
 > yet scoped as work. If this file and the code ever disagree, the code wins; file an issue.
 
-For the full policy specs this summarizes, see `prompts/02-policies/*.md` and
-`prompts/01-architecture/decisions.md` (D13, D14, D15, D19).
+For the full policy specs this summarizes, see `docs/design/policies/*.md` and
+`docs/design/architecture/decisions.md` (D13, D14, D15, D19).
 
 ---
 
@@ -86,7 +86,7 @@ does not know about paint-only CSS properties or stacking/z-order. So:
   second geometric pass per activation — explicitly out of scope per the Age blind-spots note in
   `age.md` ("acceptable given fail-open... do not add expensive per-frame visibility polling").
 - All of the above fail **open** (allow), never closed — consistent with sparsh's core safety property: a
-  missed detection is acceptable, a false block is not (see `prompts/README.md` rule #2).
+  missed detection is acceptable, a false block is not (see `docs/design/README.md` rule #2).
 
 ---
 
@@ -124,6 +124,5 @@ For completeness — these are pre-existing, already-documented gaps independent
 
 ---
 
-*Last updated alongside the `@sparshlabs/core` + `@sparshlabs/dom` implementation (T01–T17). If you implement a fix
-for any of the ❌ rows above, update this table and the corresponding policy doc in `prompts/02-policies/`
+*If you implement a fix for any of the ❌ rows above, update this table and the corresponding policy doc in `docs/design/policies/`
 in the same change.*

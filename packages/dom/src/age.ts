@@ -1,6 +1,5 @@
 /**
- * Age tracking — perceivability, per `prompts/02-policies/age.md` (D13) and
- * `prompts/03-implementation/tasks/15-dom-host-age-tracking.md`.
+ * Age tracking — perceivability, per `docs/design/policies/age.md` (D13).
  *
  * `ageMs` is time since an element became PERCEIVABLE (visible to the user), not since DOM
  * insertion. Combines:

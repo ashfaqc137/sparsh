@@ -1,4 +1,5 @@
 # apps/demo
 
-Placeholder for T20 — the demo app (Vite + React), one repro per case from
-`prompts/00-context/problem.md`, with a live suspect log. Not implemented yet.
+Placeholder for a demo app (Vite + React) with one repro per case from
+`docs/design/context/problem.md` and a live suspect log. Not implemented; whether to build or drop it
+is tracked in [#8](https://github.com/ashfaqc137/sparsh/issues/8).
