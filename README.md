@@ -3,7 +3,7 @@
 **sparsh helps prevent a tap from activating the wrong thing when an interface changes under the
 user.** A page can shift, a new item can appear, or a control can change while someone is pressing
 it. sparsh checks whether the target still matches what the person first interacted with, and can
-stop a suspicious activation before it commits.
+stop a suspicious activation before it commits. 
 
 ## What sparsh checks
 
@@ -23,7 +23,8 @@ Sparsh does not block Escape, focus changes, or scrolling.
 
 - `@sparshlabs/core` contains the framework-independent decision engine.
 - `@sparshlabs/dom` connects the engine to browser events and also provides a vanilla DOM API.
-- `@sparshlabs/react`, `@sparshlabs/vue`, and `@sparshlabs/angular` provide framework bindings.
+- `@sparshlabs/react`, `@sparshlabs/vue`, `@sparshlabs/angular`, and `@sparshlabs/solidjs` provide
+  framework bindings.
 
 Install the integration for your app with npm:
 
@@ -39,6 +40,9 @@ npm install @sparshlabs/vue
 
 # Angular 22+ (Angular is a peer dependency)
 npm install @sparshlabs/angular
+
+# SolidJS 1.8+ (solid-js is a peer dependency)
+npm install @sparshlabs/solidjs
 ```
 
 `@sparshlabs/dom` is also the browser integration used by the framework packages and is installed
@@ -79,22 +83,22 @@ replacement batches. The interaction fixture times equivalent synthetic pointerd
 and click dispatches on guarded and unguarded targets. These timings show synchronous handling in
 this fixture; they are not end-to-end input-to-paint latency or a guarantee for every app or device.
 
-Package ESM entry sizes from the same runs:
+Package ESM entry sizes, as printed by `pnpm bench`:
 
 | Package | Raw | Gzip |
 | --- | ---: | ---: |
 | `@sparshlabs/core` | 7,982 bytes | 2,308 bytes |
-| `@sparshlabs/dom` | 12,646 bytes | 3,243 bytes |
-| `@sparshlabs/react` | 3,752 bytes | 1,186 bytes |
-| `@sparshlabs/vue` | 3,840 bytes | 1,308 bytes |
-| `@sparshlabs/angular` | 16,627 bytes | 4,984 bytes |
+| `@sparshlabs/dom` | 13,550 bytes | 3,625 bytes |
+| `@sparshlabs/react` | 3,756 bytes | 1,189 bytes |
+| `@sparshlabs/vue` | 3,844 bytes | 1,311 bytes |
+| `@sparshlabs/solidjs` | 3,515 bytes | 1,197 bytes |
+| `@sparshlabs/angular` | 11,537 bytes | 2,543 bytes |
 
 These are individual package entry files before app bundling or tree-shaking, not the total
 download size for a consumer. The Angular entry is ng-packagr's partially compiled FESM output,
-which keeps source comments and Angular's partial declarations; the app's Angular linker and
-minifier reduce it further (about 9.4 KB raw / 2.4 KB gzip with comments stripped alone). The project’s performance target is less than 1 ms of added work per
-interaction; the fixture results above are diagnostic measurements, not a cross-device benchmark
-guarantee.
+which includes Angular's partial declarations; the app's Angular linker and minifier reduce it
+further. The project’s performance target is less than 1 ms of added work per interaction; the
+fixture results above are diagnostic measurements, not a cross-device benchmark guarantee.
 
 ## Website
 

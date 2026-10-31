@@ -1,0 +1,32 @@
+# Build check, run on a self-hosted OwnCI runner (https://sparshlabs.com/ownci/).
+# OwnCI only accepts jobs that declare a container, so the job runs in node:22.
+name: build
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: [ownci]
+    container: node:22
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enable pnpm
+        run: corepack enable
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build

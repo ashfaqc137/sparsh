@@ -2,7 +2,8 @@
 
 Consumer-facing site and the source for sparsh's official product and API documentation. Product
 routes include `/`, `/how-it-works/`, `/demo/`, and `/playground/`. Developer docs live under
-`/docs/`: getting started, core concepts, React, Vue, and low-level DOM references. Framework
+`/docs/`: getting started, core concepts, React, Vue, Angular, SolidJS, and low-level DOM
+references. Framework
 references are separate pages so future bindings can add focused API documentation.
 
 The site is served at [sparshlabs.com/sparsh/](https://sparshlabs.com/sparsh/), one of the

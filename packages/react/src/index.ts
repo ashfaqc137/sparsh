@@ -21,6 +21,7 @@ export type {
   Host,
   InputKind,
   Mode,
+  Phase,
   PolicyId,
   Rect,
   TargetHandle,

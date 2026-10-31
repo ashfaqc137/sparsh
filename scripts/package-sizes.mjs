@@ -8,6 +8,7 @@ const packages = {
   dom: 'dist/index.js',
   react: 'dist/index.js',
   vue: 'dist/index.js',
+  solidjs: 'dist/index.js',
   angular: 'dist/fesm2022/sparshlabs-angular.mjs',
 }
 const root = process.cwd()

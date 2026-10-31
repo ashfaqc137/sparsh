@@ -125,12 +125,42 @@ expressed in Angular idiom (directives + DI instead of components + context). An
   `typecheck` script runs on its local TypeScript instead.
 - Depends on: `@sparshlabs/core`, `@sparshlabs/dom`, `@angular/core` + `@angular/common` (peers, `>=22`).
 
+## `@sparshlabs/solidjs`
+
+**Responsibility:** the SolidJS binding; same surface as `@sparshlabs/react`/`@sparshlabs/vue`.
+Solid 1.8+.
+
+- Exports:
+  - `ActivationGuardProvider` — primary API, app-wide. Same props as React's
+    `<ActivationGuardProvider>` (`mode`, `onDecision`, `onSuspect`, `root`, plus the `DomGuardOptions`
+    passthrough).
+  - `useActivationGuard()` → `{ ref, isGuarded }` — per-element escape hatch / block explanation.
+    `isGuarded` is an `Accessor<boolean>` (a signal getter); `ref` is a ref callback
+    (`<button ref={ref}>`). A ref rather than a `use:` directive — same reasoning as React's "hook
+    not HOC" (D16), and it needs no JSX namespace augmentation.
+  - `ActivationGuard` — optional subtree wrapper, same "nested provider" framing as React's.
+  - `GuardContext` — the `createContext` value (Vue's `GuardKey`, React's `GuardContext`).
+- Provider calls `createGuard` from `@sparshlabs/dom` in a `createEffect` with `onCleanup`, on a
+  `display: contents` wrapper (rendered through `Dynamic`) or an explicit `root` prop. The effect
+  tracks only the serialized option set and `root`; callbacks are read from props when they fire,
+  since Solid props are live getters (no "latest ref" needed). Effects never run on the server, so
+  SSR creates no guard; `test/ssr.test.ts` renders with Solid's server build in a DOM-less Node
+  environment to prove it.
+- **No JSX in `src/`.** Components are written with `createComponent`/`Dynamic`, which is what
+  Solid's compiler emits. tsup then ships plain JS with no Babel step, and the consumer's bundler
+  resolves `solid-js`/`solid-js/web` (kept external) to the browser or server build, so one output
+  serves client rendering, SSR and hydration. Tests use JSX via `vite-plugin-solid`.
+- Named `solidjs` (the framework's own npm package is `solid-js`).
+- Depends on: `@sparshlabs/core`, `@sparshlabs/dom`, `solid-js` (peer, `^1.8`). Solid 2.0 changes
+  effect and lifecycle semantics; support is deferred until it is stable.
+
 ## Dependency direction (must never invert)
 
 ```
 react    ──▶  dom  ──▶  core
 vue      ──▶  dom  ──▶  core
 angular  ──▶  dom  ──▶  core
+solidjs  ──▶  dom  ──▶  core
    └─────────────────▶  core   (the adapters also import core types directly)
 ```
 
@@ -139,6 +169,7 @@ angular  ──▶  dom  ──▶  core
 - `react` depends on `core` + `dom` + react (peer).
 - `vue` depends on `core` + `dom` + vue (peer).
 - `angular` depends on `core` + `dom` + `@angular/core`/`@angular/common` (peers).
+- `solidjs` depends on `core` + `dom` + solid-js (peer).
 - No package imports a sibling "upward". No framework-adapter package imports another framework's
   adapter.
 

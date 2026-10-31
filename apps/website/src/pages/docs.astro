@@ -37,6 +37,16 @@ import { ActivationGuardDirective } from '@sparshlabs/angular'
 })
 export class AppComponent {}`
 
+const solidProvider = `import { ActivationGuardProvider } from '@sparshlabs/solidjs'
+
+export function App() {
+  return (
+    <ActivationGuardProvider mode="enforce">
+      <YourApp />
+    </ActivationGuardProvider>
+  )
+}`
+
 const observeDecisions = `import type { Decision } from '@sparshlabs/react'
 
 function recordDecision(decision: Decision) {
@@ -51,6 +61,7 @@ function recordDecision(decision: Decision) {
 const installReact = 'npm install @sparshlabs/react'
 const installVue = 'npm install @sparshlabs/vue'
 const installAngular = 'npm install @sparshlabs/angular'
+const installSolid = 'npm install @sparshlabs/solidjs'
 const installDom = 'npm install @sparshlabs/dom'
 ---
 
@@ -63,8 +74,8 @@ const installDom = 'npm install @sparshlabs/dom'
     <h2>Choose a binding</h2>
     <p>
       sparsh separates its interaction engine from its platform adapters and framework bindings. Use
-      the binding that matches your app; the React, Vue, and Angular bindings install the browser DOM
-      adapter for you.
+      the binding that matches your app; the React, Vue, Angular, and SolidJS bindings install the
+      browser DOM adapter for you.
     </p>
     <p class="callout">A small naming note: <em>sparsh</em> means “touch” in Sanskrit.</p>
     <div class="table-wrap">
@@ -74,12 +85,13 @@ const installDom = 'npm install @sparshlabs/dom'
           <tr><td><code>@sparshlabs/react</code></td><td>Your UI is React.</td><td>React 18 or later</td></tr>
           <tr><td><code>@sparshlabs/vue</code></td><td>Your UI is Vue 3.</td><td>Vue 3.3 or later; Composition API</td></tr>
           <tr><td><code>@sparshlabs/angular</code></td><td>Your UI is Angular.</td><td>Angular 22 or later</td></tr>
+          <tr><td><code>@sparshlabs/solidjs</code></td><td>Your UI is SolidJS.</td><td>Solid 1.8 or later</td></tr>
           <tr><td><code>@sparshlabs/dom</code></td><td>You use vanilla JavaScript or a different framework.</td><td>A browser DOM root</td></tr>
         </tbody>
       </table>
     </div>
     <p class="callout">
-      Install the package that matches your app. The React, Vue, and Angular bindings bring in
+      Install the package that matches your app. The React, Vue, Angular, and SolidJS bindings bring in
       <code>@sparshlabs/dom</code> automatically; install it directly only for vanilla JS or a
       custom host.
     </p>
@@ -129,8 +141,21 @@ const installDom = 'npm install @sparshlabs/dom'
     <p>See the <a href={href('/docs/angular/')}>Angular API reference</a> for the provider, the element-feedback directive, and inputs.</p>
   </section>
 
+  <section class="docs-section" id="solidjs-setup">
+    <p class="section-kicker">04 · SOLIDJS</p>
+    <h2>Wrap the part of the app you want to protect</h2>
+    <p>
+      The SolidJS provider shares its guard with descendants through Solid context. It attaches in
+      an effect after the first render, never runs during server-side rendering, and removes its
+      listeners when it is disposed, so it works unchanged in SolidStart.
+    </p>
+    <Code code={installSolid} lang="sh" theme="github-dark" />
+    <Code code={solidProvider} lang="tsx" theme="github-dark" />
+    <p>See the <a href={href('/docs/solidjs/')}>SolidJS API reference</a> for the element-feedback hook and props.</p>
+  </section>
+
   <section class="docs-section" id="first-feedback">
-    <p class="section-kicker">04 · OBSERVE THE RESULT</p>
+    <p class="section-kicker">05 · OBSERVE THE RESULT</p>
     <h2>Make a block understandable</h2>
     <p>
       Enforce mode is the default. A suspicious activation can be stopped, and <code>onDecision</code>
