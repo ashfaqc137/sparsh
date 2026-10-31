@@ -51,7 +51,7 @@ mouse.**
 
 ## Read-before-you-write list
 
-- Before writing input **classification** (`02-policies/classification.md`): read react-aria's
+- Before writing input **classification** (`policies/classification.md`): read react-aria's
   `usePress.ts` classification and [react-spectrum #3945](https://github.com/adobe/react-spectrum/issues/3945)
   (the virtual-vs-real pointer discrimination problem). Do not re-derive this from scratch.
 - Before writing the **capture listener / blocking** (`02-policies` + dom host): read

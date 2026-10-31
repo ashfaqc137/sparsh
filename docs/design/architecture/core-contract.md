@@ -13,7 +13,7 @@ export type Mode = 'report' | 'enforce'
 
 export type PolicyId = 'age' | 'continuity' | 'semantics' | 'doubleFire'
 
-// How the activation was produced. Drives which policies apply (see 02-policies/classification.md).
+// How the activation was produced. Drives which policies apply (see policies/classification.md).
 export type InputKind = 'mouse' | 'touch' | 'pen' | 'virtual' | 'key'
 
 // intent   = the moment intent is formed (pointerdown, or first-visible for age on a fresh element)
@@ -87,7 +87,6 @@ export interface Host {
   /**
    * Subscribe to intent-clearing signals (`pointercancel` / `lostpointercapture` in the DOM
    * host). The engine clears any stored intent for the given `pointerId` when this fires.
-   * (Implemented in T05; not in the original draft of this doc.)
    */
   onIntentClear(cb: (signal: IntentClearSignal) => void): Unsubscribe
 
@@ -130,14 +129,13 @@ export interface GuardOptions {
 
   /**
    * DoubleFire's post-activation refractory window, ms. Default 300 — a dedicated, smaller
-   * value than `cooldownMs` (see `02-policies/double-fire.md`'s "decide during implementation"
-   * note). Added in T05/T11; not in the original draft of this doc.
+   * value than `cooldownMs` (see `policies/double-fire.md`'s "decide during implementation"
+   * note).
    */
   refractoryMs?: number
 
   /**
-   * Opt-in: also compare `Fingerprint.text` in SemanticsPolicy (D14). Default false. Added in
-   * T09; not in the original draft of this doc.
+   * Opt-in: also compare `Fingerprint.text` in SemanticsPolicy (D14). Default false.
    */
   semanticsTextCheck?: boolean
 
@@ -198,11 +196,11 @@ export interface PolicyContext {
   now: number
   cooldownMs: number
   rectThresholdPx: number
-  /** Refractory window for DoubleFirePolicy. Added in T05/T11; see GuardOptions.refractoryMs. */
+  /** Refractory window for DoubleFirePolicy. See GuardOptions.refractoryMs. */
   refractoryMs: number
-  /** Opt-in text comparison flag for SemanticsPolicy. Added in T09; see GuardOptions.semanticsTextCheck. */
+  /** Opt-in text comparison flag for SemanticsPolicy. See GuardOptions.semanticsTextCheck. */
   compareText: boolean
-  /** Last committed (allowed) pointer activation, for DoubleFirePolicy. Added in T05/T11. */
+  /** Last committed (allowed) pointer activation, for DoubleFirePolicy. */
   lastActivation?: LastActivation
 }
 

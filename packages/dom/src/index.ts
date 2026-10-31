@@ -33,7 +33,7 @@ export type DomGuardOptions = GuardOptions & DomHostOptions
 /**
  * Roots with a currently-active guard, so `createGuard` can warn about overlapping instances
  * (e.g. two `ActivationGuardProvider`s nested over the same subtree — see D10 in
- * `prompts/01-architecture/decisions.md`). Each guard is fully independent — capture-phase
+ * `docs/design/architecture/decisions.md`). Each guard is fully independent — capture-phase
  * listeners stack on overlapping roots, and the outermost one runs first and can stop
  * propagation before an inner one ever sees the event. This is the documented mechanism for
  * intentional subtree-scoped overrides (`<ActivationGuard>`), so the warning is advisory only —

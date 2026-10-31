@@ -4,7 +4,7 @@
  *
  * Covers case 2 (layout shift), the mid-press variant of case 6, and the mid-press half of case 1
  * (interstitial appears between down and up). Pointer input only — never key/virtual, which have
- * no pointerdown (D11). See `prompts/02-policies/continuity.md`.
+ * no pointerdown (D11). See `docs/design/policies/continuity.md`.
  */
 
 import type { Policy, PolicyContext, Verdict } from '../policy.js'

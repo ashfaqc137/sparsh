@@ -1,13 +1,14 @@
 # Testing strategy
 
 In sparsh, **the tests are the product.** Correctness is entirely about input timing and identity; a guard
-that silently stops working is worse than none. This file is the authoritative test plan; tasks T08–T11
-(unit) and T21 (e2e) implement it.
+that silently stops working is worse than none. This file is the authoritative test plan. Gaps between
+it and the current suites are tracked as GitHub issues, linked per layer below.
 
 ## Layer 1 — Unit (Vitest), engine + policies against a fake host
 
 The **decision table is the product.** Cover it exhaustively. Each policy is tested in isolation against
-synthesized `ActivationEvent` sequences and scripted `TargetSnapshot`s via the fake host (built in T05).
+synthesized `ActivationEvent` sequences and scripted `TargetSnapshot`s via the fake host
+(`packages/core/test/fake-host.ts`).
 No browser needed — this proves core correctness in Node.
 
 ### The decision table (must all be covered)
@@ -41,8 +42,10 @@ No browser needed — this proves core correctness in Node.
 
 ## Layer 2 — Real-input integration (Playwright) — non-negotiable
 
-One scenario **per numbered case** in `00-context/problem.md`, driven through Playwright's genuine `mouse`
-and `touchscreen` APIs against the demo app (T20/T21).
+One scenario **per numbered case** in `context/problem.md`, driven through Playwright's genuine `mouse`
+and `touchscreen` APIs against a deterministic fixture (see below). Today `e2e/` covers three
+playground scenarios with mouse on Chromium; the rest of this layer is tracked in
+[#9](https://github.com/ashfaqc137/sparsh/issues/9).
 
 - **Touch asserted independently for every scenario, never inferred from mouse.** This is precisely what
   Chromium got wrong (crbug 40067456). Separate Playwright projects for mouse, touch (webkit + chromium),
@@ -64,8 +67,8 @@ These stop a false-positive regression (the existential bug) from shipping. Trea
 ## Layer 3 — Accessibility smoke test (manual, once)
 
 NVDA or VoiceOver activating a control inside a guarded tree. Automation will not catch a broken
-virtual-click path. Document as a checklist in T21. Confirm: AT activation is never permanently blocked;
-Escape/focus/scroll always work.
+virtual-click path. Confirm: AT activation is never permanently blocked; Escape/focus/scroll always
+work. The checklist is tracked in [#11](https://github.com/ashfaqc137/sparsh/issues/11).
 
 ## Layer 4 — Performance (D19, release blocker)
 
@@ -73,11 +76,21 @@ Escape/focus/scroll always work.
 - Background observer cost: measured under a **virtualized 10k-row fixture**; stamping is O(added nodes),
   never O(tree).
 
-## Fixture: the demo app
+`e2e/performance.spec.ts` runs both measurements against the website's `/performance/` page but does not
+yet fail on regression — tracked in [#10](https://github.com/ashfaqc137/sparsh/issues/10).
 
-`apps/demo` (T20) is the single fixture for Layers 2–4 and doubles as README proof. Each of the six cases
-is individually toggleable with a **deterministic "arm" trigger** (explicit timing) so tests assert
-precisely against the cooldown window and never flake.
+## Fixtures
+
+Every case must be armable with a **deterministic trigger** (explicit timing) so tests assert precisely
+against the cooldown window and never flake. Current fixtures:
+
+- `apps/website` `/playground/` — the public scenarios, driven by `e2e/playground-bindings.spec.ts`.
+- `apps/bindings-harness` — the same scenarios through every framework binding (never deployed).
+- `apps/storybook-vanilla` — framework-free gallery with per-section "Arm" triggers.
+- `apps/website` `/performance/` — the Layer 4 benchmark.
+
+Whether `apps/demo` becomes the single per-case fixture or is dropped is tracked in
+[#8](https://github.com/ashfaqc137/sparsh/issues/8).
 
 ## Definition of "verified"
 

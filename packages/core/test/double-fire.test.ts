@@ -9,7 +9,7 @@ function setup(refractoryMs = 300, cooldownMs = 500) {
   const guard = createGuard(host, {
     // Isolate DoubleFire from Age/Continuity/Semantics for these unit tests — Age uses the same
     // "younger than cooldownMs" signal and would otherwise win the pipeline first (by design;
-    // see prompts/02-policies/double-fire.md "Relationship to the other policies"). Engine-level
+    // see docs/design/policies/double-fire.md "Relationship to the other policies"). Engine-level
     // interplay across all four policies together is covered in engine.test.ts.
     policies: ['doubleFire'],
     mode: 'enforce',

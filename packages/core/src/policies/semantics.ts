@@ -4,7 +4,7 @@
  * diffing is opt-in via `ctx.compareText` to avoid false positives on live-text controls.
  *
  * Applies to ALL input kinds — meaning changes matter regardless of modality.
- * See `prompts/02-policies/semantics.md`.
+ * See `docs/design/policies/semantics.md`.
  */
 
 import type { Policy, PolicyContext, Verdict } from '../policy.js'

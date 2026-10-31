@@ -1,6 +1,6 @@
 /**
- * Snapshot — `snapshot(handle)` per `core-contract.md` and
- * `prompts/03-implementation/tasks/14-dom-host-snapshot.md`.
+ * Snapshot — `snapshot(handle)` per
+ * `docs/design/architecture/core-contract.md`.
  *
  * Reads a resolved element's `rect` and `fingerprint` cheaply — one `getBoundingClientRect()`
  * call, no interleaved reads/writes. `ageMs` is supplied by the caller (from `age.ts`, T15).

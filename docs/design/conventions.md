@@ -1,7 +1,7 @@
 # Conventions & invariants
 
-Cross-cutting rules every task must honor. These encode the failure modes from `00-context/prior-art.md`
-and the decisions in `01-architecture/decisions.md`. Violating them silently reintroduces the bugs sparsh
+Cross-cutting rules every task must honor. These encode the failure modes from `context/prior-art.md`
+and the decisions in `architecture/decisions.md`. Violating them silently reintroduces the bugs sparsh
 exists to prevent.
 
 ## Correctness invariants (non-negotiable)
@@ -36,8 +36,8 @@ exists to prevent.
 - **No DOM access during render.** Hosts attach in effects / explicit `createGuard`. (SSR-safe)
 - **Arm on visibility, not mount.** Hidden-then-revealed surfaces must re-arm. (D13)
 - Provider renders **no DOM wrapper**; it attaches to a node via ref on a `display: contents` element, or
-  accepts a `root` prop. **Verify `display: contents` against flex/grid parents in the demo** — it has
-  historically had layout quirks.
+  accepts a `root` prop. `display: contents` has historically had layout quirks under flex/grid
+  parents; verification is tracked in [#12](https://github.com/ashfaqc137/sparsh/issues/12).
 - Every `createGuard` returns a `destroy()` that removes listeners, disconnects observers, and clears
   maps. React cleanup calls it. No leaks across remounts.
 
@@ -54,7 +54,7 @@ exists to prevent.
 ## Legibility
 
 - A block is always observable via `onDecision` and (in React) `isGuarded`. Never swallow input silently.
-  (Product requirement — `00-context/philosophy.md`.)
+  (Product requirement — `context/philosophy.md`.)
 
 ## Naming & attributes (public surface)
 
@@ -65,8 +65,7 @@ exists to prevent.
 
 ## Docs discipline
 
-- The types in `01-architecture/core-contract.md` are normative. If code diverges, update the doc in the
+- The types in `architecture/core-contract.md` are normative. If code diverges, update the doc in the
   **same** change.
 - Every settled tradeoff goes in `decisions.md` as a new ADR entry; don't silently reverse an existing
   one.
-- Update `progress.md` as the **last step of every task**.

@@ -15,4 +15,4 @@ The guard runs the age, continuity, semantics, and double-fire policies by defau
 reports suspicious activations without blocking them; the default is `enforce`. Subscribe to
 decisions with `onDecision` and release all host subscriptions with `destroy()`.
 
-See the [repository README](../../README.md) and [public contract](../../prompts/01-architecture/core-contract.md).
+See the [repository README](../../README.md) and [public contract](https://github.com/ashfaqc137/sparsh/blob/master/docs/design/architecture/core-contract.md).
