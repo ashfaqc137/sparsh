@@ -18,6 +18,13 @@ deliberately single-framework and never names one: it shows what the guard does.
 binding is exercised separately in `apps/bindings-harness`, an internal app the e2e suite drives. Shared navigation and footer live in
 `src/layouts/BaseLayout.astro`.
 
+## Link previews
+
+`BaseLayout.astro` sets Open Graph and Twitter card tags on every page, using each page's
+`title` and `description` and one shared image, `public/og-image.png` (1200×630, served at
+`/sparsh/og-image.png`). The image is a screenshot of the homepage hero. After changing the hero,
+regenerate it with `pnpm build:website && node scripts/og-image.mjs` from the repo root.
+
 ## Styles
 
 - `src/styles/sparshlabs.css` is the shared sparshlabs theme (tokens, header, footer, heroes,
