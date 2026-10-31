@@ -1,12 +1,9 @@
 import type { Decision, Mode } from '@sparshlabs/core'
 import { ActivationGuardProvider } from '@sparshlabs/react'
 import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
-import { createApp } from 'vue'
-import { VueScenario } from './VueScenario'
 import { formatDecisionReason } from './formatDecisionReason'
 
 type Scenario = 'inbox' | 'late' | 'meaning'
-type Framework = 'react' | 'vue'
 
 function highlightCode(code: string): ReactNode[] {
   const tokenPattern =
@@ -109,7 +106,7 @@ function Scene({ scenario, mode, cooldownMs, onDecision, onReset }: DemoProps) {
       policies={['age', 'continuity', 'semantics']}
       onDecision={report}
     >
-      <div className="pg-scene" data-testid="playground-scene" data-framework="react">
+      <div className="pg-scene" data-testid="playground-scene">
         <div className="pg-scene-top">
           <span className="pg-live-dot" /> LIVE {mode.toUpperCase()} MODE
         </div>
@@ -250,25 +247,13 @@ function Scene({ scenario, mode, cooldownMs, onDecision, onReset }: DemoProps) {
   )
 }
 
-function VueMount({ scenario, mode, cooldownMs, onDecision, onReset }: DemoProps) {
-  const mountRef = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    if (!mountRef.current) return
-    const app = createApp(VueScenario, { scenario, mode, cooldownMs, onDecision, onReset })
-    app.mount(mountRef.current)
-    return () => app.unmount()
-  }, [scenario, mode, cooldownMs, onDecision, onReset])
-  return <div ref={mountRef} />
-}
-
-function exampleCode(framework: Framework, scenario: Scenario, mode: Mode, cooldownMs: number) {
-  if (framework === 'react')
-    return `import { ActivationGuardProvider } from '@sparshlabs/react'\n\n<ActivationGuardProvider\n  mode="${mode}"\n  cooldownMs={${cooldownMs}}\n  policies={['age', 'continuity', 'semantics']}\n>\n  <${scenario === 'inbox' ? 'Inbox' : scenario === 'late' ? 'LateAction' : 'ChangingButton'} />\n</ActivationGuardProvider>`
-  return `import { ActivationGuardProvider } from '@sparshlabs/vue'\n\n<ActivationGuardProvider\n  mode="${mode}"\n  :cooldown-ms="${cooldownMs}"\n  :policies="['age', 'continuity', 'semantics']"\n>\n  <${scenario === 'inbox' ? 'Inbox' : scenario === 'late' ? 'LateAction' : 'ChangingButton'} />\n</ActivationGuardProvider>`
+// Framework-neutral on purpose: the playground is about what the guard does, and every binding
+// takes these same options.
+function exampleCode(mode: Mode, cooldownMs: number) {
+  return `import { createGuard } from '@sparshlabs/dom'\n\ncreateGuard(document.querySelector('#app'), {\n  mode: '${mode}',\n  cooldownMs: ${cooldownMs},\n  policies: ['age', 'continuity', 'semantics'],\n})`
 }
 
 export function Playground() {
-  const [framework, setFramework] = useState<Framework>('react')
   const [scenario, setScenario] = useState<Scenario>('inbox')
   const [mode, setMode] = useState<Mode>('enforce')
   const [cooldownMs, setCooldownMs] = useState(800)
@@ -300,36 +285,18 @@ export function Playground() {
       <section className="pg-code-section">
         <div>
           <span className="eyebrow">THE SETUP</span>
-          <h2>A small wrapper. A calmer interface.</h2>
-          <p>This example follows your framework, scenario, mode, and cooldown settings.</p>
+          <h2>One guard. A calmer interface.</h2>
+          <p>
+            This example follows your mode and cooldown settings. Every framework binding takes the
+            same options.
+          </p>
         </div>
         <pre>
-          <code>{highlightCode(exampleCode(framework, scenario, mode, cooldownMs))}</code>
+          <code>{highlightCode(exampleCode(mode, cooldownMs))}</code>
         </pre>
       </section>
       <section className="pg-workbench" aria-label="sparsh playground">
         <div className="pg-toolbar">
-          <fieldset className="pg-control-group">
-            <legend className="pg-label">FRAMEWORK</legend>
-            <div className="pg-segment">
-              <button
-                type="button"
-                aria-pressed={framework === 'react'}
-                className={framework === 'react' ? 'active' : ''}
-                onClick={() => setFramework('react')}
-              >
-                React
-              </button>
-              <button
-                type="button"
-                aria-pressed={framework === 'vue'}
-                className={framework === 'vue' ? 'active' : ''}
-                onClick={() => setFramework('vue')}
-              >
-                Vue
-              </button>
-            </div>
-          </fieldset>
           <fieldset className="pg-control-group">
             <legend className="pg-label">GUARD MODE</legend>
             <div className="pg-segment">
@@ -388,24 +355,14 @@ export function Playground() {
             />
           </label>
         </div>
-        <div className="pg-stage" key={`${framework}-${scenario}-${mode}-${cooldownMs}`}>
-          {framework === 'react' ? (
-            <Scene
-              scenario={scenario}
-              mode={mode}
-              cooldownMs={cooldownMs}
-              onDecision={onDecision}
-              onReset={onReset}
-            />
-          ) : (
-            <VueMount
-              scenario={scenario}
-              mode={mode}
-              cooldownMs={cooldownMs}
-              onDecision={onDecision}
-              onReset={onReset}
-            />
-          )}
+        <div className="pg-stage" key={`${scenario}-${mode}-${cooldownMs}`}>
+          <Scene
+            scenario={scenario}
+            mode={mode}
+            cooldownMs={cooldownMs}
+            onDecision={onDecision}
+            onReset={onReset}
+          />
         </div>
         <div className="pg-explainer">
           <span className="pg-explainer-icon">{mode === 'report' ? '◉' : '✋'}</span>
@@ -434,8 +391,7 @@ export function Playground() {
         </div>
       </section>
       <p className="pg-footnote">
-        These are real React and Vue bindings running in your browser. No account or sandbox setup
-        needed.
+        This is the real sparsh guard running in your browser. No account or sandbox setup needed.
       </p>
     </main>
   )

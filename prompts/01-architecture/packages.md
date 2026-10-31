@@ -154,6 +154,44 @@ Solid 1.8+.
 - Depends on: `@sparshlabs/core`, `@sparshlabs/dom`, `solid-js` (peer, `^1.8`). Solid 2.0 changes
   effect and lifecycle semantics; support is deferred until it is stable.
 
+## `@sparshlabs/svelte`
+
+**Responsibility:** the Svelte binding; same surface as `@sparshlabs/react`/`@sparshlabs/solidjs`.
+Svelte 5.29+ (runes). Svelte 4 is not supported: its component model is too different to share
+source with.
+
+- Exports:
+  - `ActivationGuardProvider` — primary API, app-wide. Same props as React's
+    `<ActivationGuardProvider>` (`mode`, `onDecision`, `onSuspect`, `root`, plus the `DomGuardOptions`
+    passthrough); content arrives as the `children` snippet.
+  - `useActivationGuard()` → `{ ref, isGuarded }` — per-element escape hatch / block explanation.
+    `ref` is a Svelte attachment (`<button {@attach ref}>`), Svelte 5's ref-callback equivalent (node
+    in, cleanup out), which is why 5.29 is the floor. `isGuarded` is an accessor (`isGuarded()`), as
+    in Solid, so destructuring the result keeps it reactive (a getter on a returned object would
+    not). Like `getContext`, it must be called during component initialisation.
+  - `ActivationGuard` — optional subtree wrapper, same "nested provider" framing as React's.
+  - `GuardKey` — the `setContext`/`getContext` key (Vue's `GuardKey`, React's/Solid's
+    `GuardContext`).
+- Provider calls `createGuard` from `@sparshlabs/dom` in a `$effect` (cleanup destroys it), on a
+  `display: contents` wrapper (`bind:this`) or an explicit `root` prop. The effect tracks only a
+  `$derived` serialized option set, `root` and the wrapper element; callbacks are read from the
+  destructured props when they fire, since those stay live. `$effect` and attachments never run on
+  the server, so SSR creates no guard; `test/ssr.test.ts` renders with `svelte/server` in a
+  DOM-less Node environment to prove it.
+- **Built with `svelte-package`, not tsup.** Svelte libraries ship uncompiled `.svelte` (and
+  rune-using `.svelte.js`) files for the consumer's compiler, so the package is ESM-only with a
+  `svelte` export condition and no CJS build. `svelte.config.js` strips TypeScript from the shipped
+  components. The context key, props type and `serializeOptions` live in `src/context.ts` rather
+  than in the provider, because a `.svelte` file can't cleanly export them.
+- Not in the root `tsc -b` graph (tsc can't read `.svelte`); `svelte-check` typechecks it from the
+  root `typecheck` script, as Angular's own typecheck is. Tests use `@sveltejs/vite-plugin-svelte`
+  4 (the Vite 5 line vitest 2 runs on) and `.svelte.test.ts` files so they can drive props through
+  `$state`.
+- Biome 1.9 only partly understands `.svelte`: `biome.json` turns off its formatter for them
+  (it can't indent the `<script>` block) and `useConst` (it can't see `bind:this` assignments).
+  The rest of the lint rules still apply.
+- Depends on: `@sparshlabs/core`, `@sparshlabs/dom`, `svelte` (peer, `^5.29`).
+
 ## Dependency direction (must never invert)
 
 ```
@@ -161,6 +199,7 @@ react    ──▶  dom  ──▶  core
 vue      ──▶  dom  ──▶  core
 angular  ──▶  dom  ──▶  core
 solidjs  ──▶  dom  ──▶  core
+svelte   ──▶  dom  ──▶  core
    └─────────────────▶  core   (the adapters also import core types directly)
 ```
 
@@ -170,11 +209,12 @@ solidjs  ──▶  dom  ──▶  core
 - `vue` depends on `core` + `dom` + vue (peer).
 - `angular` depends on `core` + `dom` + `@angular/core`/`@angular/common` (peers).
 - `solidjs` depends on `core` + `dom` + solid-js (peer).
+- `svelte` depends on `core` + `dom` + svelte (peer).
 - No package imports a sibling "upward". No framework-adapter package imports another framework's
   adapter.
 
 ## Future packages (not built in v1)
 
-`@sparshlabs/svelte` — a thin binding over `core` + `dom`, same shape as the existing adapters. An Options-API-compatible surface for `@sparshlabs/vue` (mixin/`inject`-
-based, see above) is also deferred. `@sparshlabs/native` (or separate) — a *different host*, shared
+An Options-API-compatible surface for `@sparshlabs/vue` (mixin/`inject`-based, see above) is
+deferred. `@sparshlabs/native` (or separate) — a *different host*, shared
 philosophy only, not shared code. See `decisions.md` for why native is deferred.

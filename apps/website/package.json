@@ -18,11 +18,9 @@
     "@sparshlabs/core": "workspace:*",
     "@sparshlabs/dom": "workspace:*",
     "@sparshlabs/react": "workspace:*",
-    "@sparshlabs/vue": "workspace:^",
     "astro": "^5.1.1",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "vue": "^3.5.43"
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",

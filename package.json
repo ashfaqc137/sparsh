@@ -15,7 +15,7 @@
     "e2e": "playwright test",
     "bench": "pnpm -r --filter './packages/*' run build && node scripts/package-sizes.mjs && SPARSH_BENCHMARK=1 playwright test",
     "lint": "biome check .",
-    "typecheck": "tsc -b tsconfig.json && pnpm --filter @sparshlabs/angular typecheck",
+    "typecheck": "tsc -b tsconfig.json && pnpm --filter @sparshlabs/angular typecheck && pnpm --filter @sparshlabs/svelte typecheck",
     "typecheck:core-fence": "tsc -p packages/core/tsconfig.json --noEmit",
     "release": "changeset version && changeset publish",
     "changeset": "changeset"

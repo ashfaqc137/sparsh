@@ -12,7 +12,7 @@ export default defineConfig({
   integrations: [react()],
   vite: {
     optimizeDeps: {
-      include: ['react', 'react-dom', 'vue'],
+      include: ['react', 'react-dom'],
     },
   },
 })

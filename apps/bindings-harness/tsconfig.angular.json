@@ -1,0 +1,12 @@
+{
+  // Read by @analogjs/vite-plugin-angular: the Angular compiler only ever sees `src/angular/`
+  // (plus what it imports), compiled AOT like a real app.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // The Angular compiler emits through TypeScript, so the base config's `noEmit` must be undone.
+    "noEmit": false,
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false
+  },
+  "include": ["src/angular", "src/shared.ts"]
+}

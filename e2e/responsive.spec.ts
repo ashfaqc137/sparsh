@@ -17,6 +17,7 @@ const pages = [
   { path: '/docs/vue/', landmark: 'main.docs-page' },
   { path: '/docs/angular/', landmark: 'main.docs-page' },
   { path: '/docs/solidjs/', landmark: 'main.docs-page' },
+  { path: '/docs/svelte/', landmark: 'main.docs-page' },
   { path: '/docs/dom/', landmark: 'main.docs-page' },
 ]
 

@@ -1,0 +1,14 @@
+{
+  // Not part of the root `tsc -b` graph: tsc can't read `.svelte` files. `svelte-check` typechecks
+  // this package instead (root `typecheck` script), the same way Angular is handled.
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "noEmit": true,
+    "verbatimModuleSyntax": true
+  },
+  "include": ["src", "test"]
+}
