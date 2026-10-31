@@ -23,8 +23,8 @@ Sparsh does not block Escape, focus changes, or scrolling.
 
 - `@sparshlabs/core` contains the framework-independent decision engine.
 - `@sparshlabs/dom` connects the engine to browser events and also provides a vanilla DOM API.
-- `@sparshlabs/react`, `@sparshlabs/vue`, `@sparshlabs/angular`, and `@sparshlabs/solidjs` provide
-  framework bindings.
+- `@sparshlabs/react`, `@sparshlabs/vue`, `@sparshlabs/angular`, `@sparshlabs/solidjs`, and
+  `@sparshlabs/svelte` provide framework bindings.
 
 Install the integration for your app with npm:
 
@@ -43,6 +43,9 @@ npm install @sparshlabs/angular
 
 # SolidJS 1.8+ (solid-js is a peer dependency)
 npm install @sparshlabs/solidjs
+
+# Svelte 5.29+ (svelte is a peer dependency)
+npm install @sparshlabs/svelte
 ```
 
 `@sparshlabs/dom` is also the browser integration used by the framework packages and is installed
@@ -93,11 +96,14 @@ Package ESM entry sizes, as printed by `pnpm bench`:
 | `@sparshlabs/vue` | 3,844 bytes | 1,311 bytes |
 | `@sparshlabs/solidjs` | 3,515 bytes | 1,197 bytes |
 | `@sparshlabs/angular` | 11,537 bytes | 2,543 bytes |
+| `@sparshlabs/svelte` | 6,729 bytes | 2,649 bytes |
 
 These are individual package entry files before app bundling or tree-shaking, not the total
 download size for a consumer. The Angular entry is ng-packagr's partially compiled FESM output,
 which includes Angular's partial declarations; the app's Angular linker and minifier reduce it
-further. The project’s performance target is less than 1 ms of added work per interaction; the
+further. The Svelte row is all of the package's published `.js` and `.svelte` source, comments
+included, because Svelte libraries ship uncompiled and the app's Svelte compiler produces the final
+code. The project’s performance target is less than 1 ms of added work per interaction; the
 fixture results above are diagnostic measurements, not a cross-device benchmark guarantee.
 
 ## Website

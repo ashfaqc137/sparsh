@@ -43,6 +43,17 @@
   },
   "overrides": [
     {
+      "include": ["**/*.svelte"],
+      "formatter": { "enabled": false },
+      "linter": {
+        "rules": {
+          "style": {
+            "useConst": "off"
+          }
+        }
+      }
+    },
+    {
       "include": ["**/tsconfig*.json"],
       "json": {
         "parser": {

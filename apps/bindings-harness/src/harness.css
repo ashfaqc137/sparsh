@@ -1,0 +1,103 @@
+/* Just enough layout to make the scenes usable by hand; the e2e spec doesn't depend on looks. */
+body {
+  margin: 0;
+  font: 15px / 1.5 system-ui, sans-serif;
+  background: #f7f7f5;
+  color: #1d1d1b;
+}
+#harness {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+}
+.harness-toolbar {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.harness-toolbar fieldset {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  border: 1px solid #d8d8d2;
+  border-radius: 8px;
+}
+.harness-toolbar button[aria-pressed="true"] {
+  background: #1d1d1b;
+  color: #fff;
+}
+.harness-toolbar label {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+button {
+  font: inherit;
+  padding: 8px 12px;
+  border: 1px solid #c9c9c2;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+.pg-scene {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #d8d8d2;
+  border-radius: 12px;
+  background: #fff;
+}
+.pg-inbox {
+  display: grid;
+  gap: 4px;
+}
+.pg-mail-head,
+.pg-mail-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+.pg-mail-row {
+  width: 100%;
+  min-height: 56px;
+  text-align: left;
+}
+.pg-mail-row span {
+  display: grid;
+  flex: 1;
+}
+.pg-target {
+  outline: 2px solid #0ea5b7;
+}
+.pg-slot {
+  display: grid;
+  min-height: 64px;
+  place-items: center;
+  border: 1px dashed #c9c9c2;
+  border-radius: 8px;
+}
+.pg-meaning {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+}
+.pg-action {
+  min-width: 180px;
+  min-height: 48px;
+}
+.pg-disabled {
+  opacity: 0.6;
+}
+.pg-result {
+  display: grid;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #eef7ef;
+}
+.pg-result-report {
+  background: #fff6e0;
+}
+.pg-result-block {
+  background: #fdecec;
+}

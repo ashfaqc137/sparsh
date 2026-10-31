@@ -40,6 +40,7 @@ sparsh/                      (repo root; package name "sparsh" internal, not pub
       src/
   apps/
     demo/                    # Vite + React; repro per case; live suspect log; Playwright fixture
+    bindings-harness/        # internal, never deployed: playground scenarios through every binding
   e2e/                       # Playwright config + specs (or fold into apps/demo)
 ```
 

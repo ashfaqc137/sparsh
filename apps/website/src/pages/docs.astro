@@ -47,6 +47,15 @@ export function App() {
   )
 }`
 
+const svelteProvider = `<script lang="ts">
+  import { ActivationGuardProvider } from '@sparshlabs/svelte'
+  import YourApp from './YourApp.svelte'
+</script>
+
+<ActivationGuardProvider mode="enforce">
+  <YourApp />
+</ActivationGuardProvider>`
+
 const observeDecisions = `import type { Decision } from '@sparshlabs/react'
 
 function recordDecision(decision: Decision) {
@@ -62,6 +71,7 @@ const installReact = 'npm install @sparshlabs/react'
 const installVue = 'npm install @sparshlabs/vue'
 const installAngular = 'npm install @sparshlabs/angular'
 const installSolid = 'npm install @sparshlabs/solidjs'
+const installSvelte = 'npm install @sparshlabs/svelte'
 const installDom = 'npm install @sparshlabs/dom'
 ---
 
@@ -74,8 +84,8 @@ const installDom = 'npm install @sparshlabs/dom'
     <h2>Choose a binding</h2>
     <p>
       sparsh separates its interaction engine from its platform adapters and framework bindings. Use
-      the binding that matches your app; the React, Vue, Angular, and SolidJS bindings install the
-      browser DOM adapter for you.
+      the binding that matches your app; the React, Vue, Angular, SolidJS, and Svelte bindings install
+      the browser DOM adapter for you.
     </p>
     <p class="callout">A small naming note: <em>sparsh</em> means “touch” in Sanskrit.</p>
     <div class="table-wrap">
@@ -86,12 +96,13 @@ const installDom = 'npm install @sparshlabs/dom'
           <tr><td><code>@sparshlabs/vue</code></td><td>Your UI is Vue 3.</td><td>Vue 3.3 or later; Composition API</td></tr>
           <tr><td><code>@sparshlabs/angular</code></td><td>Your UI is Angular.</td><td>Angular 22 or later</td></tr>
           <tr><td><code>@sparshlabs/solidjs</code></td><td>Your UI is SolidJS.</td><td>Solid 1.8 or later</td></tr>
+          <tr><td><code>@sparshlabs/svelte</code></td><td>Your UI is Svelte.</td><td>Svelte 5.29 or later</td></tr>
           <tr><td><code>@sparshlabs/dom</code></td><td>You use vanilla JavaScript or a different framework.</td><td>A browser DOM root</td></tr>
         </tbody>
       </table>
     </div>
     <p class="callout">
-      Install the package that matches your app. The React, Vue, Angular, and SolidJS bindings bring in
+      Install the package that matches your app. The React, Vue, Angular, SolidJS, and Svelte bindings bring in
       <code>@sparshlabs/dom</code> automatically; install it directly only for vanilla JS or a
       custom host.
     </p>
@@ -154,8 +165,21 @@ const installDom = 'npm install @sparshlabs/dom'
     <p>See the <a href={href('/docs/solidjs/')}>SolidJS API reference</a> for the element-feedback hook and props.</p>
   </section>
 
+  <section class="docs-section" id="svelte-setup">
+    <p class="section-kicker">05 · SVELTE</p>
+    <h2>Wrap the part of the app you want to protect</h2>
+    <p>
+      The Svelte provider shares its guard with descendants through Svelte context. It attaches in
+      an effect after the first render, never runs during server-side rendering, and removes its
+      listeners when it is destroyed, so it works unchanged in SvelteKit. It requires Svelte 5.
+    </p>
+    <Code code={installSvelte} lang="sh" theme="github-dark" />
+    <Code code={svelteProvider} lang="svelte" theme="github-dark" />
+    <p>See the <a href={href('/docs/svelte/')}>Svelte API reference</a> for the element-feedback hook and props.</p>
+  </section>
+
   <section class="docs-section" id="first-feedback">
-    <p class="section-kicker">05 · OBSERVE THE RESULT</p>
+    <p class="section-kicker">06 · OBSERVE THE RESULT</p>
     <h2>Make a block understandable</h2>
     <p>
       Enforce mode is the default. A suspicious activation can be stopped, and <code>onDecision</code>
@@ -176,7 +200,7 @@ const installDom = 'npm install @sparshlabs/dom'
     <ul>
       <li><a href={href('/docs/concepts/')}>Core concepts</a> explains modes, policies, accessibility behavior, and known limits.</li>
       <li><a href={href('/docs/dom/')}>DOM / vanilla API</a> covers low-level integration and cleanup.</li>
-      <li><a href={href('/playground/')}>The playground</a> lets you try the React and Vue bindings against moving interfaces.</li>
+      <li><a href={href('/playground/')}>The playground</a> lets you try the guard against moving interfaces.</li>
     </ul>
   </section>
 </DocsShell>

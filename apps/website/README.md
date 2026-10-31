@@ -2,9 +2,9 @@
 
 Consumer-facing site and the source for sparsh's official product and API documentation. Product
 routes include `/`, `/how-it-works/`, `/demo/`, and `/playground/`. Developer docs live under
-`/docs/`: getting started, core concepts, React, Vue, Angular, SolidJS, and low-level DOM
-references. Framework
-references are separate pages so future bindings can add focused API documentation.
+`/docs/`: getting started, core concepts, React, Vue, Angular, SolidJS, Svelte, and low-level
+DOM references. Framework references are separate pages so future bindings can add focused API
+documentation.
 
 The site is served at [sparshlabs.com/sparsh/](https://sparshlabs.com/sparsh/), one of the
 [sparshlabs](https://github.com/ashfaqc137/sparshlabs) project sites, so every route lives under
@@ -13,8 +13,9 @@ the `/sparsh` base (`astro.config.mjs`). Internal links go through `href()` from
 
 Built with **Astro** + `@astrojs/react`: the informational pages are static Astro, and the interactive
 demo (`src/components/HeroDemo.tsx`) and playground (`src/components/Playground.tsx`) are hydrated
-React islands (`client:load`). The playground mounts its Vue example with the real `@sparshlabs/vue`
-binding. Both use workspace packages rather than mocks. Shared navigation and footer live in
+React islands (`client:load`). Both use the workspace packages rather than mocks. The playground is
+deliberately single-framework and never names one: it shows what the guard does. Each framework
+binding is exercised separately in `apps/bindings-harness`, an internal app the e2e suite drives. Shared navigation and footer live in
 `src/layouts/BaseLayout.astro`.
 
 ## Styles

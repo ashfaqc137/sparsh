@@ -1,0 +1,182 @@
+---
+import { Code } from 'astro:components'
+import DocsShell from '../../components/DocsShell.astro'
+import { href } from '../../lib/paths'
+
+const providerExample = `<script lang="ts">
+  import { ActivationGuardProvider, type Decision } from '@sparshlabs/svelte'
+  import ApplicationShell from './ApplicationShell.svelte'
+
+  function handleDecision(decision: Decision) {
+    if (!decision.allowed) {
+      console.info('Suspicious activation:', decision.reason)
+    }
+  }
+</script>
+
+<ActivationGuardProvider mode="enforce" cooldownMs={500} onDecision={handleDecision}>
+  <ApplicationShell />
+</ActivationGuardProvider>`
+
+const hookExample = `<script lang="ts">
+  import { useActivationGuard } from '@sparshlabs/svelte'
+
+  const { ref, isGuarded } = useActivationGuard()
+</script>
+
+<button {@attach ref} type="button">Save draft</button>
+{#if isGuarded()}
+  <p role="status">The screen changed. Try again.</p>
+{/if}`
+
+const customFeedback = `<script lang="ts">
+  import { ActivationGuardProvider } from '@sparshlabs/svelte'
+  import ApplicationShell from './ApplicationShell.svelte'
+
+  function animateBlocked(element: Element) {
+    element.animate(
+      [
+        { transform: 'scale(1)' },
+        { transform: 'scale(0.96)' },
+        { transform: 'scale(1)' },
+      ],
+      { duration: 220, easing: 'ease-out' },
+    )
+  }
+</script>
+
+<ActivationGuardProvider onBlocked={animateBlocked}>
+  <ApplicationShell />
+</ActivationGuardProvider>`
+
+const publicTypes = `import type { InputKind, Phase, PolicyId } from '@sparshlabs/svelte'
+import type { Attachment } from 'svelte/attachments'
+
+export interface UseActivationGuardResult {
+  ref: Attachment<Element>
+  isGuarded: () => boolean
+}
+
+export interface Decision {
+  allowed: boolean
+  enforced: boolean
+  policy?: PolicyId
+  reason?: string
+  event: { kind: InputKind; phase: Phase }
+  target: {
+    identity: unknown
+    ageMs: number
+    guardKey?: string
+  }
+}`
+---
+
+<DocsShell
+  title="Svelte API reference"
+  description="Provider, element-feedback hook, scoped wrapper, callbacks, and shared guard options for Svelte 5."
+>
+  <section class="docs-section" id="provider">
+    <p class="section-kicker">COMPONENT · PROVIDER</p>
+    <h2><code>ActivationGuardProvider</code></h2>
+    <p>
+      Provides one guard to descendant components through Svelte context and attaches it to the
+      rendered subtree after the first render. When <code>root</code> is omitted, the provider
+      creates a <code>display: contents</code> wrapper; pass an element or document as
+      <code>root</code> to attach to an existing boundary.
+    </p>
+    <p>
+      Changing a guard configuration option recreates the guard and resets in-flight interaction
+      observations. Keep configuration stable during a press; callback changes are picked up without
+      recreating the guard.
+    </p>
+    <Code code={providerExample} lang="svelte" theme="github-dark" />
+    <p>
+      The guard is created in an effect, so it never runs during server-side rendering. The
+      provider works unchanged in SvelteKit and attaches once the page hydrates.
+    </p>
+    <h3>Props</h3>
+    <div class="table-wrap">
+      <table class="docs-table">
+        <thead><tr><th>Prop</th><th>Type</th><th>Default / behavior</th></tr></thead>
+        <tbody>
+          <tr><td><code>children</code></td><td><code>Snippet</code></td><td>Subtree to observe (the component's content).</td></tr>
+          <tr><td><code>mode</code></td><td><code>Mode | Partial&lt;Record&lt;PolicyId, Mode&gt;&gt;</code></td><td><code>'enforce'</code>. Unspecified policies in a mode map remain enforced.</td></tr>
+          <tr><td><code>policies</code></td><td><code>PolicyId[]</code></td><td>All four policies by default.</td></tr>
+          <tr><td><code>cooldownMs</code></td><td><code>number</code></td><td><code>500</code>. Age policy threshold in milliseconds.</td></tr>
+          <tr><td><code>rectThresholdPx</code></td><td><code>number</code></td><td><code>4</code>. Continuity movement tolerance.</td></tr>
+          <tr><td><code>refractoryMs</code></td><td><code>number</code></td><td><code>300</code>. DoubleFire recency window.</td></tr>
+          <tr><td><code>semanticsTextCheck</code></td><td><code>boolean</code></td><td><code>false</code>. Also compare target text.</td></tr>
+          <tr><td><code>clickSuppressMs</code></td><td><code>number</code></td><td><code>500</code>. Matching native click window.</td></tr>
+          <tr><td><code>onDecision</code></td><td><code>(decision: Decision) =&gt; void</code></td><td>Called for allowed and suspicious decisions.</td></tr>
+          <tr><td><code>onSuspect</code></td><td><code>(decision: Decision) =&gt; void</code></td><td>Called when a policy verdict is suspicious, including report mode.</td></tr>
+          <tr><td><code>onBlocked</code></td><td><code>(element: Element) =&gt; void</code></td><td>Called after an enforced activation is canceled; replaces the default shake.</td></tr>
+          <tr><td><code>blockAnimation</code></td><td><code>boolean</code></td><td><code>true</code>. Enables the default shake when no custom callback is set.</td></tr>
+          <tr><td><code>blockAnimationMs</code></td><td><code>number</code></td><td><code>300</code>. Default shake duration.</td></tr>
+          <tr><td><code>root</code></td><td><code>Element | Document</code></td><td>Optional explicit DOM root.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="docs-section" id="hook">
+    <p class="section-kicker">HOOK · ELEMENT FEEDBACK</p>
+    <h2><code>useActivationGuard()</code></h2>
+    <p>
+      Call it in a descendant component's <code>&lt;script&gt;</code>. It returns an attachment
+      and an <code>isGuarded</code> accessor that becomes true when the element is actually
+      blocked.
+    </p>
+    <Code code={hookExample} lang="svelte" theme="github-dark" />
+    <ul>
+      <li>Attach the returned <code>ref</code> to the element: <code>&lt;button {'{@attach ref}'}&gt;</code>.</li>
+      <li><code>isGuarded</code> is a reactive accessor; call it (<code>isGuarded()</code>) in markup, <code>$derived</code>, or <code>$effect</code>. It resets after an allowed activation. Destructuring the result keeps it reactive.</li>
+      <li>Like <code>getContext</code>, it must be called while the component initialises, not inside an event handler.</li>
+      <li>Without a provider ancestor, the hook is a no-op and does not throw.</li>
+    </ul>
+  </section>
+
+  <section class="docs-section" id="scoped-wrapper">
+    <p class="section-kicker">COMPONENT · SCOPED GUARD</p>
+    <h2><code>ActivationGuard</code></h2>
+    <p>
+      This is an alias of <code>ActivationGuardProvider</code> with the same props. A nested
+      instance installs a separate guard on its subtree; options are not merged with an ancestor.
+    </p>
+    <Code code={`<ActivationGuard mode={{ age: 'report' }}>
+  <FrequentlyUpdatedPanel />
+</ActivationGuard>`} lang="svelte" theme="github-dark" />
+    <p class="callout">
+      <strong>Nesting providers:</strong> each provider installs its own capture-phase listeners
+      and policy pipeline — nothing is merged or inherited from an ancestor. When providers
+      overlap the same DOM, the outermost one sees pointer/click/key events first and, if it
+      blocks, the inner provider never sees that interaction at all. This is exactly how
+      <code>&lt;ActivationGuard&gt;</code> is meant to be used for a scoped override, but
+      accidentally wrapping the same subtree with two top-level <code>ActivationGuardProvider</code>s
+      is usually a mistake. sparsh logs a <code>console.warn</code> whenever a new guard's root
+      overlaps one that's already active, so you can tell the two cases apart — ignore it for an
+      intentional scoped override, fix it otherwise.
+    </p>
+  </section>
+
+  <section class="docs-section" id="custom-feedback">
+    <p class="section-kicker">BLOCK FEEDBACK</p>
+    <h2>Customize the blocked animation</h2>
+    <p>
+      <code>onBlocked</code> runs after cancellation and receives the interactive element. A
+      callback exception is ignored so it cannot affect the guard’s decision.
+    </p>
+    <Code code={customFeedback} lang="svelte" theme="github-dark" />
+  </section>
+
+  <section class="docs-section" id="types">
+    <p class="section-kicker">RELATED TYPES</p>
+    <h2>Decision and mode</h2>
+    <p>
+      <code>Mode</code>, <code>PolicyId</code>, and <code>Decision</code> are re-exported from
+      <code>@sparshlabs/svelte</code>. A decision’s <code>allowed</code> field records the policy verdict;
+      <code>enforced</code> says whether it actually stopped the activation. See
+      <a href={href('/docs/concepts/')}>Core concepts</a> for policy behavior and accessibility details.
+    </p>
+    <Code code={publicTypes} lang="ts" theme="github-dark" />
+  </section>
+</DocsShell>

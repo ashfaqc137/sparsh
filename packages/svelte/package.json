@@ -1,0 +1,49 @@
+{
+  "name": "@sparshlabs/svelte",
+  "version": "0.1.0",
+  "description": "Svelte 5 binding for sparsh: <ActivationGuardProvider>, useActivationGuard(), <ActivationGuard>.",
+  "license": "MIT",
+  "type": "module",
+  "svelte": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": [
+    "**/*.svelte"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "svelte": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "svelte-package -i src -o dist",
+    "dev": "svelte-package -i src -o dist --watch",
+    "test": "vitest run --passWithNoTests && vitest run -c vitest.config.ssr.ts",
+    "test:watch": "vitest",
+    "typecheck": "svelte-check --tsconfig ./tsconfig.json --fail-on-warnings"
+  },
+  "dependencies": {
+    "@sparshlabs/core": "workspace:*",
+    "@sparshlabs/dom": "workspace:*"
+  },
+  "peerDependencies": {
+    "svelte": "^5.29.0"
+  },
+  "devDependencies": {
+    "@sveltejs/package": "^2.5.8",
+    "@sveltejs/vite-plugin-svelte": "^4.0.4",
+    "jsdom": "^25.0.1",
+    "svelte": "^5.57.3",
+    "svelte-check": "^4.7.7",
+    "typescript": "^5.7.2",
+    "vite": "^5.4.21",
+    "vitest": "^2.1.8"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

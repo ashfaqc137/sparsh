@@ -1,5 +1,12 @@
 # @sparshlabs/vue
 
+## 0.1.2
+
+### Patch Changes
+
+- 82b0f3d: Re-export the `Phase` type from `@sparshlabs/core`, as the API reference already shows, so
+  `Decision['event']['phase']` can be typed without a direct `@sparshlabs/core` import.
+
 ## 0.1.1
 
 ### Patch Changes

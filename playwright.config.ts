@@ -21,13 +21,26 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
   ],
-  webServer: {
-    command: devServer
-      ? 'node_modules/.bin/astro dev --host 127.0.0.1 --port 4322 --force'
-      : 'node_modules/.bin/astro build && node_modules/.bin/astro preview --host 127.0.0.1 --port 4322 --strictPort',
-    cwd: 'apps/website',
-    url: 'http://127.0.0.1:4322/sparsh/playground/',
-    reuseExistingServer: false,
-    timeout: 120_000,
-  },
+  webServer: [
+    {
+      command: devServer
+        ? 'node_modules/.bin/astro dev --host 127.0.0.1 --port 4322 --force'
+        : 'node_modules/.bin/astro build && node_modules/.bin/astro preview --host 127.0.0.1 --port 4322 --strictPort',
+      cwd: 'apps/website',
+      url: 'http://127.0.0.1:4322/sparsh/playground/',
+      reuseExistingServer: false,
+      timeout: 120_000,
+    },
+    {
+      // Internal bindings harness (never deployed): the playground scenarios through every
+      // framework binding, driven by playground-bindings.spec.ts.
+      command: devServer
+        ? 'node_modules/.bin/vite --host 127.0.0.1 --force'
+        : 'node_modules/.bin/vite build && node_modules/.bin/vite preview --host 127.0.0.1',
+      cwd: 'apps/bindings-harness',
+      url: 'http://127.0.0.1:4323/',
+      reuseExistingServer: false,
+      timeout: 120_000,
+    },
+  ],
 })
